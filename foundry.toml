@@ -1,0 +1,8 @@
+[profile.default]
+optimizer = true
+optimizer_runs = 20_000
+
+[profile.ci]
+verbosity = 4
+chain_id = 31337
+ 
