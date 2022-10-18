@@ -9,7 +9,7 @@ pragma solidity 0.8.9;
 * https://github.com/mudgen/diamond-2
 /******************************************************************************/
 
-import "./libraries/LibDiamond.sol";
+import "contracts/diamond/libraries/LibDiamond.sol";
 import "./interfaces/IDiamondLoupe.sol";
 import "./interfaces/IDiamondCut.sol";
 import "contracts/libraries/cashier/CashierStorageLib.sol";

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 import "contracts/libraries/AppStorage.sol";
-import "contracts/UniswapV2.sol";
+import "contracts/libraries/UniswapV2.sol";
 
 library LibHLP {
     uint256 constant PLAYER_WINS_COMISSION = 3; //0.0003 0.03%

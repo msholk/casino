@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "hardhat/console.sol";
 import "contracts/vrf/VrfStructs.sol";
-import "contracts/libraries/LibDiamond.sol";
+import "contracts/diamond/libraries/LibDiamond.sol";
 
 /**
  * @title The RandomNumberConsumerV2 contract

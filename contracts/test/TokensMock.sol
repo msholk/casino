@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
-import "contracts/UniswapV2.sol";
-import "contracts/constants.sol";
+import "contracts/libraries/UniswapV2.sol";
+import "contracts/libraries/constants.sol";
 
 contract TokensMock {
     IWETH public weth = IWETH(WETH);

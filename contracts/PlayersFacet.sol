@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
-import "contracts/UniswapV2.sol";
-import "contracts/constants.sol";
+import "contracts/libraries/UniswapV2.sol";
+import "contracts/libraries/constants.sol";
 import "hardhat/console.sol";
 
-import "contracts/libraries/LibDiamond.sol";
+import "contracts/diamond/libraries/LibDiamond.sol";
 import "contracts/libraries/house/LibHLP.sol";
 import "contracts/vrf/VrfStructs.sol";
 import "contracts/libraries/cashier/CashierStorageLib.sol";
