@@ -2,6 +2,12 @@
 
 yarn install
 
+# Install
+
+To run test for player: yarn testp
+
+
+
 
 forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z -vvvvv --match-contract Sw --match-test testSwapSingleHopExactAmountIn
 forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z   --fork-block-number 15756971 --match-contract Sw --match-test testSwapSingleHopExactAmountIn
