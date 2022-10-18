@@ -1,25 +1,32 @@
+require("dotenv").config();
 require("@nomicfoundation/hardhat-toolbox");
-require("hardhat-gas-reporter");
-require('hardhat-storage-layout');
-/** @type import('hardhat/config').HardhatUserConfig */
+
+const { BLOCK_NUMBER } = require('./config');
+
 module.exports = {
-  solidity: "0.8.9",
-  gasReporter: {
-    currency: 'EUR',
-    gasPrice: 21,
-    enabled: false,
-    excludeContracts: ["Test1Facet", "Test2Facet", "DiamondCutFacet", "DiamondLoupeFacet", "OwnershipFacet"]
-  },
+  defaultNetwork: 'hardhat',
+  chainId: 31337,
   networks: {
     hardhat: {
-      chainId: 31337,
       forking: {
-        // Using Alchemy
-        url: `https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z`, // url to RPC node, ${ALCHEMY_KEY} - must be your API key
-        // Using Infura
-        // url: `https://mainnet.infura.io/v3/${INFURA_KEY}`, // ${INFURA_KEY} - must be your API key
-        blockNumber: 15756193, // a specific block number with which you want to work
-      },
+        url: process.env.ARBITRUM_MAINNET_API_URL,
+        blockNumber: BLOCK_NUMBER
+      }
     },
-  }
-};
+  },
+  etherscan: {
+    apiKey: {
+      arbitrumOne: process.env.ARBISCAN_API_KEY,
+    }
+  },
+  solidity: "0.8.17",
+  // solidity: {
+  //   version: "0.8.5",
+  //   settings: {
+  //     optimizer: {
+  //       enabled: true,
+  //       runs: 1
+  //     }
+  //   }
+  // }
+}
