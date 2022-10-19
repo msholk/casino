@@ -11,6 +11,7 @@ import "contracts/libraries/cashier/CashierStorageLib.sol";
 import "contracts/libraries/roulette/LibRulette.sol";
 import "contracts/libraries/roulette/BetPointPrm.sol";
 import "contracts/libraries/roulette/RouletteLaunchLib.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract PlayersFacet {
     AppStorage s;
@@ -48,8 +49,19 @@ contract PlayersFacet {
         s.cs.playersBalances[msg.sender] += daiAmountOut;
     }
 
-    function checkPlayerBalance() public view returns (uint256) {
-        return s.cs.playersBalances[msg.sender];
+    /// @title Getb player balance in DAI and current price of (1)DAI in ETH
+    /// @author Max
+    function checkPlayerBalance() public view returns (uint256, int256) {
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(DAI_ETH);
+        (
+            ,
+            /*uint80 roundID*/
+            int256 price, /*uint startedAt*/ /*uint timeStamp*/ /*uint80 answeredInRound*/
+            ,
+            ,
+
+        ) = priceFeed.latestRoundData();
+        return (s.cs.playersBalances[msg.sender], price);
     }
 
     function withdrawDAI() public {

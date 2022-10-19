@@ -87,8 +87,9 @@ const { ZERO_ADDRESS } = require('../utils/utils')
                 expect(bal).eq(0)
                 // console.log("PlayersFacet dai balance", bal)
 
-                bal = await PlayersFacet.checkPlayerBalance();
-                expect(bal).eq(0)
+                let pbal = await PlayersFacet.checkPlayerBalance();
+                // console.log(pbal)
+                expect(pbal[0]).eq(0)
                 // console.log("Player balance", bal)
 
                 await PlayersFacet.depositETH({ value: BigNumber.from(1) });
@@ -101,9 +102,11 @@ const { ZERO_ADDRESS } = require('../utils/utils')
                 expect(bal).eq(1270)
                 // console.log("PlayersFacet dai balance", bal)
 
-                bal = await PlayersFacet.checkPlayerBalance();
+                pbal = await PlayersFacet.checkPlayerBalance();
                 // console.log("Player balance", bal)
-                expect(bal).eq(1270)
+                console.log(pbal)
+                expect(pbal[0]).eq(1270)
+                expect(pbal[1]).eq(BigNumber.from("783260000000000"))
 
                 await PlayersFacet.withdrawDAI();
 
@@ -111,9 +114,9 @@ const { ZERO_ADDRESS } = require('../utils/utils')
                 expect(bal).eq(0)
                 // console.log("PlayersFacet dai balance", bal)
 
-                bal = await PlayersFacet.checkPlayerBalance();
+                pbal = await PlayersFacet.checkPlayerBalance();
                 // console.log("Player balance", bal)
-                expect(bal).eq(0)
+                expect(pbal[0]).eq(0)
 
 
                 /////////////////////////////////////
