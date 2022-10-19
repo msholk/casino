@@ -8,7 +8,7 @@ module.exports = {
     currency: 'EUR',
     gasPrice: 21,
     enabled: false,
-    excludeContracts: ["Test1Facet", "Test2Facet", "DiamondCutFacet", "DiamondLoupeFacet", "OwnershipFacet"]
+    excludeContracts: ["DiamondCutFacet", "DiamondLoupeFacet", "OwnershipFacet"]
   },
   networks: {
     hardhat: {

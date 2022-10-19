@@ -1,6 +1,7 @@
 const _ = require("lodash")
 
-const diamond = require('diamond-util')
+// const diamond = require('diamond-util')
+const diamond = require('./diamond-util')
 const { FacetCutAction } = diamond
 
 function getSelectors(contract, exludes) {
@@ -30,13 +31,18 @@ async function diamondDeploy({
     facets,
     args = [],
     overrides = {},
-    excludes
+    excludes,
+    deployLibraries
 }) {
-
+    /*
+    deployLibraries:{
+        facetName:["Lib1","Lib2"]
+    }
+    */
     if (arguments.length !== 1) {
         throw Error(`Requires only 1 map argument. ${arguments.length} arguments used.`)
     }
-    facets = await diamond.deployFacets(facets)
+    facets = await diamond.deployFacets(facets, deployLibraries)
     const diamondFactory = await ethers.getContractFactory(diamondName)
     const diamondCut = []
     console.log('--')

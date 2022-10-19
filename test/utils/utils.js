@@ -3,6 +3,7 @@ const _ = require("lodash")
 const { assert } = require('chai')
 require("./BigNum-utils.js")
 const { facetSelectors } = require('./facetSelectors')
+const FACETS_COUNT = 4
 const getSignature = (stringSignature) => {
     return utils.keccak256(utils.toUtf8Bytes(stringSignature)).substring(0, 10)
 }
@@ -48,11 +49,9 @@ async function diamondInit1() {
     const diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress)
     const diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress)
     const ownershipFacet = await ethers.getContractAt('OwnershipFacet', diamondAddress)
-    const stakingFacet = await ethers.getContractAt('StakingFacet', diamondAddress)
-    const ticketsFacet = await ethers.getContractAt('TicketsFacet', diamondAddress)
-    const erc721Facet = await ethers.getContractAt('ERC721Facet', diamondAddress)
+    const playersFacet = await ethers.getContractAt('PlayersFacet', diamondAddress)
 
-    return { diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, stakingFacet, ticketsFacet, erc721Facet }
+    return { diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet }
 }
 async function getAccounts() {
     const signers = await ethers.getSigners()
@@ -62,7 +61,7 @@ async function getAccounts() {
     return { signers, account0, account1, account2 }
 }
 async function checkFacets1(facets) {
-    const { facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, stakingFacet, ticketsFacet, erc721Facet } = facets;
+    const { facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet } = facets;
     //don't disable: fills facetAddress
 
     const addresses = []
@@ -70,19 +69,17 @@ async function checkFacets1(facets) {
         addresses.push(address)
     }
     //console.log("facetAddresses", addresses)
-    assert.equal(addresses.length, 6)
+    assert.equal(addresses.length, FACETS_COUNT)
 
     facetAddress.DiamondCutFacet = addresses[0]
     facetAddress.DiamondLoupeFacet = addresses[1]
     facetAddress.OwnershipFacet = addresses[2]
-    facetAddress.StakingFacet = addresses[3]
-    facetAddress.TicketsFacet = addresses[4]
-    facetAddress.ERC721Facet = addresses[5]
+    facetAddress.PlayersFacet = addresses[3]
 
 
 }
 async function checkFacets2(facets) {
-    const { facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, stakingFacet, ticketsFacet, erc721Facet } = facets;
+    const { facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet } = facets;
     //don't disable: fills facetAddress
 
     //don't disable: assign signatures to selectors
@@ -107,37 +104,11 @@ async function checkFacets2(facets) {
     assert.sameKeys(facetSelectors.OwnershipFacet, selectorsToDic(selectors), "OwnershipFacet expected functions", "OwnershipFacet deployed functions")
     facetSelectors.OwnershipFacet = { ...facetSelectors.OwnershipFacet, ...selectorsToDic(selectors) }
 
-    selectors = getSelectors(stakingFacet)
-    result = await diamondLoupeFacet.facetFunctionSelectors(facetAddress.StakingFacet)
+    selectors = getSelectors(playersFacet)
+    result = await diamondLoupeFacet.facetFunctionSelectors(facetAddress.PlayersFacet)
     assert.sameMembers(result, selectors)
-    assert.sameKeys(facetSelectors.StakingFacet, selectorsToDic(selectors), "StakingFacet expected functions", "StakingFacet deployed functions")
-    facetSelectors.StakingFacet = { ...facetSelectors.StakingFacet, ...selectorsToDic(selectors) }
-
-
-    selectors = getSelectors(ticketsFacet)
-    result = await diamondLoupeFacet.facetFunctionSelectors(facetAddress.TicketsFacet)
-    assert.sameMembers(result, selectors)
-    assert.sameKeys(facetSelectors.TicketsFacet, selectorsToDic(selectors), "TicketsFacet expected functions", "TicketsFacet deployed functions")
-    facetSelectors.TicketsFacet = { ...facetSelectors.TicketsFacet, ...selectorsToDic(selectors) }
-
-
-    selectors = getSelectors(erc721Facet)
-    result = await diamondLoupeFacet.facetFunctionSelectors(facetAddress.ERC721Facet)
-    let expected = _.keys(facetSelectors.ERC721Facet)
-    let published = _.keys(selectorsToDic(selectors))
-    const exludes = [
-        'isApprovedForAll(address,address)',
-        'setApprovalForAll(address,bool)',
-        'supportsInterface(bytes4)'
-    ]
-    expected = _.filter(expected, e => !_.includes(exludes, e))
-    published = _.filter(published, e => !_.includes(exludes, e))
-    // console.log(_.difference(expected, published))
-    // console.log(_.difference(published, expected))
-    assert.sameMembers(expected, published)
-    facetSelectors.ERC721Facet = { ...facetSelectors.ERC721Facet, ...selectorsToDic(selectors) }
-
-
+    assert.sameKeys(facetSelectors.PlayersFacet, selectorsToDic(selectors), "PlayersFacet expected functions", "PlayersFacet deployed functions")
+    facetSelectors.PlayersFacet = { ...facetSelectors.PlayersFacet, ...selectorsToDic(selectors) }
 
 
 }

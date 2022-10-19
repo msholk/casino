@@ -16,9 +16,13 @@ async function deployDiamond() {
         facets: [
             'DiamondCutFacet',
             'DiamondLoupeFacet',
-            'OwnershipFacet'
+            'OwnershipFacet',
+            'PlayersFacet'
         ],
         args: [account],
+        deployLibraries: {
+            PlayersFacet: ["LibRulette"]
+        }
         // excludes: {
         //     ERC721Facet: [
         //         'isApprovedForAll(address,address)',
