@@ -7,10 +7,4 @@ struct VrfInfoStruct {
     uint64 subscriptionId;
     address vrfCoordinatorAddress;
     bytes32 keyHash;
-    VRFCoordinatorV2Interface COORDINATOR;
-}
-struct VrfInfoStructPrm {
-    uint64 subscriptionId;
-    address vrfCoordinatorAddress;
-    bytes32 keyHash;
 }

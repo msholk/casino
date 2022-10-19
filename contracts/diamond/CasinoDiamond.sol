@@ -2,9 +2,6 @@
 pragma solidity 0.8.9;
 
 /******************************************************************************\
-* Author: Nick Mudge
-* Aavegotchi Staking Diamond
-* 
 * Uses the diamond-2, version 1.3.4, diamond implementation:
 * https://github.com/mudgen/diamond-2
 /******************************************************************************/

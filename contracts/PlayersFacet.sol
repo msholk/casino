@@ -65,7 +65,7 @@ contract PlayersFacet {
         }
     }
 
-    function setVrfInfo(VrfInfoStructPrm calldata _vrfInfo) public {
+    function setVrfInfo(VrfInfoStruct calldata _vrfInfo) public {
         LibDiamond.enforceIsContractOwner();
         VrfInfoStruct storage vrfInfo = s.rcs.vrfInfo;
         vrfInfo.subscriptionId = _vrfInfo.subscriptionId;
@@ -73,10 +73,6 @@ contract PlayersFacet {
         vrfInfo.keyHash = _vrfInfo.keyHash;
         console.log(
             "PlayersFacet(vrfInfo.vrfCoordinatorAddress)",
-            vrfInfo.vrfCoordinatorAddress
-        );
-        // vrfCoordinator = vrfInfo.vrfCoordinatorAddress;
-        vrfInfo.COORDINATOR = VRFCoordinatorV2Interface(
             vrfInfo.vrfCoordinatorAddress
         );
     }
@@ -122,9 +118,18 @@ contract PlayersFacet {
         // Cannot exceed VRFCoordinatorV2.MAX_NUM_WORDS.
         uint32 NUM_WORDS = 1;
         // Will revert if subscription is not set and funded.
-        uint256 s_requestId = s.rcs.vrfInfo.COORDINATOR.requestRandomWords(
-            s.rcs.vrfInfo.keyHash,
-            s.rcs.vrfInfo.subscriptionId,
+        VrfInfoStruct storage vrfInfo = s.rcs.vrfInfo;
+
+        require(
+            vrfInfo.vrfCoordinatorAddress != address(0x0),
+            "vrfInfo not set"
+        );
+        VRFCoordinatorV2Interface COORDINATOR = VRFCoordinatorV2Interface(
+            vrfInfo.vrfCoordinatorAddress
+        );
+        uint256 s_requestId = COORDINATOR.requestRandomWords(
+            vrfInfo.keyHash,
+            vrfInfo.subscriptionId,
             REQUEST_CONFIRMATIONS,
             CALLBACK_GAS_LIMIT,
             NUM_WORDS

@@ -4,7 +4,8 @@ yarn install
 
 # Install
 
-To run test for player: yarn testp
+To run test for player as single contract: yarn testPlayer
+To run test for player as part of Diamond: yarn testDiamondPlayer
 
 
 
@@ -18,5 +19,4 @@ VRF on hardhat
 yarn add --dev @nomicfoundation/hardhat-toolbox @nomicfoundation/hardhat-network-helpers @nomicfoundation/hardhat-chai-matchers @nomiclabs/hardhat-ethers @nomiclabs/hardhat-etherscan chai ethers hardhat-gas-reporter solidity-coverage @typechain/hardhat typechain @typechain/ethers-v5 @ethersproject/abi @ethersproject/providers
 add helper-hardhat-config.js
 add contracts/test/VRFCoordinatorV2Mock.sol
-add contracts/RandomNumberConsumerV2.sol
 yarn add @chainlink/contracts --dev
