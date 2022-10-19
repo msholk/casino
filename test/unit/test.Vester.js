@@ -9,7 +9,7 @@ const { deployContract } = require('./shared/fixtures');
 const {
     ROLES,
     DEFAULT_TEST_VALUES: { TOKEN_NAME, TOKEN_SYMBOL, INITIAL_SUPPLY }
-} = require('../config');
+} = require('../../config');
 
 describe("3 :: Vester", function () {
     async function deployVesterFixture() {

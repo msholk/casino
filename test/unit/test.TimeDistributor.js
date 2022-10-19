@@ -3,7 +3,6 @@ const { assert, expect } = require('chai');
 const chai = require('chai');
 chai.use(require('chai-as-promised'));
 
-const { reset } = require('./resetFork');
 const { listenersRoleAdminChanged, listenersRoleGranted, listenersRoleRevoked } = require('./events/listenersAccessControl');
 const { listenersDistributionChange, listenersTokensPerIntervalChange } = require('./events/listenersTimeDistributor');
 
@@ -11,7 +10,7 @@ const { ethers, network } = require('hardhat');
 const {
     ROLES,
     DEFAULT_TEST_VALUES: { TOKEN_NAME, TOKEN_SYMBOL, INITIAL_SUPPLY }
-} = require('../config');
+} = require('../../config');
 
 
 describe("2 :: TimeDistributor", function () {

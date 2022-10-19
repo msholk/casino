@@ -12,7 +12,7 @@ const { listenersPaused, listenersUnpaused } = require('./events/listenersPausab
 const {
     ROLES,
     DEFAULT_TEST_VALUES: { TOKEN_NAME, TOKEN_SYMBOL, INITIAL_SUPPLY }
-} = require('../config');
+} = require('../../config');
 
 describe("0 :: BaseToken", function () {
     async function deployBaseTokenFixture() {

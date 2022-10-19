@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { network } = require("hardhat");
-const { BLOCK_NUMBER } = require("../config");
+const { BLOCK_NUMBER } = require("../../config");
 
 async function reset() {
     await network.provider.request({
