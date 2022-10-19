@@ -76,7 +76,7 @@ library LibDiamond {
         for (
             uint256 facetIndex;
             facetIndex < _diamondCut.length;
-            facetIndex++
+            ++facetIndex
         ) {
             IDiamondCut.FacetCutAction action = _diamondCut[facetIndex].action;
             if (action == IDiamondCut.FacetCutAction.Add) {
@@ -123,7 +123,7 @@ library LibDiamond {
         for (
             uint256 selectorIndex;
             selectorIndex < _functionSelectors.length;
-            selectorIndex++
+            ++selectorIndex
         ) {
             bytes4 selector = _functionSelectors[selectorIndex];
             address oldFacetAddress = ds
@@ -165,7 +165,7 @@ library LibDiamond {
         for (
             uint256 selectorIndex;
             selectorIndex < _functionSelectors.length;
-            selectorIndex++
+            ++selectorIndex
         ) {
             bytes4 selector = _functionSelectors[selectorIndex];
             address oldFacetAddress = ds
@@ -208,7 +208,7 @@ library LibDiamond {
         for (
             uint256 selectorIndex;
             selectorIndex < _functionSelectors.length;
-            selectorIndex++
+            ++selectorIndex
         ) {
             bytes4 selector = _functionSelectors[selectorIndex];
             FacetAddressAndSelectorPosition

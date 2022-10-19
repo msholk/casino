@@ -23,7 +23,7 @@ library RouletteLaunchLib {
         RouletteLaunch storage rl,
         BetPointPrm[] calldata betPoints
     ) internal {
-        for (uint256 index = 0; index < betPoints.length; index++) {
+        for (uint256 index; index < betPoints.length; ++index) {
             BetPointPrm calldata p = betPoints[index];
             BetPoint memory bp;
             bp.amount = p.amount;
@@ -38,7 +38,7 @@ library RouletteLaunchLib {
         pure
         returns (uint256 totalBetSum)
     {
-        for (uint256 index = 0; index < betPoints.length; index++) {
+        for (uint256 index; index < betPoints.length; ++index) {
             BetPointPrm calldata p = betPoints[index];
             totalBetSum += p.amount;
             //check bet param is correct

@@ -237,7 +237,7 @@ library LibRulette {
             bet3 + 3
         ];
 
-        for (uint256 index = 0; index < 6; index++) {
+        for (uint256 index; index < 6; ++index) {
             if (checkNums[index] == winNum) {
                 return winFactor;
             }
@@ -301,7 +301,7 @@ library LibRulette {
         } else if (betDet == 3) {
             checkNums = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36];
         }
-        for (uint256 index = 0; index < 6; index++) {
+        for (uint256 index; index < 6; ++index) {
             if (checkNums[index] == winNum) {
                 return winFactor;
             }
@@ -392,7 +392,7 @@ library LibRulette {
                 35
             ];
         }
-        for (uint256 index = 0; index < 6; index++) {
+        for (uint256 index; index < 6; ++index) {
             if (checkNums[index] == winNum) {
                 return winFactor;
             }
