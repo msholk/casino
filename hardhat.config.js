@@ -1,7 +1,11 @@
+require("dotenv").config();
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-gas-reporter");
 require('hardhat-storage-layout');
-/** @type import('hardhat/config').HardhatUserConfig */
+
+const { BLOCK_NUMBER } = require('./config');
+
+
 module.exports = {
   solidity: "0.8.9",
   gasReporter: {
