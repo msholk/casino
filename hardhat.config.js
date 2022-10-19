@@ -10,16 +10,14 @@ module.exports = {
     enabled: false,
     excludeContracts: ["DiamondCutFacet", "DiamondLoupeFacet", "OwnershipFacet"]
   },
+  defaultNetwork: 'hardhat',
+  chainId: 31337,
   networks: {
     hardhat: {
-      chainId: 31337,
       forking: {
-        // Using Alchemy
-        url: `https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z`, // url to RPC node, ${ALCHEMY_KEY} - must be your API key
-        // Using Infura
-        // url: `https://mainnet.infura.io/v3/${INFURA_KEY}`, // ${INFURA_KEY} - must be your API key
-        blockNumber: 15756193, // a specific block number with which you want to work
-      },
+        url: process.env.ARBITRUM_MAINNET_API_URL,
+        blockNumber: BLOCK_NUMBER
+      }
     },
-  }
+  },
 };

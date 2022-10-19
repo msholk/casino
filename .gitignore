@@ -31,3 +31,9 @@ typechain-types
 cache
 artifacts
 __archive
+
+bin/
+.vscode/settings.json
+.vscode/slither-results.json
+
+yarn-error.log
