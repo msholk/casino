@@ -6,6 +6,7 @@ yarn install
 
 To run test for player as single contract: yarn testPlayer
 To run test for player as part of Diamond: yarn testDiamondPlayer
+To run test for staker as single contract: yarn testStaker
 
 
 

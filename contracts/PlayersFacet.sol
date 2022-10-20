@@ -17,7 +17,8 @@ contract PlayersFacet {
     AppStorage s;
 
     constructor() {
-        s.hs.houseBalance = 10_000 * 1e18;
+        //Set to test withoud diamond
+        // s.hs.houseBalance = 10_000 ;
         LibDiamond.setContractOwner(msg.sender);
     }
 
@@ -49,8 +50,7 @@ contract PlayersFacet {
         s.cs.playersBalances[msg.sender] += daiAmountOut;
     }
 
-    /// @title Getb player balance in DAI and current price of (1)DAI in ETH
-    /// @author Max
+    // @title Getb player balance in DAI and current price of (1)DAI in ETH
     function checkPlayerBalance() public view returns (uint256, int256) {
         AggregatorV3Interface priceFeed = AggregatorV3Interface(DAI_ETH);
         (

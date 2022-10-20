@@ -11,19 +11,19 @@ library LibHLP {
         internal
     {
         require(
-            hs.houseBalance / 1e18 >= totalBetSum * 36,
+            hs.houseBalance >= totalBetSum * 36,
             "House balance is insufficient"
         );
 
-        hs.houseBalance -= totalBetSum * 36 * 1e18;
-        hs.houseLockedBalance += totalBetSum * 36 * 1e18;
+        hs.houseBalance -= totalBetSum * 36;
+        hs.houseLockedBalance += totalBetSum * 36;
     }
 
     function UnlockBalances(HouseStorage storage hs, uint256 totalBetSum)
         internal
     {
-        hs.houseBalance += totalBetSum * 36 * 1e18;
-        hs.houseLockedBalance -= totalBetSum * 36 * 1e18;
+        hs.houseBalance += totalBetSum * 36;
+        hs.houseLockedBalance -= totalBetSum * 36;
     }
 
     function transferFromHLP2Cachier(AppStorage storage s, uint256 payDiff)
