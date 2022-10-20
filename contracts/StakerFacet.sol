@@ -18,6 +18,50 @@ contract StakerFacet {
         LibDiamond.setContractOwner(msg.sender);
     }
 
+    function withdrawAllStakerDAI() public {
+        if (!s.hs.stakerExists[msg.sender]) {
+            revert("You are not a staker");
+        }
+        mapping(address => uint256) storage stakersPercentages = s
+            .hs
+            .stakersPercentages;
+        uint256 stakerPercent = stakersPercentages[msg.sender];
+        require(stakerPercent > 0, "Your precent iz ZERO");
+        require(s.hs.houseBalance > 0, "House balance iz ZERO");
+        uint256 oldBalance = s.hs.houseBalance;
+        uint256 stakerOldAmount = (oldBalance * stakerPercent) /
+            PERCENT_PRECISION;
+        s.hs.houseBalance -= oldBalance;
+        uint256 newBalance = s.hs.houseBalance;
+        stakersPercentages[msg.sender] = 0;
+        ////////////////////////////////////
+        for (uint256 index; index < stakersListCount; ++index) {
+            address stakerAddress = stakersList[index];
+            uint256 stakerPercent = stakersPercentages[stakerAddress];
+            uint256 stakerOldAmount = (oldBalance * stakerPercent) /
+                PERCENT_PRECISION;
+            uint256 stakerNewPercent = (stakerOldAmount * PERCENT_PRECISION) /
+                newBalance;
+            stakersPercentages[stakerAddress] = stakerNewPercent;
+
+            console.log(
+                "Percent change",
+                index,
+                stakerPercent,
+                stakerNewPercent
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////
+        require(stakerOldAmount > 0, "Your balance iz ZERO");
+        if (stakerOldAmount > 0) {
+            IERC20 dai = IERC20(DAI);
+            dai.approve(address(this), stakerOldAmount);
+            dai.transfer(msg.sender, stakerOldAmount);
+            playersBalances[msg.sender] = 0;
+        }
+    }
+
     function depositETH() public payable {
         IWETH weth = IWETH(WETH);
         weth.deposit{value: msg.value}();
