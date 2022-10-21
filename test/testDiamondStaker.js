@@ -242,6 +242,7 @@ describe('DiamondTest', async function () {
             const staker = await ethers.getContractAt('StakerFacet', diamondAddress)
             bal = await staker.checkStakerBalance()
             houseBalance = bal.newHouseBalance
+            //expect(houseBalance).eq(1000)
         })
         describe('Playing and winning', async () => {
             it("Place a winning bet: expect emit RouletteLaunched", async () => {
@@ -296,7 +297,7 @@ describe('DiamondTest', async function () {
                 houseBalance = bal.newHouseBalance
             })
         })
-        xdescribe('Playing and loosing', async () => {
+        describe('Playing and loosing', async () => {
             it("Place a loosing bet: expect emit RouletteLaunched", async () => {
                 requestId = 2
                 const player = await ethers.getContractAt('PlayersFacet', diamondAddress)
@@ -336,13 +337,13 @@ describe('DiamondTest', async function () {
                 expect(playerBalance - newBalance).eq(1000 * 100) //1000.00DAI
                 playerBalance = newBalance
             })
-            it('Check house liquidity decreased 250+7.5', async () => {
+            it('Check house liquidity increased 1000-2.6', async () => {
                 const staker = await ethers.getContractAt('StakerFacet', diamondAddress)
 
                 bal = await staker.checkStakerBalance()
                 const diff = bal.newHouseBalance - houseBalance
-                //console.log(houseBalance, bal.newHouseBalance)
-                expect(diff / 100).eq(257.50) //1 means 100%
+                // console.log(houseBalance, bal.newHouseBalance, diff)
+                expect(diff / 1000000).eq(1000 - 2.6) //1 means 100%
                 houseBalance = bal.newHouseBalance
             })
         })

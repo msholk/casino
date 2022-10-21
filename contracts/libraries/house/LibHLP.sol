@@ -63,7 +63,6 @@ library LibHLP {
         uint256 payDiffP6 = (payDiffP18 - ourComissionP18) / 1e12;
         s.hs.houseBalanceP6 += payDiffP6; //transfer from Cahsier to HLP
 
-        // DAI.approve(address(HLP),payDiff);
-        // HLP.depositDAI(address(this),payDiff);
+        //console.log(payDiffP0, payDiffP18, ourComissionP18, payDiffP6);
     }
 }
