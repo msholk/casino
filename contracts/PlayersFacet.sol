@@ -43,14 +43,14 @@ contract PlayersFacet {
         );
         //@audit-issue when testing on hardat the result is 1270, when using foundry, it is a bigint that could be remove 16 decimals
         uint256 daiAmountOut = amounts[1]; /// 1e16;
-        // console.log("PlayersFacet. adding to");
-        // console.log("swapExactTokensForTokens ******************************");
-        // console.log(amounts[0]);
-        // console.log(amounts[1]);
+        // //console.log("PlayersFacet. adding to");
+        // //console.log("swapExactTokensForTokens ******************************");
+        // //console.log(amounts[0]);
+        // //console.log(amounts[1]);
         uint256 daiPrecision2 = daiAmountOut / 1e16;
 
         uint256 leftOver = daiAmountOut - daiPrecision2 * 1e16;
-        //console.log(daiPrecision2, leftOver);
+        ////console.log(daiPrecision2, leftOver);
         s.cs.playersBalancesPr2[msg.sender] += daiPrecision2;
         s.platformBalancePr18 += leftOver;
     }
@@ -66,7 +66,7 @@ contract PlayersFacet {
             ,
 
         ) = priceFeed.latestRoundData();
-        // console.log(s.cs.playersBalancesPr2[msg.sender], uint256(price));
+        // //console.log(s.cs.playersBalancesPr2[msg.sender], uint256(price));
         return (s.cs.playersBalancesPr2[msg.sender], price);
     }
 
@@ -89,10 +89,10 @@ contract PlayersFacet {
         vrfInfo.subscriptionId = _vrfInfo.subscriptionId;
         vrfInfo.vrfCoordinatorAddress = _vrfInfo.vrfCoordinatorAddress;
         vrfInfo.keyHash = _vrfInfo.keyHash;
-        console.log(
-            "PlayersFacet(vrfInfo.vrfCoordinatorAddress)",
-            vrfInfo.vrfCoordinatorAddress
-        );
+        //console.log(
+        //     "PlayersFacet(vrfInfo.vrfCoordinatorAddress)",
+        //     vrfInfo.vrfCoordinatorAddress
+        // );
     }
 
     function placeBet(BetPointPrm[] calldata betPoints) public {
@@ -104,14 +104,14 @@ contract PlayersFacet {
 
         LibHLP.LockMaxWinAmount(s.hs, totalBetSumP0);
         CashierStorageLib.LockBetAmount(s.cs, totalBetSumP0, msg.sender);
-        // console.log("**********************************");
+        // //console.log("**********************************");
 
         RouletteLaunch storage rl = s.rcs.playersLaunchedRoulette[msg.sender];
         RouletteLaunchLib.storeBetPoints(rl, betPoints);
 
         rl.requestId = launchRoulette();
         s.rcs.userAddressByRequestId[rl.requestId] = msg.sender;
-        // console.log(
+        // //console.log(
         //     "Placing the bet",
         //     rl.requestId,
         //     msg.sender,
@@ -204,7 +204,7 @@ contract PlayersFacet {
         }
         uint8 resultnum8 = uint8(resultnum);
         emit RouletteStopped(requestId, randomWords[0], resultnum);
-        // console.log(
+        // //console.log(
         //     "emitting RouletteStopped",
         //     requestId,
         //     randomWords[0],
@@ -214,7 +214,7 @@ contract PlayersFacet {
 
         if (playerAddress == address(0)) {
             //request not registered
-            console.log("playerAddress is empty");
+            //console.log("playerAddress is empty");
             emit RouletteStoppedRequestIdRecognized(false);
             return;
         }
@@ -224,10 +224,10 @@ contract PlayersFacet {
         RouletteLaunch memory rl = s.rcs.playersLaunchedRoulette[playerAddress];
         if (rl.requestId != requestId) {
             emit RouletteLaunchOfPlayerFound(false);
-            console.log("rl.requestId != requestId");
+            //console.log("rl.requestId != requestId");
             return; //Don't revert
         }
-        console.log("emitting RouletteLaunchOfPlayerFound(true)");
+        //console.log("emitting RouletteLaunchOfPlayerFound(true)");
         emit RouletteLaunchOfPlayerFound(true);
 
         delete s.rcs.playersLaunchedRoulette[playerAddress];
@@ -252,14 +252,14 @@ contract PlayersFacet {
                 p.won = won;
                 winByPosition[index] = won;
             }
-            console.log(
-                "returned winfactor",
-                index,
-                totalBetSumP0,
-                totalWinSumP0
-            );
+            //console.log(
+            //     "returned winfactor",
+            //     index,
+            //     totalBetSumP0,
+            //     totalWinSumP0
+            // );
         }
-        console.log("Betpoints calculated");
+        //console.log("Betpoints calculated");
 
         //unlock balances
         LibHLP.UnlockBalances(s.hs, totalBetSumP0);
@@ -267,17 +267,17 @@ contract PlayersFacet {
         int256 payDiffP0 = int256(totalBetSumP0);
 
         if (totalWinSumP0 > 0) {
-            console.log(
-                "Player wins",
-                totalWinSumP0 * 1e2,
-                s.cs.playersBalancesPr2[playerAddress]
-            );
+            //console.log(
+            //     "Player wins",
+            //     totalWinSumP0 * 1e2,
+            //     s.cs.playersBalancesPr2[playerAddress]
+            // );
             s.cs.playersBalancesPr2[playerAddress] += totalWinSumP0 * 1e2; //keeps in Cahsier
             payDiffP0 -= int256(totalWinSumP0);
         }
 
         if (payDiffP0 < 0) {
-            console.log("House=>Cachier", uint256(-payDiffP0));
+            //console.log("House=>Cachier", uint256(-payDiffP0));
             //player wins amount
             //transfer from HLP to Cachier
             LibHLP.transferFromHouse2Cachier(s, uint256(-payDiffP0));
@@ -286,8 +286,8 @@ contract PlayersFacet {
             //transfer from to Cachier to HLP
             LibHLP.transferFromCachierToHouse(s, uint256(payDiffP0));
         }
-        /*  console.log("payDiffP0", payDiffP0);
-        console.log("emitting RouletteStoppedPrizeInfo");*/
+        /*  //console.log("payDiffP0", payDiffP0);
+        //console.log("emitting RouletteStoppedPrizeInfo");*/
         emit RouletteStoppedPrizeInfo(
             requestId,
             randomWords[0],
