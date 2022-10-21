@@ -17,7 +17,8 @@ async function deployDiamond() {
             'DiamondCutFacet',
             'DiamondLoupeFacet',
             'OwnershipFacet',
-            'PlayersFacet'
+            'PlayersFacet',
+            'StakerFacet'
         ],
         args: [account],
         deployLibraries: {

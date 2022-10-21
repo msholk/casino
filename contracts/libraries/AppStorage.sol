@@ -8,5 +8,5 @@ struct AppStorage {
     CashierStorage cs;
     HouseStorage hs;
     RouletCroupierStorage rcs;
-    uint256 platformBalance;
+    uint256 platformBalancePr18;
 }

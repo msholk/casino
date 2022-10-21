@@ -20,6 +20,11 @@ const facetSelectors = {
         'rawFulfillRandomWords(uint256,uint256[])': null,
         'setVrfInfo((uint64,address,bytes32))': null,
         'withdrawDAI()': null
+    },
+    StakerFacet: {
+        'checkStakerBalance()': null,
+        'stakeETH()': null,
+        'withdrawAllStakerDAI()': null
     }
 
 

@@ -31,6 +31,7 @@
     "format": "prettier --write .",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js",
     "testDiamondPlayer": "npx hardhat test test/testDiamondPlayer.js --network hardhat ",
+    "testDiamondStaker": "npx hardhat test test/testDiamondStaker.js --network hardhat ",
     "testr": "hardhat test test/unit/R*.spec.js",
     "testPlayer": "hardhat test test/unit/Player.spec.js",
     "testStaker": "hardhat test test/unit/Staker.spec.js",
@@ -41,6 +42,8 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
+    "@uniswap/v3-core": "^1.0.1",
+    "@uniswap/v3-periphery": "^1.4.2",
     "forge-std": "^1.1.2",
     "solhint": "^3.3.7"
   }

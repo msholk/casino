@@ -29,7 +29,7 @@ const { ZERO_ADDRESS } = require('../utils/utils')
                 )
                 const signers = await ethers.getSigners()
 
-                await StakerFacet.depositETH({ value: BigNumber.from(1) })
+                await StakerFacet.stakeETH({ value: BigNumber.from(1) })
                 const PRCNT_PRECISION = 16
 
                 let res = await StakerFacet.checkStakerBalance()
@@ -40,7 +40,7 @@ const { ZERO_ADDRESS } = require('../utils/utils')
 
 
                 await StakerFacet.connect(signers[1])
-                    .depositETH({ value: BigNumber.from(2) });
+                    .stakeETH({ value: BigNumber.from(2) });
 
                 res = await StakerFacet.checkStakerBalance()
                 stakerPercent = ethers.utils.formatEther(res.stakerPercent) * 10 ** 18 / (10 ** PRCNT_PRECISION)
@@ -57,7 +57,7 @@ const { ZERO_ADDRESS } = require('../utils/utils')
 
 
                 await StakerFacet.connect(signers[0])
-                    .depositETH({ value: BigNumber.from(1) });
+                    .stakeETH({ value: BigNumber.from(1) });
 
 
                 const expectePercent = 49.980314960629926

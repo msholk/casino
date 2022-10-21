@@ -18,7 +18,7 @@ contract PlayersFacet {
 
     constructor() {
         //Set to test withoud diamond
-        // s.hs.houseBalance = 10_000 ;
+        // s.hs.houseBalancePr2 = 10_000 ;
         LibDiamond.setContractOwner(msg.sender);
     }
 
@@ -32,8 +32,8 @@ contract PlayersFacet {
 
         address[] memory path;
         path = new address[](2);
-        path[0] = WETH;
-        path[1] = DAI;
+        path[0] = WETH; //_tokenIn;
+        path[1] = DAI; //_tokenOut
 
         uint256[] memory amounts = router.swapExactTokensForTokens(
             msg.value,
@@ -45,9 +45,15 @@ contract PlayersFacet {
         //@audit-issue when testing on hardat the result is 1270, when using foundry, it is a bigint that could be remove 16 decimals
         uint256 daiAmountOut = amounts[1]; /// 1e16;
         // console.log("PlayersFacet. adding to");
-        // console.log(msg.sender);
-        // console.log(amounts[1], daiAmountOut);
-        s.cs.playersBalances[msg.sender] += daiAmountOut;
+        // console.log("swapExactTokensForTokens ******************************");
+        // console.log(amounts[0]);
+        // console.log(amounts[1]);
+        uint256 daiPrecision2 = daiAmountOut / 1e16;
+
+        uint256 leftOver = daiAmountOut - daiPrecision2 * 1e16;
+        //console.log(daiPrecision2, leftOver);
+        s.cs.playersBalancesPr2[msg.sender] += daiPrecision2;
+        s.platformBalancePr18 += leftOver;
     }
 
     // @title Getb player balance in DAI and current price of (1)DAI in ETH
@@ -61,19 +67,20 @@ contract PlayersFacet {
             ,
 
         ) = priceFeed.latestRoundData();
-        return (s.cs.playersBalances[msg.sender], price);
+        // console.log(s.cs.playersBalancesPr2[msg.sender], uint256(price));
+        return (s.cs.playersBalancesPr2[msg.sender], price);
     }
 
     function withdrawDAI() public {
-        mapping(address => uint256) storage playersBalances = s
+        mapping(address => uint256) storage playersBalancesPr2 = s
             .cs
-            .playersBalances;
-        uint256 balance = playersBalances[msg.sender];
+            .playersBalancesPr2;
+        uint256 balance = playersBalancesPr2[msg.sender];
         if (balance > 0) {
             IERC20 dai = IERC20(DAI);
             dai.approve(address(this), balance);
             dai.transfer(msg.sender, balance);
-            playersBalances[msg.sender] = 0;
+            playersBalancesPr2[msg.sender] = 0;
         }
     }
 
@@ -92,12 +99,12 @@ contract PlayersFacet {
     function placeBet(BetPointPrm[] calldata betPoints) public {
         RouletteLaunchLib.checkRouletteIsUnlockedForPlayer(s.rcs, betPoints);
 
-        uint256 playerBalance = s.cs.playersBalances[msg.sender];
-        require(playerBalance >= 1, "Balance is empty");
-        uint256 totalBetSum = RouletteLaunchLib.getTotalBetSum(betPoints);
+        uint256 playerBalanceP2 = s.cs.playersBalancesPr2[msg.sender];
+        require(playerBalanceP2 >= 100, "Balance is empty");
+        uint256 totalBetSumP0 = RouletteLaunchLib.getTotalBetSum(betPoints);
 
-        LibHLP.LockMaxWinAmount(s.hs, totalBetSum);
-        CashierStorageLib.LockBetAmount(s.cs, totalBetSum, msg.sender);
+        LibHLP.LockMaxWinAmount(s.hs, totalBetSumP0);
+        CashierStorageLib.LockBetAmount(s.cs, totalBetSumP0, msg.sender);
         // console.log("**********************************");
 
         RouletteLaunch storage rl = s.rcs.playersLaunchedRoulette[msg.sender];
@@ -171,6 +178,9 @@ contract PlayersFacet {
         uint256 randomWord,
         uint256 resultNum
     );
+    event RouletteStoppedVRFCallReceived();
+    event RouletteStoppedRequestIdRecognized(bool);
+    event RouletteLaunchOfPlayerFound(bool);
     event RouletteStoppedPrizeInfo(
         uint256 requestId,
         uint256 randomWord,
@@ -187,35 +197,48 @@ contract PlayersFacet {
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords)
         internal
     {
+        emit RouletteStoppedVRFCallReceived();
+
         uint256 resultnum = randomWords[0] % 38;
         if (resultnum == 0) {
             resultnum = 38;
         }
         uint8 resultnum8 = uint8(resultnum);
         emit RouletteStopped(requestId, randomWords[0], resultnum);
-        console.log("emitting RouletteStopped");
+        // console.log(
+        //     "emitting RouletteStopped",
+        //     requestId,
+        //     randomWords[0],
+        //     resultnum
+        // );
         address playerAddress = s.rcs.userAddressByRequestId[requestId];
 
         if (playerAddress == address(0)) {
             //request not registered
             console.log("playerAddress is empty");
+            emit RouletteStoppedRequestIdRecognized(false);
             return;
         }
         delete s.rcs.userAddressByRequestId[requestId];
+        emit RouletteStoppedRequestIdRecognized(true);
 
         RouletteLaunch memory rl = s.rcs.playersLaunchedRoulette[playerAddress];
         if (rl.requestId != requestId) {
+            emit RouletteLaunchOfPlayerFound(false);
             console.log("rl.requestId != requestId");
             return; //Don't revert
         }
+        console.log("emitting RouletteLaunchOfPlayerFound(true)");
+        emit RouletteLaunchOfPlayerFound(true);
+
         delete s.rcs.playersLaunchedRoulette[playerAddress];
-        uint256 totalBetSum;
-        uint256 totalWinSum;
+        uint256 totalBetSumP0;
+        uint256 totalWinSumP0;
         uint256 betPointQnt = rl.betPoints.length;
         uint256[10] memory winByPosition;
         for (uint256 index; index < betPointQnt; ++index) {
             BetPoint memory p = rl.betPoints[index];
-            totalBetSum += p.amount;
+            totalBetSumP0 += p.amount;
             //check bet param
 
             uint256 winFact = LibRulette.getWinFactor(
@@ -226,32 +249,46 @@ contract PlayersFacet {
 
             if (winFact > 0) {
                 uint256 won = (p.amount * winFact);
-                totalWinSum += won;
+                totalWinSumP0 += won;
                 p.won = won;
                 winByPosition[index] = won;
             }
-            console.log("returned winfactor", index, totalBetSum, totalWinSum);
+            console.log(
+                "returned winfactor",
+                index,
+                totalBetSumP0,
+                totalWinSumP0
+            );
         }
+        console.log("Betpoints calculated");
 
         //unlock balances
-        LibHLP.UnlockBalances(s.hs, totalBetSum);
-        CashierStorageLib.UnlockBetAmount(s.cs, totalBetSum, playerAddress);
-        int256 payDiff = int256(totalBetSum);
+        LibHLP.UnlockBalances(s.hs, totalBetSumP0);
+        CashierStorageLib.UnlockBetAmount(s.cs, totalBetSumP0, playerAddress);
+        int256 payDiffP0 = int256(totalBetSumP0);
 
-        if (totalWinSum > 0) {
-            s.cs.playersBalances[playerAddress] += totalWinSum; //keeps in Cahsier
-            payDiff -= int256(totalWinSum);
+        if (totalWinSumP0 > 0) {
+            console.log(
+                "Player wins",
+                totalWinSumP0 * 1e2,
+                s.cs.playersBalancesPr2[playerAddress]
+            );
+            s.cs.playersBalancesPr2[playerAddress] += totalWinSumP0 * 1e2; //keeps in Cahsier
+            payDiffP0 -= int256(totalWinSumP0);
         }
-        if (payDiff < 0) {
+
+        if (payDiffP0 < 0) {
+            console.log("House=>Cachier", uint256(-payDiffP0));
             //player wins amount
             //transfer from HLP to Cachier
-            LibHLP.transferFromHLP2Cachier(s, uint256(-payDiff));
-        } else if (payDiff > 0) {
+            LibHLP.transferFromHouse2Cachier(s, uint256(-payDiffP0));
+        } else if (payDiffP0 > 0) {
             //player lost all
             //transfer from to Cachier to HLP
-            LibHLP.transferFromCachierToHLP(s, uint256(payDiff));
+            LibHLP.transferFromCachierToHouse(s, uint256(payDiffP0));
         }
-        console.log("emitting RouletteStoppedPrizeInfo");
+        /*  console.log("payDiffP0", payDiffP0);
+        console.log("emitting RouletteStoppedPrizeInfo");*/
         emit RouletteStoppedPrizeInfo(
             requestId,
             randomWords[0],

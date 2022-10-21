@@ -38,7 +38,7 @@ contract CasinoDiamond {
         ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
         ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;
 
-        hs.houseBalance = 10_000 * 1e18;
+        // hs.houseBalancePr2 = 10_000 * 1e18;
     }
 
     // Find facet for function that is called and execute the
