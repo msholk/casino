@@ -95,6 +95,9 @@
     "test-2-4-00": "npx hardhat test --network localhost --grep \"2-4-00\"",
     "test-3": "npx hardhat test --network localhost --grep \"3-[0-9]{1}-\"",
     "test-3-0": "npx hardhat test --network localhost --grep \"3-0-\"",
-    "test-3-0-00": "npx hardhat test --network localhost --grep \"3-0-00-\""
+    "test-3-0-00": "npx hardhat test --network localhost --grep \"3-0-00-\"",
+    "test-4": "npx hardhat test --network localhost --grep \"4-[0-9]{1}-\"",
+    "test-4-0": "npx hardhat test --network localhost --grep \"4-0-\"",
+    "test-4-0-00": "npx hardhat test --network localhost --grep \"4-0-00\""
   }
 }
