@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
+
 interface ITimeDistributor {
     /**
      * @dev Emitted when `_amount` reward tokens are transferred to account `_receiver`.
@@ -69,6 +70,13 @@ interface ITimeDistributor {
         address[] calldata _receivers,
         uint256[] calldata _amounts
     ) external;
+
+
+    /**
+     * @dev Calculate the total pending rewards for the `_receiver`.
+     * @return uint256 The total pending rewards.
+     */
+    function pendingRewards(address _receiver) external view returns (uint256);
 
     /**
      * @dev Distribute reward tokens to `msg.sender`.

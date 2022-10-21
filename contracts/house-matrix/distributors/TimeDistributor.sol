@@ -66,7 +66,7 @@ contract TimeDistributor is AccessControl, ITimeDistributor {
         }
 
         tokensPerInterval[_receiver] = _amount;
-        lastDistributionTime[_receiver] = tdUpdates.updateLastDistributionTime();
+        // lastDistributionTime[_receiver] = tdUpdates.updateLastDistributionTime();
 
         emit TokensPerIntervalChange(_receiver, _amount);
     }
@@ -82,7 +82,10 @@ contract TimeDistributor is AccessControl, ITimeDistributor {
         external
         onlyRole(rGlobals._GOVERNOR_ROLE_)
     {
-        for (uint256 i = 0; i < _receivers.length; i++) {
+        require(_rewardTokens.length == _receivers.length, "Token/receiver length inconsistent");
+        require(_rewardTokens.length == _amounts.length, "Token/amount length inconsistent");
+
+        for (uint256 i = 0; i < _rewardTokens.length; i++) {
             address _receiver = _receivers[i];
 
             if (lastDistributionTime[_receiver] != 0) {
@@ -100,6 +103,14 @@ contract TimeDistributor is AccessControl, ITimeDistributor {
                 _receiver, tokensPerInterval[_receiver], rewardTokens[_receiver]
             );
         }
+    }
+
+    function pendingRewards(address _receiver) external view returns (uint256) {
+        if (block.timestamp == lastDistributionTime[_receiver]) {
+            return 0;
+        }
+
+        return tokensPerInterval[_receiver] * (block.timestamp - lastDistributionTime[_receiver]);
     }
 
     /**

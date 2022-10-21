@@ -7,18 +7,25 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "hardhat/console.sol";
 
+import "../distributors/interfaces/ITimeDistributor.sol";
 import "./interfaces/IHouseVestingWallet.sol";
 import "./interfaces/IHouseVestingGlobals.sol";
+
+import { LibYieldGlobals as yGlobals } from "../tokens/libraries/LibYieldFarm.sol";
 import { LibRoleGlobals as rGlobals } from "../tokens/libraries/LibRoles.sol";
 
 
 contract HouseVestingWallet is AccessControlEnumerable, Initializable {
+    event Transfer(address indexed from, address indexed to, uint256 amount);
     event ERC20Released(address indexed token, uint256 amount);
     
+    uint256 public cumulativeRewards;
+    uint256 public averageStakedAmounts;
     address private stakeHousePoolVault;
-    address private houseVestingGlobalsAddress;
+    IHouseVestingGlobals private houseVestingGlobals;
 
-    address[] private erc20Tokens;
+    address[] public erc20Tokens;
+    mapping(address => uint256) private rewards;
     mapping(address => uint256) private balances;
     mapping(address => uint256) private releasedBalances;
     mapping(address => uint256) private startTimestamp;
@@ -36,19 +43,17 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
         initializer()
     {
         require(_erc20Tokens.length == _balances.length, "VestingWallet: tokens/balances lengths differ");
+        houseVestingGlobals = IHouseVestingGlobals(_houseVestingGlobalsAddress);
         
-        houseVestingGlobalsAddress = _houseVestingGlobalsAddress;
-        IHouseVestingGlobals _vestingDurationGlobals = IHouseVestingGlobals(houseVestingGlobalsAddress);
-
         _setRoleAdmin(rGlobals._GOVERNOR_ROLE_, rGlobals._ADMIN_ROLE_);
         _setRoleAdmin(rGlobals._ADMIN_ROLE_, rGlobals._ADMIN_ROLE_);
         _setRoleAdmin(rGlobals._OWNER_ROLE_, rGlobals._OWNER_ROLE_);
         _setRoleAdmin(rGlobals._REWARDS_ROUTER_ROLE_, rGlobals._ADMIN_ROLE_);
 
-        _setupRole(rGlobals._GOVERNOR_ROLE_, _vestingDurationGlobals.governor());
-        _setupRole(rGlobals._ADMIN_ROLE_, _vestingDurationGlobals.admin());
+        _setupRole(rGlobals._GOVERNOR_ROLE_, houseVestingGlobals.governor());
+        _setupRole(rGlobals._ADMIN_ROLE_, houseVestingGlobals.admin());
         _setupRole(rGlobals._OWNER_ROLE_, _msgSender());
-        _setupRole(rGlobals._REWARDS_ROUTER_ROLE_, _vestingDurationGlobals.rewardsRouter());
+        _setupRole(rGlobals._REWARDS_ROUTER_ROLE_, houseVestingGlobals.rewardsRouter());
 
         stakeHousePoolVault = _housePoolAddress;
 
@@ -60,7 +65,7 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
         // Handle all other ERC20 deposits
         if (_erc20Tokens.length > 0) {
             for (uint256 i; i < _erc20Tokens.length; i++) {
-                if (_vestingDurationGlobals.isStakeToken(_erc20Tokens[i])) {
+                if (houseVestingGlobals.isStakeToken(_erc20Tokens[i])) {
                     _depositERC20(_erc20Tokens[i], _balances[i]);
                 }
             }
@@ -138,14 +143,21 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
      * @dev Getter for the total ERC20 token balance (both staked and non-staked).
      */
     function totalSupply(address _token) external view returns (uint256) {
-        return balances[_token];
+        uint256 _totalSupply;
+        address[3] memory _tokens = houseVestingGlobals.getTokens();
+
+        for (uint256 i; i < _tokens.length; i++) {
+            _totalSupply += balances[_tokens[i]];
+        }
+
+        return _totalSupply;
     }
 
     /**
      * @dev Getter for total staked ERC20 token.
      */
-    function totalStakedSupply(address _token) external view returns (uint256) {
-        return balances[_token] - released[_token];
+    function totalStakedSupply(address _token) public view returns (uint256) {
+        return balances[_token] - releasedBalances[_token];
     }
 
     /**
@@ -184,7 +196,7 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
         balances[_token] += _amount;
         releasedBalances[_token] += _amount;
         startTimestamp[_token] = block.timestamp;
-        durationSeconds[_token] = IHouseVestingGlobals(houseVestingGlobalsAddress).getDuration(_token);
+        durationSeconds[_token] = houseVestingGlobals.getDuration(_token);
 
         return true;
     }
@@ -250,7 +262,7 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
 
         balances[address(0)] += _amount;
         startTimestamp[address(0)] = block.timestamp;
-        durationSeconds[address(0)] = IHouseVestingGlobals(houseVestingGlobalsAddress).ethDuration();
+        durationSeconds[address(0)] = houseVestingGlobals.ethDuration();
     }
 
     /**
@@ -265,7 +277,17 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
 
         balances[_token] += msg.value;
         startTimestamp[_token] = block.timestamp;
-        durationSeconds[_token] = IHouseVestingGlobals(houseVestingGlobalsAddress).ethDuration();
+        durationSeconds[_token] = houseVestingGlobals.ethDuration();
+    }
+
+    function _mint(address _account, uint256 _amount) internal {
+        require(_account != address(0), "RewardTracker: mint to the zero address");
+
+        address hlpAddress = houseVestingGlobals.hlpAddress();
+
+        balances[hlpAddress] += _amount;
+
+        emit Transfer(address(0), _account, _amount);
     }
 
     /**
@@ -288,51 +310,43 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
     function __stake(address _account, address _token, uint256 _amount) private {
         require(_amount > 0, "RewardTracker: invalid _amount");
 
-        IHouseVestingGlobals houseVestingGlobals = IHouseVestingGlobals(houseVestingGlobalsAddress);
         require(houseVestingGlobals.isStakeToken(_token), "RewardTracker: invalid _token");
 
         // Stake token(s)        
         _token == address(0)
-            ? houseVestingGlobalsAddress.transfer(_amount)
+            ? stakeHousePoolVault.transfer(_amount)
             : IERC20(_token).safeTransferFrom(address(this), stakeHousePoolVault, _amount);
         
         releasedBalances[_token] -= _amount;
 
-        __updateRewards(_account);
+        __updateRewards(_account, _token);
+        _mint(_account, _amount);
     }
     
-    function __updateRewards(address _account) private {
-        // uint256 blockReward = IRewardDistributor(distributor).distribute();
+    function __updateRewards(address _account, address _token) private {
+        uint256 _blockReward = ITimeDistributor(houseVestingGlobals.distributor()).distribute();
+        uint256 _prevRewards = rewards[_token];
 
-        // uint256 supply = totalSupply;
-        // uint256 _cumulativeRewardPerToken = cumulativeRewardPerToken;
-        // if (supply > 0 && blockReward > 0) {
-        //     _cumulativeRewardPerToken = _cumulativeRewardPerToken.add(blockReward.mul(PRECISION).div(supply));
-        //     cumulativeRewardPerToken = _cumulativeRewardPerToken;
-        // }
+        if (balances[_token] > 0 && _blockReward > 0) {
+            rewards[_token] += _blockReward * yGlobals.PRECISION / balances[_token];
+        }
 
-        // // cumulativeRewardPerToken can only increase
-        // // so if cumulativeRewardPerToken is zero, it means there are no rewards yet
-        // if (_cumulativeRewardPerToken == 0) {
-        //     return;
-        // }
+        // rewards[_token] can only increase
+        // so if cumulativeRewardPerToken is zero, it means there are no rewards yet
+        if (rewards[_token] == 0) { return; }
 
-        // if (_account != address(0)) {
-        //     uint256 stakedAmount = stakedAmounts[_account];
-        //     uint256 accountReward = stakedAmount.mul(_cumulativeRewardPerToken.sub(previousCumulatedRewardPerToken[_account])).div(PRECISION);
-        //     uint256 _claimableReward = claimableReward[_account].add(accountReward);
+        if (_account != address(0)) {
+            uint256 _stakedAmount = totalStakedSupply(_token);
+            uint256 _accountReward = _stakedAmount * (rewards[_token] - _prevRewards) / yGlobals.PRECISION;
+            releasedBalances[_token] += _accountReward;
 
-        //     claimableReward[_account] = _claimableReward;
-        //     previousCumulatedRewardPerToken[_account] = _cumulativeRewardPerToken;
+            if (releasedBalances[_token] > 0 && _stakedAmount > 0) {
+                uint256 _prevCumulativeReward = cumulativeRewards;
+                cumulativeRewards += _accountReward;
 
-        //     if (_claimableReward > 0 && stakedAmounts[_account] > 0) {
-        //         uint256 nextCumulativeReward = cumulativeRewards[_account].add(accountReward);
-
-        //         averageStakedAmounts[_account] = averageStakedAmounts[_account].mul(cumulativeRewards[_account]).div(nextCumulativeReward)
-        //             .add(stakedAmount.mul(accountReward).div(nextCumulativeReward));
-
-        //         cumulativeRewards[_account] = nextCumulativeReward;
-        //     }
-        // }
+                averageStakedAmounts = averageStakedAmounts * _prevCumulativeReward / cumulativeRewards
+                    + (_stakedAmount * (_accountReward / cumulativeRewards));
+            }
+        }
     }
 }

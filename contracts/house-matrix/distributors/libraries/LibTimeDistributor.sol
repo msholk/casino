@@ -13,7 +13,6 @@ library LibTimeDistributorGlobals {
 
 library LibTimeDistributorGetters {
     function getIntervals(uint256 _lastDistributionTime) public view returns (uint256) {
-        console.log((block.timestamp - _lastDistributionTime) / LibTimeDistributorGlobals.DISTRIBUTION_INTERVAL);
         return (block.timestamp - _lastDistributionTime) / LibTimeDistributorGlobals.DISTRIBUTION_INTERVAL;
     }
 
