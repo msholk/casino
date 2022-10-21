@@ -30,6 +30,7 @@
     "lint:fix": "solhint 'contracts/**/*.sol' --fix",
     "format": "prettier --write .",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js",
+    "testDeploy": "npx hardhat test test/testDeploy.js --network hardhat ",
     "testDiamondStaker": "npx hardhat test test/testDiamondStaker.js --network hardhat ",
     "testr": "hardhat test test/unit/R*.spec.js",
     "forge1": "forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z   --fork-block-number 15756971 --match-contract Pl --match-test testIncrement ",
