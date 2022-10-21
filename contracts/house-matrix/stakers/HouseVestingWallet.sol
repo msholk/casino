@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/finance/VestingWallet.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "hardhat/console.sol";
 
@@ -16,6 +17,8 @@ import { LibRoleGlobals as rGlobals } from "../tokens/libraries/LibRoles.sol";
 
 
 contract HouseVestingWallet is AccessControlEnumerable, Initializable {
+    using EnumerableSet for EnumerableSet.AddressSet;
+
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event ERC20Released(address indexed token, uint256 amount);
     
@@ -24,7 +27,7 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
     address private stakeHousePoolVault;
     IHouseVestingGlobals private houseVestingGlobals;
 
-    address[] public erc20Tokens;
+    EnumerableSet.AddressSet public erc20Tokens;
     mapping(address => uint256) private rewards;
     mapping(address => uint256) private balances;
     mapping(address => uint256) private releasedBalances;
@@ -59,15 +62,14 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
 
         // Handle ETH deposits
         if (msg.value > 0) {
-            _depositEth(msg.value);
+            _deposit(address(0), msg.value);
         }
 
         // Handle all other ERC20 deposits
         if (_erc20Tokens.length > 0) {
             for (uint256 i; i < _erc20Tokens.length; i++) {
-                if (houseVestingGlobals.isStakeToken(_erc20Tokens[i])) {
-                    _depositERC20(_erc20Tokens[i], _balances[i]);
-                }
+                require(houseVestingGlobals.isStakeToken(_erc20Tokens[i]), "Invalid token");
+                _deposit(_erc20Tokens[i], _balances[i]);
             }
         }
     }
@@ -76,7 +78,7 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
      * @dev The contract should be able to receive Eth.
      */
     receive() external payable {
-        _depositEth(msg.value);
+        _deposit(address(0), msg.value);
     }
 
     /**
@@ -202,18 +204,6 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
     }
 
     /**
-     * @dev Stake ETH.
-     */
-    function stake(uint256 _amount) 
-        external
-        onlyRole(rGlobals._OWNER_ROLE_)
-        returns (bool)
-    {
-        __stake(_msgSender(), address(0), _amount);
-        return true;
-    }
-
-    /**
      * @dev Stake ERC20 tokens.
      */
     function stake(address _token, uint256 _amount)
@@ -230,8 +220,11 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
      *
      * Emits a {ERC20Released} event.
      */
-    function release(address _token) external {
-        uint256 releasable = vestedAmount(_token, uint64(block.timestamp)) - released[_token];
+    function release(address _token)
+        external
+        onlyRole(rGlobals._OWNER_ROLE_)
+    {
+        uint256 releasable = vestedAmount(_token, uint64(block.timestamp)) - releasedBalances[_token];
         releasedBalances[_token] += releasable;
         
         emit ERC20Released(_token, releasable);
@@ -255,25 +248,16 @@ contract HouseVestingWallet is AccessControlEnumerable, Initializable {
     }
 
     /**
-     * @dev Deposit ETH to this wallet.
-     */
-    function _depositEth(uint256 _amount) internal {
-        require(_amount != 0, 'Cannot deposit 0');
-
-        balances[address(0)] += _amount;
-        startTimestamp[address(0)] = block.timestamp;
-        durationSeconds[address(0)] = houseVestingGlobals.ethDuration();
-    }
-
-    /**
      * @dev Deposit ERC20 to this wallet.
      */
-    function _depositERC20(address _token, uint256 _amount) internal {
+    function _deposit(address _token, uint256 _amount) internal {
         require(_amount != 0, 'Cannot deposit 0');
 
-        IERC20(_token).transferFrom(_msgSender(), address(this), _amount);
+        if (_token != address(0)) {
+            IERC20(_token).transferFrom(_msgSender(), address(this), _amount);
+        }
 
-        erc20Tokens.push(_token);
+        erc20Tokens.add(_token);
 
         balances[_token] += msg.value;
         startTimestamp[_token] = block.timestamp;
