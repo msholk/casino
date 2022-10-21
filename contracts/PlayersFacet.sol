@@ -18,7 +18,6 @@ contract PlayersFacet {
 
     constructor() {
         //Set to test withoud diamond
-        // s.hs.houseBalancePr2 = 10_000 ;
         LibDiamond.setContractOwner(msg.sender);
     }
 

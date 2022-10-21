@@ -14,7 +14,6 @@ contract StakerFacet {
 
     constructor() {
         //Set to test withoud diamond
-        // s.hs.houseBalancePr2 = 10_000 ;
         LibDiamond.setContractOwner(msg.sender);
     }
 
@@ -27,12 +26,12 @@ contract StakerFacet {
             .stakersPercentagesPr18;
         uint256 stakerPercent = stakersPercentagesPr18[msg.sender];
         require(stakerPercent > 0, "Your precent iz ZERO");
-        require(s.hs.houseBalancePr2 > 0, "House balance iz ZERO");
-        uint256 oldBalance = s.hs.houseBalancePr2;
-        uint256 stakerOldAmount = (oldBalance * stakerPercent) /
+        require(s.hs.houseBalanceP6 > 0, "House balance iz ZERO");
+        uint256 oldBalanceP6 = s.hs.houseBalanceP6;
+        uint256 stakerOldAmount = (oldBalanceP6 * stakerPercent) /
             PERCENT_PRECISION;
-        s.hs.houseBalancePr2 -= oldBalance;
-        uint256 newBalance = s.hs.houseBalancePr2;
+        s.hs.houseBalanceP6 -= oldBalanceP6;
+        uint256 newBalance = s.hs.houseBalanceP6;
         stakersPercentagesPr18[msg.sender] = 0;
         ////////////////////////////////////
         address[] storage stakersList = s.hs.stakersList;
@@ -40,7 +39,7 @@ contract StakerFacet {
         for (uint256 index; index < stakersListCount; ++index) {
             address stakerAddress = stakersList[index];
             uint256 iStakerPercent = stakersPercentagesPr18[stakerAddress];
-            uint256 iStakerOldAmount = (oldBalance * iStakerPercent) /
+            uint256 iStakerOldAmount = (oldBalanceP6 * iStakerPercent) /
                 PERCENT_PRECISION;
             uint256 stakerNewPercent = (iStakerOldAmount * PERCENT_PRECISION) /
                 newBalance;
@@ -85,26 +84,25 @@ contract StakerFacet {
         // console.log("PlayersFacet. adding to");
         // console.log(msg.sender);
         // console.log(amounts[1], daiAmountOut);
-        uint256 daiPrecision2 = daiAmountOut / 1e16;
+        uint256 daiPrecision6 = daiAmountOut / 1e12;
 
-        uint256 leftOver = daiAmountOut - daiPrecision2 * 1e16;
-        //uint256 newBalance = oldBalance + daiAmountOut;
-        uint256 oldBalanceP2 = s.hs.houseBalancePr2;
-        s.hs.houseBalancePr2 += daiPrecision2;
+        uint256 leftOver = daiAmountOut - daiPrecision6 * 1e12;
+        uint256 oldBalanceP6 = s.hs.houseBalanceP6;
+        s.hs.houseBalanceP6 += daiPrecision6;
         s.platformBalancePr18 += leftOver;
 
         if (!s.hs.stakerExists[msg.sender]) {
-            addBalnceToNewStaker(oldBalanceP2, daiPrecision2);
+            addBalnceToNewStaker(oldBalanceP6, daiPrecision6);
         } else {
-            addBalnceToExistingStaker(oldBalanceP2, daiPrecision2);
+            addBalnceToExistingStaker(oldBalanceP6, daiPrecision6);
         }
     }
 
     function addBalnceToExistingStaker(
-        uint256 oldBalanceP2,
-        uint256 depositingDAIBalanceP2
+        uint256 oldBalanceP6,
+        uint256 depositingDAIBalanceP6
     ) private {
-        uint256 newBalanceP2 = oldBalanceP2 + depositingDAIBalanceP2;
+        uint256 newBalanceP6 = oldBalanceP6 + depositingDAIBalanceP6;
         address[] storage stakersList = s.hs.stakersList;
         uint256 stakersListCount = stakersList.length;
         mapping(address => uint256) storage stakersPercentagesPr18 = s
@@ -113,17 +111,17 @@ contract StakerFacet {
 
         uint256 stakersPercentByNowP18 = stakersPercentagesPr18[msg.sender];
         uint256 stakersBalanceByNowP18 = (stakersPercentByNowP18 *
-            oldBalanceP2) / 100;
+            oldBalanceP6) / 1e6;
 
         for (uint256 index; index < stakersListCount; ++index) {
             address stakerAddress = stakersList[index];
             uint256 stakerPercentP18 = stakersPercentagesPr18[stakerAddress];
-            uint256 stakerOldAmountP18 = (oldBalanceP2 * stakerPercentP18) /
-                100;
-            uint256 stakerNewPercentP18 = (stakerOldAmountP18 * 100) /
-                newBalanceP2;
-            uint256 stakerNewPercentFirstDecimal = ((stakerOldAmountP18 *
-                1000) / newBalanceP2) % 10;
+            uint256 stakerOldAmountP18 = (oldBalanceP6 * stakerPercentP18) /
+                1e6;
+            uint256 stakerNewPercentP18 = (stakerOldAmountP18 * 1e6) /
+                newBalanceP6;
+            uint256 stakerNewPercentFirstDecimal = ((stakerOldAmountP18 * 1e7) /
+                newBalanceP6) % 10;
             if (stakerNewPercentFirstDecimal >= 5) {
                 stakerNewPercentP18++;
             }
@@ -137,16 +135,16 @@ contract StakerFacet {
             // );
         }
 
-        uint256 currentStakerNewBalanceP18 = depositingDAIBalanceP2 *
+        uint256 currentStakerNewBalanceP18 = depositingDAIBalanceP6 *
             1e16 +
             stakersBalanceByNowP18;
         uint256 currentStakerNewPercentP18 = (currentStakerNewBalanceP18 *
             1e18) /
-            newBalanceP2 /
+            newBalanceP6 /
             1e16;
         uint256 currentStakerNewPercentFirstDecimal = ((currentStakerNewBalanceP18 *
                 1e19) /
-                newBalanceP2 /
+                newBalanceP6 /
                 1e16) % 10;
         if (currentStakerNewPercentFirstDecimal >= 5) {
             currentStakerNewPercentP18++;
@@ -157,10 +155,10 @@ contract StakerFacet {
     }
 
     function addBalnceToNewStaker(
-        uint256 oldBalanceP2,
-        uint256 depositingDAIBalanceP2
+        uint256 oldBalanceP6,
+        uint256 depositingDAIBalanceP6
     ) private {
-        uint256 newBalanceP2 = oldBalanceP2 + depositingDAIBalanceP2;
+        uint256 newBalanceP6 = oldBalanceP6 + depositingDAIBalanceP6;
         address[] storage stakersList = s.hs.stakersList;
         uint256 stakersListCount = stakersList.length;
         mapping(address => uint256) storage stakersPercentagesPr18 = s
@@ -169,12 +167,12 @@ contract StakerFacet {
         for (uint256 index; index < stakersListCount; ++index) {
             address stakerAddress = stakersList[index];
             uint256 stakerPercentPr18 = stakersPercentagesPr18[stakerAddress];
-            uint256 stakerOldAmountP18 = (oldBalanceP2 * stakerPercentPr18) /
-                1e2;
-            uint256 stakerNewPercentP18 = (stakerOldAmountP18 * 100) /
-                newBalanceP2;
-            uint256 stakerNewPercentFirstDecimal = ((stakerOldAmountP18 *
-                1000) / newBalanceP2) % 10;
+            uint256 stakerOldAmountP18 = (oldBalanceP6 * stakerPercentPr18) /
+                1e6;
+            uint256 stakerNewPercentP18 = (stakerOldAmountP18 * 1e6) /
+                newBalanceP6;
+            uint256 stakerNewPercentFirstDecimal = ((stakerOldAmountP18 * 1e7) /
+                newBalanceP6) % 10;
             if (stakerNewPercentFirstDecimal >= 5) {
                 stakerNewPercentP18++;
             }
@@ -190,11 +188,11 @@ contract StakerFacet {
 
         s.hs.stakersList.push(msg.sender);
         s.hs.stakerExists[msg.sender] = true;
-        // console.log(depositingDAIBalanceP2, newBalanceP2);
-        uint256 currentStakerNewPercentP18 = (depositingDAIBalanceP2 * 1e18) /
-            newBalanceP2;
-        uint256 currentStakerNewPercentFirstDecimal = ((depositingDAIBalanceP2 *
-            1e19) / newBalanceP2) % 10;
+        // console.log(depositingDAIBalanceP6, newBalanceP6);
+        uint256 currentStakerNewPercentP18 = (depositingDAIBalanceP6 * 1e18) /
+            newBalanceP6;
+        uint256 currentStakerNewPercentFirstDecimal = ((depositingDAIBalanceP6 *
+            1e19) / newBalanceP6) % 10;
         if (currentStakerNewPercentFirstDecimal >= 5) {
             currentStakerNewPercentP18++;
         }
@@ -209,12 +207,12 @@ contract StakerFacet {
         returns (uint256 stakerPercent, uint256 newHouseBalance)
     {
         if (!s.hs.stakerExists[msg.sender]) {
-            return (0, s.hs.houseBalancePr2);
+            return (0, s.hs.houseBalanceP6);
         }
 
         mapping(address => uint256) storage stakersPercentagesPr18 = s
             .hs
             .stakersPercentagesPr18;
-        return (stakersPercentagesPr18[msg.sender], s.hs.houseBalancePr2);
+        return (stakersPercentagesPr18[msg.sender], s.hs.houseBalanceP6);
     }
 }
