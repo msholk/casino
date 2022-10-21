@@ -23,6 +23,7 @@ describe('DiamondTest', async function () {
     let ownershipFacet
     let playersFacet
     let stakerFacet
+    let adminFacet
     let tx
     let receipt
     let result
@@ -73,7 +74,7 @@ describe('DiamondTest', async function () {
 
     before(async function () {
         const res = await diamondInit1();
-        ({ diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet } = res);
+        ({ diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet, adminFacet } = res);
 
         await initializeTokensMock()
         await initializeVRF()
@@ -91,8 +92,8 @@ describe('DiamondTest', async function () {
             ({ signers, account0, account1, account2 } = await getAccounts())
         })
         it('checkFacets', async () => {
-            await checkFacets1({ facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet });
-            await checkFacets2({ facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet });
+            await checkFacets1({ facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet, adminFacet });
+            await checkFacets2({ facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet, adminFacet });
         })
     });
 
@@ -347,6 +348,32 @@ describe('DiamondTest', async function () {
                 houseBalance = bal.newHouseBalance
             })
         })
+    })
+    describe('Platformadmin', async () => {
+        let playerBalance
+
+        it('Check platfrom balance is 2.67', async () => {
+            const adminFacet = await ethers.getContractAt('AdminFacet', diamondAddress)
+            let bal = await adminFacet.checkPlatformBalance();
+            expect(bal.platformBalanceP2 / 100).eq(2.67)
+        })
+        it('Check platfrom access allowed only to owner', async () => {
+            const adminFacet = await ethers.getContractAt('AdminFacet', diamondAddress)
+            await expect(adminFacet.connect(signers[1]).checkPlatformBalance())
+                .revertedWith("LibDiamond: Must be contract owner");
+        })
+        it('Withdraw balance', async () => {
+            let bal = await TokensMock.daiBalanceOf(signers[0].address)
+            expect(bal).eq(0)
+
+            const adminFacet = await ethers.getContractAt('AdminFacet', diamondAddress)
+            await expect(adminFacet.withdrawAllPlatformDAI())
+                .not.to.be.reverted;
+            let bal2 = await TokensMock.daiBalanceOf(signers[0].address)
+            console.log(bal2)
+            expect(Math.floor(bal2 / 10 ** 16) / 100).eq(2.67)
+        })
+
     })
 
 })

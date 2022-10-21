@@ -25,8 +25,11 @@ const facetSelectors = {
         'checkStakerBalance()': null,
         'stakeETH()': null,
         'withdrawAllStakerDAI()': null
+    },
+    AdminFacet: {
+        'withdrawAllPlatformDAI()': null,
+        'checkPlatformBalance()': null
     }
-
 
 }
 

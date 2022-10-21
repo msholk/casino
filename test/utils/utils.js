@@ -3,7 +3,7 @@ const _ = require("lodash")
 const { assert } = require('chai')
 require("./BigNum-utils.js")
 const { facetSelectors } = require('./facetSelectors')
-const FACETS_COUNT = 5
+const FACETS_COUNT = 6
 const getSignature = (stringSignature) => {
     return utils.keccak256(utils.toUtf8Bytes(stringSignature)).substring(0, 10)
 }
@@ -51,8 +51,9 @@ async function diamondInit1() {
     const ownershipFacet = await ethers.getContractAt('OwnershipFacet', diamondAddress)
     const playersFacet = await ethers.getContractAt('PlayersFacet', diamondAddress)
     const stakerFacet = await ethers.getContractAt('StakerFacet', diamondAddress)
+    const adminFacet = await ethers.getContractAt('AdminFacet', diamondAddress)
 
-    return { diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet }
+    return { diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet, adminFacet }
 }
 async function getAccounts() {
     const signers = await ethers.getSigners()
@@ -62,7 +63,7 @@ async function getAccounts() {
     return { signers, account0, account1, account2 }
 }
 async function checkFacets1(facets) {
-    const { facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet } = facets;
+    const { facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet, adminFacet } = facets;
     //don't disable: fills facetAddress
 
     const addresses = []
@@ -77,11 +78,12 @@ async function checkFacets1(facets) {
     facetAddress.OwnershipFacet = addresses[2]
     facetAddress.PlayersFacet = addresses[3]
     facetAddress.StakerFacet = addresses[4]
+    facetAddress.AdminFacet = addresses[5]
 
 
 }
 async function checkFacets2(facets) {
-    const { facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet } = facets;
+    const { facetAddress, diamondAddress, diamondCutFacet, diamondLoupeFacet, ownershipFacet, playersFacet, stakerFacet, adminFacet } = facets;
     //don't disable: fills facetAddress
 
     //don't disable: assign signatures to selectors
@@ -117,6 +119,12 @@ async function checkFacets2(facets) {
     assert.sameMembers(result, selectors)
     assert.sameKeys(facetSelectors.StakerFacet, selectorsToDic(selectors), "StakerFacet expected functions", "StakerFacet deployed functions")
     facetSelectors.StakerFacet = { ...facetSelectors.StakerFacet, ...selectorsToDic(selectors) }
+
+    selectors = getSelectors(adminFacet)
+    result = await diamondLoupeFacet.facetFunctionSelectors(facetAddress.AdminFacet)
+    assert.sameMembers(result, selectors)
+    assert.sameKeys(facetSelectors.AdminFacet, selectorsToDic(selectors), "AdminFacet expected functions", "AdminFacet deployed functions")
+    facetSelectors.AdminFacet = { ...facetSelectors.AdminFacet, ...selectorsToDic(selectors) }
 
 
 }
