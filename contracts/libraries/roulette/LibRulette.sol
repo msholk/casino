@@ -15,7 +15,7 @@ library LibRulette {
         uint8 winNum
     ) public pure returns (uint8) {
         require(winNum >= 1 && winNum <= 38, "Wrong winnum");
-        require(betType >= 1 && betType <= 12, "Wrong betType");
+        require(betType >= 1 && betType <= 13, "Wrong betType");
         if (betType == 1) {
             return uint8(bet1WinFactor(betDet, winNum));
         }
@@ -52,6 +52,9 @@ library LibRulette {
         if (betType == 12) {
             return uint8(bet12WinFactor(betDet, winNum));
         }
+        if (betType == 13) {
+            return uint8(bet13WinFactor(betDet, winNum));
+        }
         return 0;
     }
 
@@ -72,7 +75,7 @@ library LibRulette {
         return 0;
     }
 
-    /// @notice Double number bet pays 17 to 1. Also called a “split.”  x18
+    /// @notice Double VERTICAL number bet pays 17 to 1. Also called a “split.”  x18
     /// @dev 37-zero; 38- double zero
     /// @param betDet - falls in [1,33]
     /// @return Win factor
@@ -427,6 +430,65 @@ library LibRulette {
             if (winNum % 2 == 0) {
                 return 0;
             }
+            return winFactor;
+        }
+
+        return 0;
+    }
+
+    /// @notice Double HORIZONTAL number bet pays 17 to 1. Also called a “split.”  x18
+    /// @dev 37-zero; 38- double zero
+    /// @param betDet - falls in [1,33]
+    /// @return Win factor
+    /*
+     *        1       2       3       4       5       6       7       8       9       10
+     *       1,2     2,3     4,5     5,6     7,8     8,9    10,11   11,12   13,14   14,15
+     * +10  16,17   17,18   19,20   20,21   22,23   23,24   25,26   26,27   28,29   29,30
+     * +20  31,32   32,33   34,35   35,36
+
+
+     */
+    function bet13WinFactor(uint256 betDet, uint256 winNum)
+        private
+        pure
+        returns (uint256)
+    {
+        require(
+            betDet >= 1 && betDet <= 22,
+            "Wrong bet detail for Four number bet"
+        );
+        uint8[24] memory firstNums = [
+            0,
+            1,
+            2,
+            4,
+            7,
+            8,
+            10,
+            11,
+            13,
+            14,
+            16,
+            17,
+            19,
+            20,
+            22,
+            23,
+            25,
+            26,
+            28,
+            29,
+            31,
+            32,
+            34,
+            35
+        ];
+        uint256 firstNum = firstNums[betDet];
+        uint256 winFactor = 18;
+        if (firstNum == winNum) {
+            return winFactor;
+        }
+        if (firstNum + 1 == winNum) {
             return winFactor;
         }
 
