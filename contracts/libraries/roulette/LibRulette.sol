@@ -40,6 +40,9 @@ library LibRulette {
         uint256 betPointsLength = betPoints.length;
         for (uint256 index; index < betPointsLength; ++index) {
             BetPointPrm calldata p = betPoints[index];
+            if (p.amount > 1000) {
+                revert("Bet on single position exceeds 1000");
+            }
             uint8 betType = p.betType;
             //Single number: are mutually exclusive
             if (betType == 1) {
