@@ -102,12 +102,17 @@ contract PlayersFacet {
         require(playerBalanceP2 >= 100, "Balance is empty");
         uint256 totalBetSumP0 = RouletteLaunchLib.getTotalBetSum(betPoints);
 
-        LibHLP.LockMaxWinAmount(s.hs, totalBetSumP0);
+        uint256 lockHouseAmountP0 = LibRulette.getRequiredHouseLockAmount(
+            betPoints
+        );
+        console.log("Locking total:", lockHouseAmountP0);
+        LibHLP.LockAmountFromHouse(s.hs, lockHouseAmountP0);
         CashierStorageLib.LockBetAmount(s.cs, totalBetSumP0, msg.sender);
         // //console.log("**********************************");
 
         RouletteLaunch storage rl = s.rcs.playersLaunchedRoulette[msg.sender];
         RouletteLaunchLib.storeBetPoints(rl, betPoints);
+        rl.lockedHouseAmountP0 = lockHouseAmountP0;
 
         rl.requestId = launchRoulette();
         s.rcs.userAddressByRequestId[rl.requestId] = msg.sender;
@@ -262,7 +267,7 @@ contract PlayersFacet {
         //console.log("Betpoints calculated");
 
         //unlock balances
-        LibHLP.UnlockBalances(s.hs, totalBetSumP0);
+        LibHLP.UnlockBalances(s.hs, rl.lockedHouseAmountP0);
         CashierStorageLib.UnlockBetAmount(s.cs, totalBetSumP0, playerAddress);
         int256 payDiffP0 = int256(totalBetSumP0);
 

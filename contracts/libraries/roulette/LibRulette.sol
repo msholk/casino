@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
+import "contracts/libraries/roulette/BetPointPrm.sol";
 
 // import "hardhat/console.sol";
 
@@ -9,6 +10,109 @@ pragma solidity 0.8.9;
  * @dev String operations.
  */
 library LibRulette {
+    function max(uint256 a, uint256 b) private pure returns (uint256) {
+        return a >= b ? a : b;
+    }
+
+    function getRequiredHouseLockAmount(BetPointPrm[] calldata betPoints)
+        internal
+        pure
+        returns (uint256 amount2Lock)
+    {
+        uint8[14] memory LockFactorPerBetType = [
+            0,
+            35,
+            17,
+            11,
+            8,
+            6,
+            5,
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            17
+        ];
+
+        uint256[] memory LockAmountPerBetType = new uint256[](14);
+        uint256 betPointsLength = betPoints.length;
+        for (uint256 index; index < betPointsLength; ++index) {
+            BetPointPrm calldata p = betPoints[index];
+            uint8 betType = p.betType;
+            //Single number: are mutually exclusive
+            if (betType == 1) {
+                LockAmountPerBetType[1] = max(
+                    LockAmountPerBetType[1],
+                    p.amount
+                );
+            }
+            //Double vertical: just sum
+            else if (betType == 2) {
+                LockAmountPerBetType[2] += p.amount;
+            }
+            //3 horizontal: are mutually exclusive
+            else if (betType == 3) {
+                LockAmountPerBetType[3] = max(
+                    LockAmountPerBetType[3],
+                    p.amount
+                );
+            }
+            //4Square: just sum
+            else if (betType == 4) {
+                LockAmountPerBetType[4] += p.amount;
+            }
+            //5 top numbers: unique: just sum
+            else if (betType == 5) {
+                LockAmountPerBetType[5] += p.amount;
+            }
+            //6 in two lines: just sum
+            else if (betType == 6) {
+                LockAmountPerBetType[6] += p.amount;
+            }
+            //7:dozens: are mutually exclusive
+            else if (betType == 7) {
+                LockAmountPerBetType[7] = max(
+                    LockAmountPerBetType[7],
+                    p.amount
+                );
+            }
+            //8:vertical line: are mutually exclusive
+            else if (betType == 8) {
+                LockAmountPerBetType[8] = max(
+                    LockAmountPerBetType[8],
+                    p.amount
+                );
+            }
+            //9:first half: unique
+            else if (betType == 9) {
+                LockAmountPerBetType[9] += p.amount;
+            }
+            //10:second half: unique
+            else if (betType == 10) {
+                LockAmountPerBetType[10] += p.amount;
+            }
+            //11:red: unique
+            else if (betType == 11) {
+                LockAmountPerBetType[11] += p.amount;
+            }
+            //12:black: unique
+            else if (betType == 12) {
+                LockAmountPerBetType[12] += p.amount;
+            }
+            //double HORIZONTYAL:just sum
+            else if (betType == 12) {
+                LockAmountPerBetType[12] += p.amount;
+            }
+        }
+        for (uint256 index = 1; index <= 13; ++index) {
+            amount2Lock +=
+                LockAmountPerBetType[index] *
+                LockFactorPerBetType[index];
+        }
+    }
+
     function getWinFactor(
         uint8 betType,
         uint8 betDet,

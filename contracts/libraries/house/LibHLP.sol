@@ -5,25 +5,27 @@ import "contracts/libraries/UniswapV2.sol";
 import "hardhat/console.sol";
 
 library LibHLP {
-    function LockMaxWinAmount(HouseStorage storage hs, uint256 totalBetSumP0)
-        internal
-    {
-        uint256 totalBetSumP2 = totalBetSumP0 * 1e2;
+    function LockAmountFromHouse(
+        HouseStorage storage hs,
+        uint256 lockHouseAmountP0
+    ) internal {
+        uint256 lockHouseAmountP6 = lockHouseAmountP0 * 1e6;
         require(
-            hs.houseBalanceP6 >= totalBetSumP2 * 36,
+            hs.houseBalanceP6 >= lockHouseAmountP6,
             "House balance is insufficient"
         );
 
-        hs.houseBalanceP6 -= totalBetSumP2 * 36;
-        hs.houseLockedBalanceP2 += totalBetSumP2 * 36;
+        hs.houseBalanceP6 -= lockHouseAmountP6;
+        hs.houseLockedBalanceP2 += lockHouseAmountP0 * 1e2;
     }
 
-    function UnlockBalances(HouseStorage storage hs, uint256 totalBetSumP0)
-        internal
-    {
-        uint256 totalBetSumP2 = totalBetSumP0 * 1e2;
-        hs.houseBalanceP6 += totalBetSumP2 * 36;
-        hs.houseLockedBalanceP2 -= totalBetSumP2 * 36;
+    function UnlockBalances(
+        HouseStorage storage hs,
+        uint256 lockedHouseAmountP0
+    ) internal {
+        uint256 lockedHouseAmountP6 = lockedHouseAmountP0 * 1e6;
+        hs.houseBalanceP6 += lockedHouseAmountP6;
+        hs.houseLockedBalanceP2 -= lockedHouseAmountP0 * 1e2;
     }
 
     function transferFromHouse2Cashier(AppStorage storage s, uint256 payDiffP0)
