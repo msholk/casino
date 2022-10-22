@@ -298,8 +298,8 @@ describe('DiamondTest', async function () {
                 houseBalance = bal.newHouseBalance
             })
         })
-        describe('Playing and loosing', async () => {
-            it("Place a loosing bet: expect emit RouletteLaunched", async () => {
+        describe('Playing and losing', async () => {
+            it("Place a losing bet: expect emit RouletteLaunched", async () => {
                 requestId = 2
                 const player = await ethers.getContractAt('PlayersFacet', diamondAddress)
                 await expect(player.placeBet([{

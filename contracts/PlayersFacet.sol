@@ -277,14 +277,14 @@ contract PlayersFacet {
         }
 
         if (payDiffP0 < 0) {
-            //console.log("House=>Cachier", uint256(-payDiffP0));
+            //console.log("House=>Cashier", uint256(-payDiffP0));
             //player wins amount
-            //transfer from HLP to Cachier
-            LibHLP.transferFromHouse2Cachier(s, uint256(-payDiffP0));
+            //transfer from HLP to Cashier
+            LibHLP.transferFromHouse2Cashier(s, uint256(-payDiffP0));
         } else if (payDiffP0 > 0) {
             //player lost all
-            //transfer from to Cachier to HLP
-            LibHLP.transferFromCachierToHouse(s, uint256(payDiffP0));
+            //transfer from to Cashier to HLP
+            LibHLP.transferFromCashierToHouse(s, uint256(payDiffP0));
         }
         /*  //console.log("payDiffP0", payDiffP0);
         //console.log("emitting RouletteStoppedPrizeInfo");*/

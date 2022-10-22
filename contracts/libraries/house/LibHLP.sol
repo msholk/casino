@@ -26,10 +26,10 @@ library LibHLP {
         hs.houseLockedBalanceP2 -= totalBetSumP2 * 36;
     }
 
-    function transferFromHouse2Cachier(AppStorage storage s, uint256 payDiffP0)
+    function transferFromHouse2Cashier(AppStorage storage s, uint256 payDiffP0)
         internal
     {
-        //Amount goform  HLP goes to Cachier
+        //Amount goform  HLP goes to Cashier
         //We take PLAYER_WINS_COMISSION
         uint256 PLAYER_WINS_COMISSION = 3; //0.0003 0.03%
         uint256 ourComissionP18 = (PLAYER_WINS_COMISSION * payDiffP0 * 1e18) /
@@ -51,14 +51,14 @@ library LibHLP {
         // console.log(s.hs.houseBalanceP6, removeFromHouseP6);
     }
 
-    function transferFromCachierToHouse(AppStorage storage s, uint256 payDiffP0)
+    function transferFromCashierToHouse(AppStorage storage s, uint256 payDiffP0)
         internal
     {
-        uint256 PLAYER_LOOSE_COMISSION = 26; //0.0026 0.26%
-        //Amount goform Cachier goes to HLP
-        //We take PLAYER_LOOSE_COMISSION
+        uint256 PLAYER_LOSE_COMISSION = 26; //0.0026 0.26%
+        //Amount goform Cashier goes to HLP
+        //We take PLAYER_LOSE_COMISSION
         uint256 payDiffP18 = payDiffP0 * 1e18; //add precision
-        uint256 ourComissionP18 = (PLAYER_LOOSE_COMISSION * payDiffP18) / 1e4; //add precision
+        uint256 ourComissionP18 = (PLAYER_LOSE_COMISSION * payDiffP18) / 1e4; //add precision
         s.platformBalancePr18 += ourComissionP18;
         uint256 payDiffP6 = (payDiffP18 - ourComissionP18) / 1e12;
         s.hs.houseBalanceP6 += payDiffP6; //transfer from Cahsier to HLP
