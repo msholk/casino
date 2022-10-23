@@ -1,22 +1,21 @@
 import { useState, useEffect } from 'react';
-import { ethers, utils } from "ethers";
-import abi from "./contracts/Bank.json";
+import { ethers } from "ethers";
 import adminAbi from "./contracts/AdminFacet.json";
+import playersFacet from "./contracts/PlayersFacet.json";
 import _ from 'lodash';
 import { diamondAddress } from './contracts/diamondAddress'
-import { CustomerInfo, MoveMoney, BusyBlock, ErrorBlock, AdminPanel } from './components'
+import { CustomerInfo, PlayerBlock, BusyBlock, ErrorBlock, AdminPanel } from './components'
 let ethInitialized
+let lastAccountConnected = null
 function App() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [isBankerOwner, setIsAdmin] = useState(false);
   const [inputValue, setInputValue] = useState({ withdraw: "", deposit: "", bankName: "" });
-  const [bankOwnerAddress, setBankOwnerAddress] = useState(null);
-  const [customerTotalBalance, setCustomerTotalBalance] = useState(null);
   const [customerAddress, setCustomerAddress] = useState(null);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState("");
+  const [playerBalance, setPlayerBalance] = useState([0, 0]);
 
-  const contractABI = abi.abi;
 
   const getcAccounts = async () => {
     try {
@@ -28,6 +27,7 @@ function App() {
       console.error(error);
     }
   }
+
   const gotAccounts = (accounts) => {
     if (!accounts.length) {
       setIsWalletConnected(false);
@@ -37,7 +37,11 @@ function App() {
     setIsWalletConnected(true);
     setCustomerAddress(account);
     console.log("Account Connected: ", account);
-    customerBalanceHandler()
+    if (lastAccountConnected == account) {
+      return
+    }
+    lastAccountConnected = account
+    getPlayerBalanceHandler()
   }
   const checkIfWalletIsConnected = async () => {
     try {
@@ -78,17 +82,18 @@ function App() {
     }
   }
 
-  const customerBalanceHandler = async () => {
+  const getPlayerBalanceHandler = async () => {
     try {
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const bankContract = new ethers.Contract(diamondAddress, contractABI, signer);
-
-        let balance = await bankContract.getCustomerBalance();
-        setCustomerTotalBalance(utils.formatEther(balance));
+        const playerContaract = new ethers.Contract(diamondAddress, playersFacet.abi, signer);
+        let balance = await playerContaract.checkPlayerBalance();
         console.log("Retrieved balance...", balance);
-
+        setPlayerBalance({
+          DAI: balance[0],
+          DAI_ETH: balance[1]
+        })
       } else {
         console.log("Ethereum object not found, install Metamask.");
         setError("Please install a MetaMask wallet to use our bank.");
@@ -108,7 +113,7 @@ function App() {
   useEffect(() => {
     checkIfWalletIsConnected();
     getbankOwnerHandler();
-    customerBalanceHandler()
+
 
   })
 
@@ -124,15 +129,15 @@ function App() {
 
         <CustomerInfo {...{
           isWalletConnected,
-          customerTotalBalance,
           customerAddress
         }} />
         <BusyBlock {...{ busy }} />
         <hr></hr>
-        <MoveMoney {...{
+        <PlayerBlock {...{
+          playerBalance,
           isWalletConnected,
           inputValue, handleInputChange,
-          customerBalanceHandler, setError, setBusy, busy
+          getPlayerBalanceHandler, setError, setBusy, busy
         }} />
       </section>
       <AdminPanel {...{

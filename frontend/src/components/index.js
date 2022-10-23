@@ -1,5 +1,5 @@
 export { CustomerInfo } from './CustomerInfo'
-export { MoveMoney } from './MoveMoney'
+export { PlayerBlock } from './PlayerBlock'
 export { BusyBlock } from './BusyBlock'
 export { ErrorBlock } from './ErrorBlock'
 export { AdminPanel } from './admin/AdminPanel'

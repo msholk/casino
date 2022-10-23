@@ -74,7 +74,7 @@ contract PlayersFacet {
         mapping(address => uint256) storage playersBalancesPr2 = s
             .cs
             .playersBalancesPr2;
-        uint256 balance = playersBalancesPr2[msg.sender];
+        uint256 balance = playersBalancesPr2[msg.sender] * 1e16;
         if (balance > 0) {
             IERC20 dai = IERC20(DAI);
             dai.approve(address(this), balance);
