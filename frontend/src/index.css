@@ -1,0 +1,48 @@
+body {
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  padding: 15px;
+}
+
+.mw-330 {
+  max-width: 330px;
+}
+
+.mw-350 {
+  max-width: 350px;
+}
+
+.mw-300 {
+  max-width: 330px;
+}
+
+.mw-50p {
+  max-width: 50%;
+}
+
+.mr-5 {
+  margin-right: 5px;
+}
+
+.pl-5 {
+  padding-left: 5px;
+}
+
+.transferGroup .walletAddress {
+  max-width: 433px;
+}
+
+.transferGroup .transferAmount {
+  max-width: 262px;
+}
+
+.addressLog {
+  font-size: 10px;
+}
+
+.textLog {
+  font-size: 12px;
+}
+
+.moveMoneyButton {
+  min-width: 196px;
+}
