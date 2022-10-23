@@ -13,7 +13,11 @@ module.exports = {
   networks: {
     hardhat: {
       chainId: 31337,
-      forking: {
+      mining: {
+        auto: false,
+        interval: 1000
+      },
+      forking_: {
         // Using Alchemy
         url: `https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z`, // url to RPC node, ${ALCHEMY_KEY} - must be your API key
         // Using Infura

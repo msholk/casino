@@ -31,4 +31,8 @@ contract AdminFacet {
         LibDiamond.enforceIsContractOwner();
         return (s.platformBalancePr18, s.platformBalancePr18 / 1e16);
     }
+
+    function isContractOwner() public view returns (bool) {
+        return LibDiamond.isContractOwner();
+    }
 }

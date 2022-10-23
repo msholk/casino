@@ -8,3 +8,13 @@ yarn add --dev @nomicfoundation/hardhat-toolbox @nomicfoundation/hardhat-network
 add helper-hardhat-config.js
 add contracts/test/VRFCoordinatorV2Mock.sol
 yarn add @chainlink/contracts --dev
+
+
+Launch the node
+yarn hardhat node
+
+Possible need to run alse before deploy:
+export NODE_OPTIONS=--openssl-legacy-provider
+
+Run to deploy
+yarn hardhat run test/deploy.js --network localhost

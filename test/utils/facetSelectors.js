@@ -28,7 +28,8 @@ const facetSelectors = {
     },
     AdminFacet: {
         'withdrawAllPlatformDAI()': null,
-        'checkPlatformBalance()': null
+        'checkPlatformBalance()': null,
+        'isContractOwner()': null
     }
 
 }

@@ -46,16 +46,18 @@ async function deployFacets(facets, deployLibraries) {
             //Deploy required libs
             if (deployLibraries) {
                 const libs2Deploy = deployLibraries[facet]
-                console.log("Will deploy libs ", libs2Deploy, "for facet ", facet)
+                if (libs2Deploy) {
+                    console.log("Will deploy libs ", libs2Deploy, "for facet ", facet)
 
-                for (let lib in libs2Deploy) {
-                    lib = libs2Deploy[lib]
-                    console.log("getContractFactory", lib)
-                    const libFactory = await ethers.getContractFactory(lib)
-                    const libDeployed = await libFactory.deploy();
-                    await libDeployed.deployed();
+                    for (let lib in libs2Deploy) {
+                        lib = libs2Deploy[lib]
+                        console.log("getContractFactory", lib)
+                        const libFactory = await ethers.getContractFactory(lib)
+                        const libDeployed = await libFactory.deploy();
+                        await libDeployed.deployed();
 
-                    libraries[lib] = libDeployed.address
+                        libraries[lib] = libDeployed.address
+                    }
                 }
             }
 

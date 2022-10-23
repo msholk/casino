@@ -61,6 +61,10 @@ library LibDiamond {
         );
     }
 
+    function isContractOwner() internal view returns (bool) {
+        return msg.sender == diamondStorage().contractOwner;
+    }
+
     event DiamondCut(
         IDiamondCut.FacetCut[] _diamondCut,
         address _init,

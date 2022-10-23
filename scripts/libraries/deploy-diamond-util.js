@@ -43,6 +43,7 @@ async function diamondDeploy({
         throw Error(`Requires only 1 map argument. ${arguments.length} arguments used.`)
     }
     facets = await diamond.deployFacets(facets, deployLibraries)
+    console.log("Deploying diamond:", diamondName)
     const diamondFactory = await ethers.getContractFactory(diamondName)
     const diamondCut = []
     console.log('--')
@@ -84,7 +85,7 @@ async function diamondDeploy({
         console.log('See block explorer app for details.')
     }
     // console.log('Transaction hash:' + deployedDiamond.deployTransaction.hash)
-    // console.log('--')
+    console.log(diamondName, "deployed at", deployedDiamond.address)
     return deployedDiamond
 }
 

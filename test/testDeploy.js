@@ -3,17 +3,13 @@ const { utils } = require("ethers");
 const { selectorsToDic } = require('./utils/utils')
 const { facetSelectors } = require('./utils/facetSelectors')
 const { networkConfig, developmentChains } = require("../helper-hardhat-config")
-const _ = require("lodash")
 const { assert, expect } = require("chai")
-const { BigNumber } = require("ethers");
 const {
     getSelectors,
     FacetCutAction,
     removeSelectors,
     findAddressPositionInFacets
 } = require('../scripts/libraries/diamond.js')
-const { deployDiamond } = require('../scripts/deployDiamond.js')
-const ZEROS18 = "000000000000000000"
 
 const { diamondInit1, getAccounts, checkFacets1, checkFacets2 } = require('./utils/utils')
 describe('DiamondTest', async function () {
