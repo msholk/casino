@@ -30,7 +30,37 @@ function App() {
     }
   }
 
-  const gotAccounts = (accounts) => {
+  const gotAccounts = async (accounts) => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const { chainId } = await provider.getNetwork()
+
+    let testErr = "Connect your wallet to hardhat"
+    if (chainId != 31337) {
+      if (error != testErr) {
+        setIsWalletConnected(false);
+        setError(testErr);
+      }
+      return
+    }
+    else if (error == testErr) {
+      setIsWalletConnected(false);
+      setError(null);
+      return
+    }
+
+    testErr = "Connect some account"
+    if (!accounts.length) {
+      if (error != testErr) {
+        setIsWalletConnected(false);
+        setError(testErr);
+      }
+      return
+    }
+    else if (error == testErr) {
+      setIsWalletConnected(false);
+      setError(null);
+      return
+    }
     if (!accounts.length) {
       setIsWalletConnected(false);
       return
@@ -52,6 +82,9 @@ function App() {
         if (!ethInitialized) {
           ethInitialized = true
           window.ethereum.on('accountsChanged', gotAccounts);
+          window.ethereum.on('chainChanged', () => {
+            window.location.reload();
+          });
         }
         getcAccounts()
       } else {
