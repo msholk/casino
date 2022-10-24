@@ -4,7 +4,7 @@ import adminAbi from "./contracts/AdminFacet.json";
 import playersFacet from "./contracts/PlayersFacet.json";
 import stakerFacet from "./contracts/StakerFacet.json";
 import adminFacet from "./contracts/AdminFacet.json";
-import _ from 'lodash';
+// import _ from 'lodash';
 import { diamondAddress } from './contracts/diamondAddress'
 import { CustomerInfo, PlayerBlock, StakerBlock, BusyBlock, ErrorBlock, AdminPanel } from './components'
 let ethInitialized
