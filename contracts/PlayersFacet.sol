@@ -89,6 +89,7 @@ contract PlayersFacet {
         vrfInfo.subscriptionId = _vrfInfo.subscriptionId;
         vrfInfo.vrfCoordinatorAddress = _vrfInfo.vrfCoordinatorAddress;
         vrfInfo.keyHash = _vrfInfo.keyHash;
+        //COORDINATOR.addConsumer(s_subscriptionId, address(this));
         //console.log(
         //     "PlayersFacet(vrfInfo.vrfCoordinatorAddress)",
         //     vrfInfo.vrfCoordinatorAddress

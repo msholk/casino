@@ -26,6 +26,7 @@
   "scripts": {
     "slither": "slither . --solc-remaps '@openzeppelin=node_modules/@openzeppelin @chainlink=node_modules/@chainlink' --exclude naming-convention,external-function,low-level-calls",
     "toolbox": "docker run -it --rm -v $PWD:/src trailofbits/eth-security-toolbox",
+    "start": "cd frontend && npm run start'",
     "lint": "solhint 'contracts/*.sol'",
     "lint:fix": "solhint 'contracts/**/*.sol' --fix",
     "format": "prettier --write .",

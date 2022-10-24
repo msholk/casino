@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import adminAbi from "./contracts/AdminFacet.json";
 import playersFacet from "./contracts/PlayersFacet.json";
 import stakerFacet from "./contracts/StakerFacet.json";
+import adminFacet from "./contracts/AdminFacet.json";
 import _ from 'lodash';
 import { diamondAddress } from './contracts/diamondAddress'
 import { CustomerInfo, PlayerBlock, StakerBlock, BusyBlock, ErrorBlock, AdminPanel } from './components'
@@ -10,13 +11,14 @@ let ethInitialized
 let lastAccountConnected = null
 function App() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
-  const [isBankerOwner, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [inputValue, setInputValue] = useState({ withdraw: "", deposit: "", bankName: "" });
   const [customerAddress, setCustomerAddress] = useState(null);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState("");
   const [playerBalance, setPlayerBalance] = useState([0, 0]);
   const [stakerBalance, setStakerBalance] = useState([0, 0]);
+  const [platformBalance, setPlatformBalance] = useState([0, 0]);
 
 
   const getcAccounts = async () => {
@@ -158,6 +160,25 @@ function App() {
       console.log(error)
     }
   }
+  const getPlatformBalanceHandler = async () => {
+    try {
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const adminContaract = new ethers.Contract(diamondAddress, adminFacet.abi, signer);
+        let balance = await adminContaract.checkPlatformBalance();
+        console.log("Retrieved staker balance...", balance);
+        setPlatformBalance({
+          balanceP18: balance.platformBalanceP18
+        })
+      } else {
+        console.log("Ethereum object not found, install Metamask.");
+        setError("Please install a MetaMask wallet to use our bank.");
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
   const handleInputChange = (event) => {
@@ -204,8 +225,8 @@ function App() {
         }} />
       </section>
       <AdminPanel {...{
-        busy, isWalletConnected, isBankerOwner,
-        handleInputChange, inputValue,
+        busy, isWalletConnected, isAdmin,
+        platformBalance, getPlatformBalanceHandler,
         setError, setBusy
       }} />
 
