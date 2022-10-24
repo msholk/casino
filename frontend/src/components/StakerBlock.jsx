@@ -1,47 +1,54 @@
 import React from "react";
 import { ethers } from "ethers";
-import PlayersFacet from "contracts/PlayersFacet.json";
+import StakerFacet from "contracts/StakerFacet.json";
 import { diamondAddress } from 'contracts/diamondAddress'
 import {
     MDBInputGroup,
     MDBBtn
 } from 'mdb-react-ui-kit';
 import _ from 'lodash'
-/*
-PlayersFacet: {
-        'checkPlayerBalance()': null,
-        'depositETH()': null,
-        'placeBet((uint256,uint8,uint8)[])': null,
-        'rawFulfillRandomWords(uint256,uint256[])': null,
-        'setVrfInfo((uint64,address,bytes32))': null,
-        'withdrawDAI()': null
-    },*/
-export class PlayerBlock extends React.PureComponent {
 
-    getDAIBalance() {
-        const { playerBalance } = this.props
-        if (!_.get(playerBalance, 'DAI')) return '0.00'
-        return playerBalance.DAI.toNumber() * 1 / 100
+/*
+StakerFacet: {
+         'checkStakerBalance()': null,
+        'stakeETH()': null,
+        'withdrawAllStakerDAI()': null
+    },*/
+export class StakerBlock extends React.PureComponent {
+
+    getStakerPerecent() {
+        const { stakerBalance } = this.props
+        if (!_.get(stakerBalance, 'stakerPercent')) return '0.00'
+        return stakerBalance.stakerPercent.toString() / 10 ** 16
     }
-    getEthPricee() {
-        const { playerBalance } = this.props
-        if (!_.get(playerBalance, 'DAI_ETH')) return '0.00'
-        return playerBalance.DAI_ETH.toNumber() * 1 / 10 ** 18
+    getHouseBalance() {
+        const { stakerBalance } = this.props
+        if (!_.get(stakerBalance, 'houseBalance')) return '0.00'
+
+        return stakerBalance.houseBalance.toNumber() / 10 ** 6
+    }
+    getStakerBalance() {
+        const { stakerBalance } = this.props
+        if (!_.get(stakerBalance, 'houseBalance')) return '0.00'
+        if (!_.get(stakerBalance, 'stakerPercent')) return '0.00'
+
+        return stakerBalance.houseBalance.mul(stakerBalance.stakerPercent).toString() / 10 ** 24
     }
     render() {
-        const { handleInputChange, inputValue, busy, isWalletConnected, playerBalance } = this.props
+        const { handleInputChange, inputValue, busy, isWalletConnected, stakerBalance } = this.props
         if (busy || !isWalletConnected) {
             return null
         }
-        console.log(playerBalance)
+        console.log(stakerBalance)
 
         return (
             <>
                 <div className="mt-1">
                     <span className="mr-5">
-                        <strong>Player balance: {this.getDAIBalance()} DAI</strong>
+                        <div><strong>Staker balance: {this.getStakerPerecent()} %</strong></div>
+                        <div><strong>House balance: {this.getHouseBalance()} DAI</strong></div>
+                        <div><strong>Staker balance: {this.getStakerBalance()} DAI</strong></div>
                     </span>
-                    <div className="fs11">1 DAI={this.getEthPricee()} ETH</div>
                 </div>
                 <section>
                     <div className="bg-white border rounded-5 p-2 mw-330">
@@ -50,15 +57,15 @@ export class PlayerBlock extends React.PureComponent {
                                 type="text"
                                 className="form-control"
                                 onChange={handleInputChange}
-                                name="player_deposit"
+                                name="stake_deposit"
                                 placeholder="0.0000 ETH"
-                                value={inputValue.player_deposit}
+                                value={inputValue.stake_deposit}
                             />
-                            <MDBBtn className="moveMoneyButton" outline onClick={(e) => { this.deposityMoneyHandler(e) }}>Deposit Money In ETH</MDBBtn>
+                            <MDBBtn className="moveMoneyButton" outline onClick={(e) => { this.StakeEthHandler(e) }}>Deposit Money In ETH</MDBBtn>
                         </MDBInputGroup>
                     </div>
                     <div className="bg-white border rounded-5 p-2 mw-330">
-                        <MDBBtn className="moveMoneyButton" outline onClick={(e) => { this.withdrawAllPlayersFunds(e) }}>Withdraw All</MDBBtn>
+                        <MDBBtn className="moveMoneyButton" outline onClick={(e) => { this.withdrawAllStakerFunds(e) }}>Withdraw All</MDBBtn>
                     </div>
 
 
@@ -68,22 +75,22 @@ export class PlayerBlock extends React.PureComponent {
         );
     }
 
-    async deposityMoneyHandler(event) {
-        const { inputValue, getPlayerBalanceHandler, setError, setBusy } = this.props
+    async StakeEthHandler(event) {
+        const { inputValue, getStakerBalanceHandler, setError, setBusy } = this.props
         try {
             event.preventDefault();
             if (window.ethereum) {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
-                const playerContract = new ethers.Contract(diamondAddress, PlayersFacet.abi, signer);
+                const stakerContract = new ethers.Contract(diamondAddress, StakerFacet.abi, signer);
 
-                const txn = await playerContract.depositETH({ value: ethers.utils.parseEther(inputValue.player_deposit) });
+                const txn = await stakerContract.stakeETH({ value: ethers.utils.parseEther(inputValue.stake_deposit) });
                 console.log("Deposting money...");
-                setBusy("Deposting money...");
+                setBusy("Staking money...");
                 await txn.wait();
                 console.log("Deposited money...done", txn.hash);
                 setBusy("Updating balance...");
-                getPlayerBalanceHandler();
+                getStakerBalanceHandler();
 
             } else {
                 console.log("Ethereum object not found, install Metamask.");
@@ -100,25 +107,25 @@ export class PlayerBlock extends React.PureComponent {
             setBusy("")
         }
     }
-    async withdrawAllPlayersFunds(event) {
-        const { getPlayerBalanceHandler, setError, setBusy } = this.props
+    async withdrawAllStakerFunds(event) {
+        const { getStakerBalanceHandler, setError, setBusy } = this.props
         try {
             event.preventDefault();
             if (window.ethereum) {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
-                const playerContract = new ethers.Contract(diamondAddress, PlayersFacet.abi, signer);
+                const stakerContract = new ethers.Contract(diamondAddress, StakerFacet.abi, signer);
 
                 let myAddress = await signer.getAddress()
                 console.log("provider signer...", myAddress);
 
-                const txn = await playerContract.withdrawDAI();
+                const txn = await stakerContract.withdrawAllStakerDAI();
                 console.log("Withdrawing money...");
                 setBusy("Withdrawing money...");
                 await txn.wait();
                 console.log("Money with drew...done", txn.hash);
                 setBusy("Updating balance...");
-                getPlayerBalanceHandler();
+                getStakerBalanceHandler();
 
             } else {
                 console.log("Ethereum object not found, install Metamask.");

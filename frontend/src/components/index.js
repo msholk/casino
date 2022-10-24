@@ -1,5 +1,6 @@
 export { CustomerInfo } from './CustomerInfo'
 export { PlayerBlock } from './PlayerBlock'
+export { StakerBlock } from './StakerBlock'
 export { BusyBlock } from './BusyBlock'
 export { ErrorBlock } from './ErrorBlock'
 export { AdminPanel } from './admin/AdminPanel'

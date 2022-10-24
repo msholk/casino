@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { ethers } from "ethers";
 import adminAbi from "./contracts/AdminFacet.json";
 import playersFacet from "./contracts/PlayersFacet.json";
+import stakerFacet from "./contracts/StakerFacet.json";
 import _ from 'lodash';
 import { diamondAddress } from './contracts/diamondAddress'
-import { CustomerInfo, PlayerBlock, BusyBlock, ErrorBlock, AdminPanel } from './components'
+import { CustomerInfo, PlayerBlock, StakerBlock, BusyBlock, ErrorBlock, AdminPanel } from './components'
 let ethInitialized
 let lastAccountConnected = null
 function App() {
@@ -15,6 +16,7 @@ function App() {
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState("");
   const [playerBalance, setPlayerBalance] = useState([0, 0]);
+  const [stakerBalance, setStakerBalance] = useState([0, 0]);
 
 
   const getcAccounts = async () => {
@@ -42,6 +44,7 @@ function App() {
     }
     lastAccountConnected = account
     getPlayerBalanceHandler()
+    getStakerBalanceHandler()
   }
   const checkIfWalletIsConnected = async () => {
     try {
@@ -82,6 +85,26 @@ function App() {
     }
   }
 
+  const getStakerBalanceHandler = async () => {
+    try {
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const stakerContaract = new ethers.Contract(diamondAddress, stakerFacet.abi, signer);
+        let balance = await stakerContaract.checkStakerBalance();
+        console.log("Retrieved staker balance...", balance);
+        setStakerBalance({
+          stakerPercent: balance.stakerPercent,
+          houseBalance: balance.newHouseBalance
+        })
+      } else {
+        console.log("Ethereum object not found, install Metamask.");
+        setError("Please install a MetaMask wallet to use our bank.");
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const getPlayerBalanceHandler = async () => {
     try {
       if (window.ethereum) {
@@ -138,6 +161,13 @@ function App() {
           isWalletConnected,
           inputValue, handleInputChange,
           getPlayerBalanceHandler, setError, setBusy, busy
+        }} />
+        <hr></hr>
+        <StakerBlock {...{
+          stakerBalance,
+          isWalletConnected,
+          inputValue, handleInputChange,
+          getStakerBalanceHandler, setError, setBusy, busy
         }} />
       </section>
       <AdminPanel {...{

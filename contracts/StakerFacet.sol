@@ -10,7 +10,6 @@ import "contracts/libraries/cashier/CashierStorageLib.sol";
 
 contract StakerFacet {
     AppStorage s;
-    uint256 constant PERCENT_PRECISION = 1E18;
 
     constructor() {
         //Set to test withoud diamond
@@ -24,26 +23,31 @@ contract StakerFacet {
         mapping(address => uint256) storage stakersPercentagesPr18 = s
             .hs
             .stakersPercentagesPr18;
-        uint256 stakerPercent = stakersPercentagesPr18[msg.sender];
-        require(stakerPercent > 0, "Your precent iz ZERO");
+        uint256 stakerPercentP18 = stakersPercentagesPr18[msg.sender];
+        require(stakerPercentP18 > 0, "Your precent iz ZERO");
         require(s.hs.houseBalanceP6 > 0, "House balance iz ZERO");
         uint256 oldBalanceP6 = s.hs.houseBalanceP6;
-        uint256 stakerOldAmount = (oldBalanceP6 * stakerPercent) /
-            PERCENT_PRECISION;
+        uint256 stakerOldAmountP6 = (oldBalanceP6 * stakerPercentP18) / 1e18;
         s.hs.houseBalanceP6 -= oldBalanceP6;
-        uint256 newBalance = s.hs.houseBalanceP6;
+        uint256 newBalanceP6 = s.hs.houseBalanceP6;
         stakersPercentagesPr18[msg.sender] = 0;
         ////////////////////////////////////
         address[] storage stakersList = s.hs.stakersList;
         uint256 stakersListCount = stakersList.length;
         for (uint256 index; index < stakersListCount; ++index) {
             address stakerAddress = stakersList[index];
-            uint256 iStakerPercent = stakersPercentagesPr18[stakerAddress];
-            uint256 iStakerOldAmount = (oldBalanceP6 * iStakerPercent) /
-                PERCENT_PRECISION;
-            uint256 stakerNewPercent = (iStakerOldAmount * PERCENT_PRECISION) /
-                newBalance;
-            stakersPercentagesPr18[stakerAddress] = stakerNewPercent;
+            if (newBalanceP6 > 0) {
+                uint256 iStakerPercentP18 = stakersPercentagesPr18[
+                    stakerAddress
+                ];
+                uint256 iStakerOldAmountP6 = (oldBalanceP6 *
+                    iStakerPercentP18) / 1e18;
+                uint256 stakerNewPercentP18 = (iStakerOldAmountP6 * 1e18) /
+                    newBalanceP6;
+                stakersPercentagesPr18[stakerAddress] = stakerNewPercentP18;
+            } else {
+                stakersPercentagesPr18[stakerAddress] = 0;
+            }
 
             // console.log(
             //     "Percent change",
@@ -54,11 +58,11 @@ contract StakerFacet {
         }
 
         ////////////////////////////////////////////////////////////////
-        require(stakerOldAmount > 0, "Your balance iz ZERO");
-        if (stakerOldAmount > 0) {
+        require(stakerOldAmountP6 > 0, "Your balance iz ZERO");
+        if (stakerOldAmountP6 > 0) {
             IERC20 dai = IERC20(DAI);
-            dai.approve(address(this), stakerOldAmount);
-            dai.transfer(msg.sender, stakerOldAmount);
+            dai.approve(address(this), stakerOldAmountP6 * 1e12);
+            dai.transfer(msg.sender, stakerOldAmountP6 * 1e12);
         }
     }
 
