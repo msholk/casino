@@ -7,6 +7,7 @@ import {
     MDBBtn
 } from 'mdb-react-ui-kit';
 import _ from 'lodash'
+import { stableCoinName, nativeCoinName } from "../constants"
 /*
 PlayersFacet: {
         'checkPlayerBalance()': null,
@@ -18,15 +19,15 @@ PlayersFacet: {
     },*/
 export class PlayerBlock extends React.PureComponent {
 
-    getDAIBalance() {
+    getStableCoinBalance() {
         const { playerBalance } = this.props
         if (!_.get(playerBalance, 'DAI')) return '0.00'
         return playerBalance.DAI.toNumber() * 1 / 100
     }
-    getEthPricee() {
+    getMaticVsUSD() {
         const { playerBalance } = this.props
         if (!_.get(playerBalance, 'DAI_ETH')) return '0.00'
-        return playerBalance.DAI_ETH.toNumber() * 1 / 10 ** 18
+        return playerBalance.DAI_ETH.toNumber() * 1 / 10 ** 8
     }
     render() {
         const { handleInputChange, inputValue, busy, isWalletConnected, playerBalance } = this.props
@@ -39,9 +40,9 @@ export class PlayerBlock extends React.PureComponent {
             <>
                 <div className="mt-1">
                     <span className="mr-5">
-                        <strong>Player balance: {this.getDAIBalance()} DAI</strong>
+                        <strong>Player balance: {this.getStableCoinBalance()} {stableCoinName}</strong>
                     </span>
-                    <div className="fs11">1 DAI={this.getEthPricee()} ETH</div>
+                    <div className="fs11">1 MATIC={this.getMaticVsUSD()} {stableCoinName}</div>
                 </div>
                 <section>
                     <div className="bg-white border rounded-5 p-2 mw-330">
@@ -51,10 +52,10 @@ export class PlayerBlock extends React.PureComponent {
                                 className="form-control"
                                 onChange={handleInputChange}
                                 name="player_deposit"
-                                placeholder="0.0000 ETH"
+                                placeholder={"0.0000 " + nativeCoinName}
                                 value={inputValue.player_deposit}
                             />
-                            <MDBBtn className="moveMoneyButton" outline onClick={(e) => { this.deposityMoneyHandler(e) }}>Deposit Money In ETH</MDBBtn>
+                            <MDBBtn className="moveMoneyButton" outline onClick={(e) => { this.playerDepositsFunds(e) }}>Deposit funds In {nativeCoinName}</MDBBtn>
                         </MDBInputGroup>
                     </div>
                     <div className="bg-white border rounded-5 p-2 mw-330">
@@ -68,7 +69,7 @@ export class PlayerBlock extends React.PureComponent {
         );
     }
 
-    async deposityMoneyHandler(event) {
+    async playerDepositsFunds(event) {
         const { inputValue, getPlayerBalanceHandler, setError, setBusy } = this.props
         try {
             event.preventDefault();
@@ -77,7 +78,7 @@ export class PlayerBlock extends React.PureComponent {
                 const signer = provider.getSigner();
                 const playerContract = new ethers.Contract(diamondAddress, PlayersFacet.abi, signer);
 
-                const txn = await playerContract.depositETH({ value: ethers.utils.parseEther(inputValue.player_deposit) });
+                const txn = await playerContract.depositETH({ value: ethers.utils.parseEther(inputValue.player_deposit), gasLimit: 5000000 });
                 console.log("Deposting money...");
                 setBusy("Deposting money...");
                 await txn.wait();

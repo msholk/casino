@@ -5,66 +5,62 @@ import "contracts/libraries/UniswapV2.sol";
 import "hardhat/console.sol";
 
 library LibHLP {
-    function LockAmountFromHouse(
-        HouseStorage storage hs,
-        uint256 lockHouseAmountP0
-    ) internal {
-        uint256 lockHouseAmountP6 = lockHouseAmountP0 * 1e6;
-        require(
-            hs.houseBalanceP6 >= lockHouseAmountP6,
-            "House balance is insufficient"
-        );
+  function LockAmountFromHouse(HouseStorage storage hs, uint256 lockHouseAmount)
+    internal
+  {
+    uint256 lockHouseAmount = lockHouseAmount * 1e6;
+    require(
+      hs.houseBalance >= lockHouseAmount,
+      "House balance is insufficient"
+    );
 
-        hs.houseBalanceP6 -= lockHouseAmountP6;
-        hs.houseLockedBalanceP2 += lockHouseAmountP0 * 1e2;
-    }
+    hs.houseBalance -= lockHouseAmount;
+    hs.houseLockedBalance += lockHouseAmount * 1e2;
+  }
 
-    function UnlockBalances(
-        HouseStorage storage hs,
-        uint256 lockedHouseAmountP0
-    ) internal {
-        uint256 lockedHouseAmountP6 = lockedHouseAmountP0 * 1e6;
-        hs.houseBalanceP6 += lockedHouseAmountP6;
-        hs.houseLockedBalanceP2 -= lockedHouseAmountP0 * 1e2;
-    }
+  function UnlockBalances(HouseStorage storage hs, uint256 lockedHouseAmount)
+    internal
+  {
+    uint256 lockedHouseAmount = lockedHouseAmount * 1e6;
+    hs.houseBalance += lockedHouseAmount;
+    hs.houseLockedBalance -= lockedHouseAmount * 1e2;
+  }
 
-    function transferFromHouse2Cashier(AppStorage storage s, uint256 payDiffP0)
-        internal
-    {
-        //Amount goform  HLP goes to Cashier
-        //We take PLAYER_WINS_COMISSION
-        uint256 PLAYER_WINS_COMISSION = 3; //0.0003 0.03%
-        uint256 ourComissionP18 = (PLAYER_WINS_COMISSION * payDiffP0 * 1e18) /
-            1e4; //add precision
+  function transferFromHouse2Cashier(AppStorage storage s, uint256 payDiff)
+    internal
+  {
+    //Amount goform  HLP goes to Cashier
+    //We take PLAYER_WINS_COMISSION
+    uint256 PLAYER_WINS_COMISSION = 3; //0.0003 0.03%
+    uint256 ourComission = (PLAYER_WINS_COMISSION * payDiff * 1e18) / 1e4; //add precision
 
-        s.platformBalancePr18 += ourComissionP18;
-        uint256 removeFromHouseP6 = (payDiffP0 * 1e6 + ourComissionP18 / 1e12);
-        // console.log("ourComissionP18", ourComissionP18);
-        // console.log("ourComissionP18/14", ourComissionP18 / 1e14);
-        // console.log("removeFromHouseP6", removeFromHouseP6);
-        // console.log(s.hs.houseBalanceP6, removeFromHouseP6);
-        s.hs.houseBalanceP6 -= removeFromHouseP6;
-        // console.log(
-        //     "ourComissionP18",
-        //     ourComissionP18,
-        //     payDiffP0,
-        //     PLAYER_WINS_COMISSION
-        // );
-        // console.log(s.hs.houseBalanceP6, removeFromHouseP6);
-    }
+    s.platformBalance += ourComission;
+    uint256 removeFromHouse = (payDiff * 1e6 + ourComission / 1e12);
+    // console.log("ourComission", ourComission);
+    // console.log("ourComission/14", ourComission / 1e14);
+    // console.log("removeFromHouse", removeFromHouse);
+    // console.log(s.hs.houseBalance, removeFromHouse);
+    s.hs.houseBalance -= removeFromHouse;
+    // console.log(
+    //     "ourComission",
+    //     ourComission,
+    //     payDiff,
+    //     PLAYER_WINS_COMISSION
+    // );
+    // console.log(s.hs.houseBalance, removeFromHouse);
+  }
 
-    function transferFromCashierToHouse(AppStorage storage s, uint256 payDiffP0)
-        internal
-    {
-        uint256 PLAYER_LOSE_COMISSION = 26; //0.0026 0.26%
-        //Amount goform Cashier goes to HLP
-        //We take PLAYER_LOSE_COMISSION
-        uint256 payDiffP18 = payDiffP0 * 1e18; //add precision
-        uint256 ourComissionP18 = (PLAYER_LOSE_COMISSION * payDiffP18) / 1e4; //add precision
-        s.platformBalancePr18 += ourComissionP18;
-        uint256 payDiffP6 = (payDiffP18 - ourComissionP18) / 1e12;
-        s.hs.houseBalanceP6 += payDiffP6; //transfer from Cahsier to HLP
-
-        //console.log(payDiffP0, payDiffP18, ourComissionP18, payDiffP6);
-    }
+  function transferFromCashierToHouse(AppStorage storage s, uint256 payDiff)
+    internal
+  {
+    // uint256 PLAYER_LOSE_COMISSION = 26; //0.0026 0.26%
+    // //Amount goform Cashier goes to HLP
+    // //We take PLAYER_LOSE_COMISSION
+    // uint256 payDiff = payDiff * 1e18; //add precision
+    // uint256 ourComission = (PLAYER_LOSE_COMISSION * payDiff) / 1e4; //add precision
+    // s.platformBalance += ourComission;
+    // uint256 payDiff = (payDiff - ourComission) / 1e12;
+    // s.hs.houseBalance += payDiff; //transfer from Cahsier to HLP
+    //console.log(payDiff, payDiff, ourComission, payDiff);
+  }
 }

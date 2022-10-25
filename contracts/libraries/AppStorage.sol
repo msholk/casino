@@ -5,8 +5,8 @@ import "contracts/libraries/house/HouseStorage.sol";
 import "contracts/libraries/roulette/RouletCroupierStorage.sol";
 
 struct AppStorage {
-    CashierStorage cs;
-    HouseStorage hs;
-    RouletCroupierStorage rcs;
-    uint256 platformBalancePr18;
+  CashierStorage cs;
+  HouseStorage hs;
+  RouletCroupierStorage rcs;
+  uint256 platformBalance;
 }

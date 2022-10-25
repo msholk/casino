@@ -11,10 +11,18 @@ yarn add @chainlink/contracts --dev
 
 
 Launch the node
-yarn hardhat node
+yarn hardhat node --fork https://polygon-mumbai.g.alchemy.com/v2/Pa82fzNJ4JO3TxJbwjhpqyoIw_m8uRnR
 
 Possible need to run alse before deploy:
 export NODE_OPTIONS=--openssl-legacy-provider
 
 Run to deploy
 yarn hardhat run test/deploy.js --network localhost
+yarn hardhat run test/deploy.js --network mumbai
+yarn hardhat run test/testStaker.js --network mumbai
+yarn hardhat run test/testLink.js --network localhost
+
+
+Staker
+yarn testStaker
+yarn hardhat run test/deployStaker.js --network mumbai

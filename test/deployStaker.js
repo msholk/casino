@@ -2,22 +2,7 @@ const { diamondInit1 } = require("./utils/utils");
 async function main() {
   await deployStakerFacet();
 }
-async function deployDiamond() {
-  await hre.network.provider.send("hardhat_reset");
-  const res = await diamondInit1();
-  const { diamondAddress } = res;
-  const admin = await ethers.getContractAt("AdminFacet", diamondAddress);
-  const resIsContractOwner = await admin.isContractOwner();
-  console.log("resIsContractOwner", resIsContractOwner);
 
-  await saveDiamondAddress(diamondAddress);
-  await copyArtifacts();
-
-  const [deployer] = await ethers.getSigners();
-
-  console.log("Deploying contracts with the account:", deployer.address);
-  console.log("Account balance:", (await deployer.getBalance()).toString());
-}
 async function deployStakerFacet() {
   const facet = "StakerFacet";
   const facetFactory = await ethers.getContractFactory(facet, {
@@ -30,25 +15,6 @@ async function deployStakerFacet() {
   saveDiamondAddress(deployedFactory.address);
 }
 
-async function copyArtifacts() {
-  const fs = require("fs");
-  fs.copyFileSync(
-    "./artifacts/contracts/PlayersFacet.sol/PlayersFacet.json",
-    "./frontend/src/contracts/PlayersFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/StakerFacet.sol/StakerFacet.json",
-    "./frontend/src/contracts/StakerFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/AdminFacet.sol/AdminFacet.json",
-    "./frontend/src/contracts/AdminFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/diamond/facets/DiamondLoupeFacet.sol/DiamondLoupeFacet.json",
-    "./frontend/src/contracts/DiamondLoupeFacet.json"
-  );
-}
 async function saveDiamondAddress(addr) {
   const fs = require("fs");
   const content = `export const diamondAddress = '${addr}';`;

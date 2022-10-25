@@ -2,8 +2,10 @@ import React from 'react';
 import _ from 'lodash'
 
 import {
-    MDBNavbarBrand,
+    MDBNavbarBrand, MDBBtn
 } from 'mdb-react-ui-kit';
+
+import { stableCoinName, nativeCoinName } from "../../constants"
 /*
 dminFacet: {
         'withdrawAllPlatformDAI()': null,
@@ -30,6 +32,9 @@ export class AdminPanel extends React.PureComponent {
             getPlatformBalanceHandler()
         }
     }
+    withdrawAllStakerFunds() {
+
+    }
     render() {
         const { busy, isWalletConnected, isAdmin, platformBalance } = this.props
         console.log("platformBalance", platformBalance)
@@ -45,12 +50,12 @@ export class AdminPanel extends React.PureComponent {
                 <MDBNavbarBrand href='#'>Admin Panel</MDBNavbarBrand>
                 <div className="mt-1">
                     <span className="mr-5">
-                        <div><strong>Platform balance: {this.getPlatformBalance()} DAI</strong></div>
+                        <div><strong>Platform balance: {this.getPlatformBalance()} {stableCoinName}</strong></div>
                     </span>
                 </div>
 
-                <div>
-                    'withdrawAllPlatformDAI()': null,
+                <div className="bg-white border rounded-5 p-2 mw-330">
+                    <MDBBtn className="moveMoneyButton" outline onClick={(e) => { this.withdrawAllStakerFunds(e) }}>Withdraw All</MDBBtn>
                 </div>
 
             </>
