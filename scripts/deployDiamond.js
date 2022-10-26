@@ -18,10 +18,11 @@ async function deployDiamond() {
       "PlayersFacet",
       "StakerFacet",
       "AdminFacet",
+      "RouletteFacet",
     ],
     args: [account],
     deployLibraries: {
-      //PlayersFacet: ["LibRulette"]
+      RouletteFacet: ["LibRulette"],
     },
     // excludes: {
     //     ERC721Facet: [

@@ -42,3 +42,8 @@ yarn hardhat run test/deployVRF.js --network mumbai
 
 Roulette only
 yarn hardhat run test/deployRoulette.js --network mumbai
+
+
+Deploy diamond
+yarn hardhat run test/deploy.js --network mumbai
+
