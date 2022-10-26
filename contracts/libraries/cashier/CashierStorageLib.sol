@@ -10,11 +10,11 @@ library CashierStorageLib {
     address playerAddress
   ) internal {
     uint256 totalBetSum = totalBetSum * 1e2;
-    uint256 playerBalance = cs.playersBalancesPr2[playerAddress];
+    uint256 playerBalance = cs.playersBalances[playerAddress];
     require(playerBalance >= totalBetSum, "Balance is insufficient");
     cs.playersLockedBalances[playerAddress] += totalBetSum;
 
-    cs.playersBalancesPr2[playerAddress] -= totalBetSum;
+    cs.playersBalances[playerAddress] -= totalBetSum;
   }
 
   function UnlockBetAmount(

@@ -1,0 +1,404 @@
+{
+    "sources": {
+        "/Volumes/Data/Ethererum/casino/contracts/libraries/constants.sol": {
+            "ast": {
+                "absolutePath": "/Volumes/Data/Ethererum/casino/contracts/libraries/constants.sol",
+                "exportedSymbols": {
+                    "DAI": [
+                        7
+                    ],
+                    "DAI_ETH": [
+                        10
+                    ],
+                    "NATIVE_COIN": [
+                        19
+                    ],
+                    "NATIVE_TO_STABLE": [
+                        25
+                    ],
+                    "STABLE_COIN": [
+                        22
+                    ],
+                    "UNISWAP_V2_ROUTER": [
+                        13
+                    ],
+                    "UNISWAP_V3_ROUTER": [
+                        16
+                    ],
+                    "WETH": [
+                        4
+                    ]
+                },
+                "id": 26,
+                "license": "MIT",
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "id": 1,
+                        "literals": [
+                            "solidity",
+                            "0.8",
+                            ".9"
+                        ],
+                        "nodeType": "PragmaDirective",
+                        "src": "32:22:0"
+                    },
+                    {
+                        "constant": true,
+                        "id": 4,
+                        "mutability": "constant",
+                        "name": "WETH",
+                        "nameLocation": "671:4:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 26,
+                        "src": "654:66:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                        },
+                        "typeName": {
+                            "id": 2,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "654:7:0",
+                            "stateMutability": "nonpayable",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            }
+                        },
+                        "value": {
+                            "hexValue": "307839633343393238334433653434383534363937436432324433466161323430436662303332383839",
+                            "id": 3,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "678:42:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            },
+                            "value": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889"
+                        },
+                        "visibility": "internal"
+                    },
+                    {
+                        "constant": true,
+                        "id": 7,
+                        "mutability": "constant",
+                        "name": "DAI",
+                        "nameLocation": "749:3:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 26,
+                        "src": "732:65:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                        },
+                        "typeName": {
+                            "id": 5,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "732:7:0",
+                            "stateMutability": "nonpayable",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            }
+                        },
+                        "value": {
+                            "hexValue": "307865366238613543463835343739313431326331663645464337434166363239663544663163373437",
+                            "id": 6,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "755:42:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            },
+                            "value": "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747"
+                        },
+                        "visibility": "internal"
+                    },
+                    {
+                        "constant": true,
+                        "id": 10,
+                        "mutability": "constant",
+                        "name": "DAI_ETH",
+                        "nameLocation": "823:7:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 26,
+                        "src": "806:69:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                        },
+                        "typeName": {
+                            "id": 8,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "806:7:0",
+                            "stateMutability": "nonpayable",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            }
+                        },
+                        "value": {
+                            "hexValue": "307864304435653344423434444530354539463239344242306133624545614630333044453234416461",
+                            "id": 9,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "833:42:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            },
+                            "value": "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
+                        },
+                        "visibility": "internal"
+                    },
+                    {
+                        "constant": true,
+                        "id": 13,
+                        "mutability": "constant",
+                        "name": "UNISWAP_V2_ROUTER",
+                        "nameLocation": "908:17:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 26,
+                        "src": "891:79:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                        },
+                        "typeName": {
+                            "id": 11,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "891:7:0",
+                            "stateMutability": "nonpayable",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            }
+                        },
+                        "value": {
+                            "hexValue": "307845353932343237413041456365393244653345646565314631384530313537433035383631353634",
+                            "id": 12,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "928:42:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            },
+                            "value": "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+                        },
+                        "visibility": "internal"
+                    },
+                    {
+                        "constant": true,
+                        "id": 16,
+                        "mutability": "constant",
+                        "name": "UNISWAP_V3_ROUTER",
+                        "nameLocation": "989:17:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 26,
+                        "src": "972:79:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                        },
+                        "typeName": {
+                            "id": 14,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "972:7:0",
+                            "stateMutability": "nonpayable",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            }
+                        },
+                        "value": {
+                            "hexValue": "307845353932343237413041456365393244653345646565314631384530313537433035383631353634",
+                            "id": 15,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "1009:42:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            },
+                            "value": "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+                        },
+                        "visibility": "internal"
+                    },
+                    {
+                        "constant": true,
+                        "id": 19,
+                        "mutability": "constant",
+                        "name": "NATIVE_COIN",
+                        "nameLocation": "1071:11:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 26,
+                        "src": "1054:73:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                        },
+                        "typeName": {
+                            "id": 17,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1054:7:0",
+                            "stateMutability": "nonpayable",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            }
+                        },
+                        "value": {
+                            "hexValue": "307839633343393238334433653434383534363937436432324433466161323430436662303332383839",
+                            "id": 18,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "1085:42:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            },
+                            "value": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889"
+                        },
+                        "visibility": "internal"
+                    },
+                    {
+                        "constant": true,
+                        "id": 22,
+                        "mutability": "constant",
+                        "name": "STABLE_COIN",
+                        "nameLocation": "1156:11:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 26,
+                        "src": "1139:73:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                        },
+                        "typeName": {
+                            "id": 20,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1139:7:0",
+                            "stateMutability": "nonpayable",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            }
+                        },
+                        "value": {
+                            "hexValue": "307865366238613543463835343739313431326331663645464337434166363239663544663163373437",
+                            "id": 21,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "1170:42:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            },
+                            "value": "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747"
+                        },
+                        "visibility": "internal"
+                    },
+                    {
+                        "constant": true,
+                        "id": 25,
+                        "mutability": "constant",
+                        "name": "NATIVE_TO_STABLE",
+                        "nameLocation": "1238:16:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 26,
+                        "src": "1221:78:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                        },
+                        "typeName": {
+                            "id": 23,
+                            "name": "address",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1221:7:0",
+                            "stateMutability": "nonpayable",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            }
+                        },
+                        "value": {
+                            "hexValue": "307864304435653344423434444530354539463239344242306133624545614630333044453234416461",
+                            "id": 24,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "1257:42:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                            },
+                            "value": "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
+                        },
+                        "visibility": "internal"
+                    }
+                ],
+                "src": "32:1283:0"
+            },
+            "id": 0
+        }
+    }
+}

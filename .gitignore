@@ -31,3 +31,10 @@ typechain-types
 cache
 artifacts
 __archive
+bin/contracts/VRFFacet-solc-output.json
+bin/contracts/VRFFacet.abi
+bin/contracts/VRFFacet.bin
+bin/contracts/VRFFacet.json
+bin/contracts/VRFFacetMumbaiConstants.abi
+bin/contracts/VRFFacetMumbaiConstants.bin
+bin/contracts/VRFFacetMumbaiConstants.json

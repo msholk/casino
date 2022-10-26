@@ -23,6 +23,15 @@ yarn hardhat run test/testStaker.js --network mumbai
 yarn hardhat run test/testLink.js --network localhost
 
 
-Staker
+Staker only
 yarn testStaker
 yarn hardhat run test/deployStaker.js --network mumbai
+
+Admin only
+yarn hardhat run test/deployAdmin.js --network mumbai
+
+
+Player only
+yarn testPlayer
+yarn hardhat run test/deployPlayer.js --network mumbai
+yarn testPlayer //requires mumbai forking

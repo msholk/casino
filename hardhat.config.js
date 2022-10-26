@@ -7,6 +7,7 @@ const MUMBAI_RPC = process.env.MUMBAI_RPC;
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.9",
+  defaultNetwork: "hardhat",
   gasReporter: {
     currency: "EUR",
     gasPrice: 21,
@@ -27,7 +28,7 @@ module.exports = {
       //   auto: false,
       //   interval: 3000
       // },
-      forking_: {
+      forking: {
         // Using Alchemy
         //url: `https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z`, // url to RPC node, ${ALCHEMY_KEY} - must be your API key
         url: `https://polygon-mumbai.g.alchemy.com/v2/Pa82fzNJ4JO3TxJbwjhpqyoIw_m8uRnR`, // url to RPC node, ${ALCHEMY_KEY} - must be your API key

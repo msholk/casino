@@ -9,4 +9,5 @@ struct AppStorage {
   HouseStorage hs;
   RouletCroupierStorage rcs;
   uint256 platformBalance;
+  bool locked;
 }

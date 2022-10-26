@@ -258,8 +258,9 @@ describe("DiamondTest", async function () {
           diamondAddress
         );
 
-        await expect(player.depositETH({ value: utils.parseEther("1.0") })).not
-          .to.be.reverted;
+        await expect(
+          player.depositToCashier({ value: utils.parseEther("1.0") })
+        ).not.to.be.reverted;
 
         let bal = await player.checkPlayerBalance();
         // console.log("Player balance", bal, 1269.96)

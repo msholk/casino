@@ -160,23 +160,23 @@ function App() {
     }
   };
   const getPlayerBalanceHandler = async () => {
-    {
-      return;
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const diamond = new ethers.Contract(
-        diamondAddress,
-        DiamondLoupeFacet.abi,
-        signer
-      );
-      /*  'facetAddress(bytes4)': null,
-              'facetAddresses()': null,
-              'facetFunctionSelectors(address)': null,
-              'facets()': null,
-              'supportsInterface(bytes4)': null*=*/
-      const facets = await diamond.facets();
-      console.log(facets);
-    }
+    // {
+    //   return;
+    //   const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //   const signer = provider.getSigner();
+    //   const diamond = new ethers.Contract(
+    //     diamondAddress,
+    //     DiamondLoupeFacet.abi,
+    //     signer
+    //   );
+    //   /*  'facetAddress(bytes4)': null,
+    //           'facetAddresses()': null,
+    //           'facetFunctionSelectors(address)': null,
+    //           'facets()': null,
+    //           'supportsInterface(bytes4)': null*=*/
+    //   const facets = await diamond.facets();
+    //   console.log(facets);
+    // }
 
     try {
       if (window.ethereum) {
@@ -190,8 +190,8 @@ function App() {
         let balance = await playerContract.checkPlayerBalance();
         console.log("Retrieved balance...", balance);
         setPlayerBalance({
-          DAI: balance[0],
-          DAI_ETH: balance[1],
+          playerBalance: balance.playerBalance,
+          priceInStable: balance.priceInStable,
         });
       } else {
         console.log("Ethereum object not found, install Metamask.");

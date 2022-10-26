@@ -36,11 +36,13 @@
     "testDeploy": "npx hardhat test test/testDeploy.js --network hardhat ",
     "testDiamondStaker": "npx hardhat test test/testDiamondStaker.js --network hardhat ",
     "testStaker": "npx hardhat test test/testStaker.js  ",
+    "testPlayer": "npx hardhat test test/testPlayer.js  ",
     "testr": "hardhat test test/unit/R*.spec.js",
     "forge1": "forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z   --fork-block-number 15756971 --match-contract Pl --match-test testIncrement ",
     "forge2": "forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z  -vvvvv --fork-block-number 15756971 --match-contract Pl --match-test testIncrement ",
     "forge3": "forge test --fork-url https://eth-goerli.g.alchemy.com/v2/BP2byr5neXbvtI2TBhjWdaN14zPc4n2c   --fork-block-number 7778600 --match-contract Pl --match-test testIncrement ",
-    "forge4": "forge test --fork-url https://eth-goerli.g.alchemy.com/v2/BP2byr5neXbvtI2TBhjWdaN14zPc4n2c  -vvvvv --fork-block-number 7778600 --match-contract Pl --match-test testIncrement "
+    "forge4": "forge test --fork-url https://eth-goerli.g.alchemy.com/v2/BP2byr5neXbvtI2TBhjWdaN14zPc4n2c  -vvvvv --fork-block-number 7778600 --match-contract Pl --match-test testIncrement ",
+    "front": "npm run start"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",

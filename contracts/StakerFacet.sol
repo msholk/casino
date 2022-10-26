@@ -21,13 +21,12 @@ interface IStakerFacet {
 
 contract StakerFacet is IStakerFacet {
   AppStorage s;
-  bool internal locked;
 
   modifier noReentrant() {
-    require(!locked, "No re-entrancy");
-    locked = true;
+    require(!s.locked, "No re-entrancy");
+    s.locked = true;
     _;
-    locked = false;
+    s.locked = false;
   }
 
   constructor() {
