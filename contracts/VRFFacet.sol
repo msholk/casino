@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 //  https://vrf.chain.link/mumbai/2190
 //published at 0xc64af37e244960fc5d0f39596512c89ae6c82659
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import "contracts/libraries/AppStorage.sol";
 
 contract VRFFacetMumbaiConstants {
   error OnlyCoordinatorCanFulfill(address have, address want);
@@ -25,8 +26,7 @@ contract VRFFacetMumbaiConstants {
 }
 
 contract VRFFacet is VRFFacetMumbaiConstants {
-  mapping(address => uint256) requests;
-  mapping(uint256 => uint256) requests_rand;
+  AppStorage s;
 
   // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF
   // proof. rawFulfillRandomness then calls fulfillRandomness, after validating
@@ -54,18 +54,18 @@ contract VRFFacet is VRFFacetMumbaiConstants {
       numWords
     );
 
-    requests[msg.sender] = s_requestId;
+    s.vrf.requests[msg.sender] = s_requestId;
     // requests_sender[s_requestId] = msg.sender;
   }
 
   function getReqID() public view returns (uint256) {
-    return requests[msg.sender];
+    return s.vrf.requests[msg.sender];
   }
 
   function getRnd() public view returns (uint256) {
-    uint256 reqId = requests[msg.sender];
+    uint256 reqId = s.vrf.requests[msg.sender];
     if (reqId == 0) return 333; //no request is made for sender
-    uint256 rndNum = requests_rand[reqId];
+    uint256 rndNum = s.vrf.requests_rand[reqId];
     if (rndNum == 0) return 334; //request is made, waiting for chainlink
     return rndNum;
   }
@@ -74,6 +74,6 @@ contract VRFFacet is VRFFacetMumbaiConstants {
     internal
   {
     // s_randomWords = randomWords;
-    requests_rand[requestId] = randomWords[0];
+    s.vrf.requests_rand[requestId] = randomWords[0];
   }
 }
