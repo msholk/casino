@@ -104,7 +104,7 @@ describe("DiamondTest", async function () {
     const player = await ethers.getContractAt("PlayersFacet", diamondAddress);
 
     const { subscriptionId, vrfCoordinatorAddress, keyHash } = vrfInfo;
-    await player.setVrfInfo({ subscriptionId, vrfCoordinatorAddress, keyHash });
+    //await player.setVrfInfo({ subscriptionId, vrfCoordinatorAddress, keyHash });
   });
 
   describe("Diamond initialization", async () => {
@@ -235,10 +235,10 @@ describe("DiamondTest", async function () {
   });
 
   describe("Deposits and Staking", async () => {
-    // it("Check contracts's balance is zero", async () => {
-    //     let bal = await TokensMock.daiBalanceOf(diamondAddress)
-    //     expect(bal).eq(0)
-    // })
+    it("Check contracts's balance is zero", async () => {
+      let bal = await TokensMock.daiBalanceOf(diamondAddress);
+      expect(bal).eq(0);
+    });
     describe("Player`s deposits", async () => {
       it("Check player balance is zero ", async () => {
         const player = await ethers.getContractAt(
@@ -263,11 +263,10 @@ describe("DiamondTest", async function () {
         ).not.to.be.reverted;
 
         let bal = await player.checkPlayerBalance();
-        // console.log("Player balance", bal, 1269.96)
-        expect(bal[0]).eq(1269.96 * 100); //precision 2
+        expect(bal[0]).eq(utils.parseEther("1.0"));
 
-        bal = await TokensMock.daiBalanceOf(diamondAddress);
-        expect(bal).eq(utils.parseEther("1269.962651640579957603")); //precision 18
+        bal = await ethers.provider.getBalance(diamondAddress);
+        expect(bal).eq(utils.parseEther("1.0"));
       });
     });
 
@@ -280,13 +279,13 @@ describe("DiamondTest", async function () {
         await expect(staker.stakeETH({ value: utils.parseEther("100.0") })).not
           .to.be.reverted;
 
-        let bal = await TokensMock.daiBalanceOf(diamondAddress);
-        expect(bal).eq(utils.parseEther("125878.216902836847393662")); //precision 18
+        let bal = await ethers.provider.getBalance(diamondAddress);
+        expect(bal).eq(utils.parseEther("101.0")); //precision 18
 
         bal = await staker.checkStakerBalance();
         // console.log(bal)
         expect(bal.stakerPercent).eq(utils.parseEther("1")); //1 means 100%
-        expect(bal.newHouseBalance).eq(124608.254251 * 1000000); //1 means 100%
+        expect(bal.newHouseBalance).eq(utils.parseEther("100.0")); //1 means 100%
       });
       it("Staker1 stakes: 50ETH", async () => {
         const staker = await ethers.getContractAt(
@@ -300,8 +299,8 @@ describe("DiamondTest", async function () {
         ).not.to.be.reverted;
       });
       it("Check diamond balance increased", async () => {
-        let bal = await TokensMock.daiBalanceOf(diamondAddress);
-        expect(bal).eq(utils.parseEther("186455.148901922781502314")); //precision 18
+        let bal = await ethers.provider.getBalance(diamondAddress);
+        expect(bal).eq(utils.parseEther("151")); //precision 18
       });
       it("The first staker should have some 66%", async () => {
         const staker = await ethers.getContractAt(
@@ -310,8 +309,8 @@ describe("DiamondTest", async function () {
         );
         let bal = await staker.checkStakerBalance();
         //console.log(bal)
-        expect(bal.stakerPercent).eq(utils.parseEther("0.672884569086313728")); //1 means 100%
-        expect(bal.newHouseBalance).eq(185185.18625 * 1000000); //1 means 100%
+        expect(bal.stakerPercent).eq(utils.parseEther("0.666666666666666667")); //1 means 100%
+        expect(bal.newHouseBalance).eq(utils.parseEther("150")); //1 means 100%
       });
       it("The second staker should have some 33%", async () => {
         const staker = await ethers.getContractAt(
@@ -320,12 +319,12 @@ describe("DiamondTest", async function () {
         );
         let bal = await staker.connect(signers[1]).checkStakerBalance();
         //console.log(bal)
-        expect(bal.stakerPercent).eq(utils.parseEther("0.327115430913686272")); //1 means 100%
-        expect(bal.newHouseBalance).eq(185185.18625 * 1000000); //1 means 100%
+        expect(bal.stakerPercent).eq(utils.parseEther("0.333333333333333333")); //1 means 100%
+        expect(bal.newHouseBalance).eq(utils.parseEther("150")); //1 means 100%
       });
     });
   });
-  describe("Playing", async () => {
+  xdescribe("Playing", async () => {
     let playerBalance;
     let houseBalance;
     let requestId = 1;
@@ -498,7 +497,7 @@ describe("DiamondTest", async function () {
       });
     });
   });
-  describe("Platformadmin", async () => {
+  xdescribe("Platformadmin", async () => {
     let playerBalance;
 
     it("Check platfrom balance is 2.67", async () => {

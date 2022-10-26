@@ -34,7 +34,7 @@
     "format": "prettier --write .",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js",
     "testDeploy": "npx hardhat test test/testDeploy.js --network hardhat ",
-    "testDiamondStaker": "npx hardhat test test/testDiamondStaker.js --network hardhat ",
+    "testDiamond": "npx hardhat test test/testDiamond.js --network hardhat ",
     "testStaker": "npx hardhat test test/testStaker.js  ",
     "testPlayer": "npx hardhat test test/testPlayer.js  ",
     "testr": "hardhat test test/unit/R*.spec.js",

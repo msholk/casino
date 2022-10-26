@@ -16,10 +16,10 @@ const facetSelectors = {
   PlayersFacet: {
     "checkPlayerBalance()": null,
     "depositToCashier()": null,
-    "placeBet((uint256,uint8,uint8)[])": null,
-    "rawFulfillRandomWords(uint256,uint256[])": null,
-    "setVrfInfo((uint64,address,bytes32))": null,
-    "withdrawDAI()": null,
+    // "placeBet((uint256,uint8,uint8)[])": null,
+    // "rawFulfillRandomWords(uint256,uint256[])": null,
+    // "setVrfInfo((uint64,address,bytes32))": null,
+    "withdrawPlayerBalance()": null,
   },
   StakerFacet: {
     "checkStakerBalance()": null,
@@ -27,7 +27,7 @@ const facetSelectors = {
     "withdrawAllStakerDAI()": null,
   },
   AdminFacet: {
-    "withdrawAllPlatformDAI()": null,
+    "withdrawAllPlatformFunds()": null,
     "checkPlatformBalance()": null,
     "isContractOwner()": null,
   },
