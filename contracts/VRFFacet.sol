@@ -64,8 +64,10 @@ contract VRFFacet is VRFFacetMumbaiConstants {
 
   function getRnd() public view returns (uint256) {
     uint256 reqId = requests[msg.sender];
-    if (reqId == 0) return 333;
-    return requests_rand[reqId];
+    if (reqId == 0) return 333; //no request is made for sender
+    uint256 rndNum = requests_rand[reqId];
+    if (rndNum == 0) return 334; //request is made, waiting for chainlink
+    return rndNum;
   }
 
   function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords)
