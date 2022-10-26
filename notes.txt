@@ -39,3 +39,6 @@ yarn testPlayer //requires mumbai forking
 
 VRF only
 yarn hardhat run test/deployVRF.js --network mumbai
+
+Roulette only
+yarn hardhat run test/deployRoulette.js --network mumbai
