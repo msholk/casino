@@ -1,11 +1,11 @@
 const { diamondInit1 } = require("./utils/utils");
 async function main() {
-  await deployStakerFacet();
+  await deployAdminFacet();
   await copyArtifacts();
 }
 
-async function deployStakerFacet() {
-  const facet = "StakerFacet";
+async function deployAdminFacet() {
+  const facet = "AdminFacet";
   const facetFactory = await ethers.getContractFactory(facet, {
     libraries: {},
   });
@@ -15,27 +15,6 @@ async function deployStakerFacet() {
   console.log(`${facet} deployed: ${deployedFactory.address}`);
   saveDiamondAddress(deployedFactory.address);
 }
-
-async function saveDiamondAddress(addr) {
-  const fs = require("fs");
-  const content = `export const diamondAddress = '${addr}';`;
-  try {
-    const diamondAddressPath = "./frontend/src/contracts/diamondAddress.js";
-    fs.writeFileSync(diamondAddressPath, content);
-    // file written successfully
-    console.log(
-      "Diamond address saved to",
-      diamondAddressPath,
-      "as\n",
-      content
-    );
-  } catch (err) {
-    console.error(err);
-  }
-  // console.log('AdminFacet deployed to:', AdminFacet.address);
-  console.log("Diamond deployed to:", addr);
-}
-
 async function copyArtifacts() {
   const fs = require("fs");
   fs.copyFileSync(
@@ -54,6 +33,25 @@ async function copyArtifacts() {
     "./artifacts/contracts/diamond/facets/DiamondLoupeFacet.sol/DiamondLoupeFacet.json",
     "./frontend/src/contracts/DiamondLoupeFacet.json"
   );
+}
+async function saveDiamondAddress(addr) {
+  const fs = require("fs");
+  const content = `export const diamondAddress = '${addr}';`;
+  try {
+    const diamondAddressPath = "./frontend/src/contracts/diamondAddress.js";
+    fs.writeFileSync(diamondAddressPath, content);
+    // file written successfully
+    console.log(
+      "Diamond address saved to",
+      diamondAddressPath,
+      "as\n",
+      content
+    );
+  } catch (err) {
+    console.error(err);
+  }
+  // console.log('AdminFacet deployed to:', AdminFacet.address);
+  console.log("Diamond deployed to:", addr);
 }
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.

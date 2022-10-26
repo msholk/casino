@@ -13,7 +13,7 @@ contract AdminFacet {
     LibDiamond.setContractOwner(msg.sender);
   }
 
-  function withdrawAllPlatformDAI() public {
+  function withdrawAllPlatformFunds() public {
     LibDiamond.enforceIsContractOwner();
 
     ////////////////////////////////////////////////////////////////

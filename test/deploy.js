@@ -1,6 +1,6 @@
 const { diamondInit1 } = require("./utils/utils");
 async function main() {
-  await deployStakerFacet();
+  await deployDiamond();
 }
 async function deployDiamond() {
   await hre.network.provider.send("hardhat_reset");
