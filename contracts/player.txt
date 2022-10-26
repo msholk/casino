@@ -14,7 +14,7 @@
 
     RouletteLaunch storage rl = s.rcs.playersLaunchedRoulette[msg.sender];
     RouletteLaunchLib.storeBetPoints(rl, betPoints);
-    rl.lockedHouseAmount = lockHouseAmount;
+    rl.lockedHouseAmountEth = lockHouseAmount;
 
     rl.requestId = launchRoulette();
     s.rcs.userAddressByRequestId[rl.requestId] = msg.sender;
@@ -151,7 +151,7 @@
     //console.log("Betpoints calculated");
 
     //unlock balances
-    LibHLP.UnlockBalances(s.hs, rl.lockedHouseAmount);
+    LibHLP.UnlockBalances(s.hs, rl.lockedHouseAmountEth);
     CashierStorageLib.UnlockBetAmount(s.cs, totalBetSum, playerAddress);
     int256 payDiff = int256(totalBetSum);
 

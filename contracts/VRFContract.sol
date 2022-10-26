@@ -6,7 +6,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "contracts/libraries/AppStorage.sol";
 import "./VRFFacetMumbaiConstants.sol";
 
-contract VRFFacet is VRFFacetMumbaiConstants {
+contract VRFContract is VRFFacetMumbaiConstants {
   AppStorage s;
 
   // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF
@@ -23,7 +23,7 @@ contract VRFFacet is VRFFacetMumbaiConstants {
   }
 
   // Assumes the subscription is funded sufficiently.
-  function requestRandomWords() external {
+  function requestRandomWords() public {
     //require(authorized[msg.sender], "not authorized");
 
     // Will revert if subscription is not set and funded.
@@ -36,6 +36,7 @@ contract VRFFacet is VRFFacetMumbaiConstants {
     );
 
     s.vrf.requests[msg.sender] = s_requestId;
+    s.rcs.userAddressByRequestId[s_requestId] = msg.sender;
     // requests_sender[s_requestId] = msg.sender;
   }
 
@@ -53,6 +54,7 @@ contract VRFFacet is VRFFacetMumbaiConstants {
 
   function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords)
     internal
+    virtual
   {
     // s_randomWords = randomWords;
     s.vrf.requests_rand[requestId] = randomWords[0];

@@ -5,5 +5,5 @@ import "contracts/libraries/roulette/BetPoint.sol";
 struct RouletteLaunch {
   BetPoint[] betPoints;
   uint256 requestId;
-  uint256 lockedHouseAmount;
+  uint256 lockedHouseAmountEth;
 }
