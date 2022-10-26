@@ -35,3 +35,7 @@ Player only
 yarn testPlayer
 yarn hardhat run test/deployPlayer.js --network mumbai
 yarn testPlayer //requires mumbai forking
+
+
+VRF only
+yarn hardhat run test/deployVRF.js --network mumbai
