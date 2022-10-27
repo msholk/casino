@@ -89,7 +89,7 @@ async function deploy({
   overrides = {},
   deployLibraries,
 }) {
-  console.log(`++++++++++++++++++++++++++++++++++++`);
+  //   console.log(`++++++++++++++++++++++++++++++++++++`);
   if (arguments.length !== 1) {
     throw Error(
       `Requires only 1 map argument. ${arguments.length} arguments used.`
@@ -113,7 +113,7 @@ async function deploy({
   }
   console.log("--");
   console.log(`Deploying ${diamondName}`);
-  console.log(`++++++++++++++++++++++++++++++++++++`, diamondCut);
+  //   console.log(`++++++++++++++++++++++++++++++++++++`, diamondCut);
   console.log(`diamondCut`, diamondCut);
   const constructorArguments = [diamondCut];
   if (args.length > 0) {

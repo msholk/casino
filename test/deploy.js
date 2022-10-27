@@ -1,9 +1,19 @@
 const { diamondInit1 } = require("./utils/utils");
+const chalk = require("chalk");
+const fs = require("fs");
 async function main() {
+  fs.writeFileSync("deployDic.json", "{}");
   await deployDiamond();
 }
 async function deployDiamond() {
-  await hre.network.provider.send("hardhat_reset");
+  console.log(
+    chalk.bold.red(
+      `******Deploying to network ${hre.network.name}********************`
+    )
+  );
+  if (hre.network.name == "hardhat") {
+    await hre.network.provider.send("hardhat_reset");
+  }
   const res = await diamondInit1();
   const { diamondAddress } = res;
   const admin = await ethers.getContractAt("AdminFacet", diamondAddress);
@@ -43,6 +53,10 @@ async function copyArtifacts() {
   fs.copyFileSync(
     "./artifacts/contracts/AdminFacet.sol/AdminFacet.json",
     "./frontend/src/contracts/AdminFacet.json"
+  );
+  fs.copyFileSync(
+    "./artifacts/contracts/RouletteFacet.sol/RouletteFacet.json",
+    "./frontend/src/contracts/RouletteFacet.json"
   );
   fs.copyFileSync(
     "./artifacts/contracts/diamond/facets/DiamondLoupeFacet.sol/DiamondLoupeFacet.json",

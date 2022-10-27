@@ -84,7 +84,7 @@ async function diamondDeploy({
       getSelectors(deployedFacet, exludeSignatures),
     ]);
   }
-  console.log("diamondCut++++++++++++++++++", diamondCut);
+  // console.log("diamondCut++++++++++++++++++", diamondCut);
   const fs = require("fs");
   fs.writeFileSync("deployDic.json", JSON.stringify(addressDic, null, 2));
   console.log("--");
