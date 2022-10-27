@@ -23,6 +23,13 @@ contract RouletteFacet is VRFContract {
   );
   uint256 constant CHIPS_IN_ETH = 1000;
 
+  function test1() public {
+    emit RouletteLaunched(1);
+    emit RouletteLaunched(2);
+    emit RouletteLaunched(3);
+    emit RouletteLaunched(4);
+  }
+
   function placeBet(BetPointPrm[] calldata betPoints) public {
     RouletteLaunchLib.checkRouletteIsUnlockedForPlayer(s.rcs, betPoints);
 
@@ -36,6 +43,7 @@ contract RouletteFacet is VRFContract {
     );
     uint256 lockHouseAmountInEth = lockHouseAmountInChips / CHIPS_IN_ETH;
     console.log("Locking total:", lockHouseAmountInEth);
+
     LibHLP.LockAmountFromHouse(s.hs, lockHouseAmountInEth);
     CashierStorageLib.LockBetAmount(
       s.cs,
@@ -69,10 +77,8 @@ contract RouletteFacet is VRFContract {
     console.log("fulfillRandomWords", requestId, randomWords[0]);
     emit RouletteStoppedVRFCallReceived();
 
-    uint256 resultnum = randomWords[0] % 38;
-    if (resultnum == 0) {
-      resultnum = 38;
-    }
+    uint256 resultnum = (randomWords[0] % 38) + 1;
+
     uint8 resultnum8 = uint8(resultnum);
     emit RouletteStopped(requestId, randomWords[0], resultnum);
     // //console.log(

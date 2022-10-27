@@ -4,8 +4,8 @@ import { ethers } from "ethers";
 import playersFacet from "./contracts/PlayersFacet.json";
 import stakerFacet from "./contracts/StakerFacet.json";
 import adminFacet from "./contracts/AdminFacet.json";
-import DiamondLoupeFacet from "./contracts/DiamondLoupeFacet.json";
-// import _ from 'lodash';
+import rouletteFacet from "./contracts/RouletteFacet.json";
+import _ from "lodash";
 import { diamondAddress } from "./contracts/diamondAddress";
 import {
   CustomerInfo,
@@ -17,6 +17,8 @@ import {
 } from "./components";
 let ethInitialized;
 let lastAccountConnected = null;
+const processedEvents = {};
+debugger;
 function App() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -32,6 +34,47 @@ function App() {
   const [stakerBalance, setStakerBalance] = useState([0, 0]);
   const [platformBalance, setPlatformBalance] = useState([0, 0]);
 
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  window.ethers = ethers;
+  provider.getBlockNumber().then((latestBlock) => {
+    if (processedEvents.providerIsConnected) {
+      return;
+    }
+    processedEvents.providerIsConnected = true;
+    console.log("latestBlock", latestBlock);
+
+    const filter = {
+      address: diamondAddress,
+      fromBlock: latestBlock,
+      topics: [
+        // the name of the event, parnetheses containing the data type of each event, no spaces
+        ethers.utils.id("RouletteLaunched(uint256)"),
+      ],
+      // topics: [
+      //   // the name of the event, parnetheses containing the data type of each event, no spaces
+      //   utils.id("Transfer(address,address,uint256)"),
+      // ],
+    };
+
+    let abi = ["event RouletteLaunched(uint256 requestId)"];
+
+    let iface = new ethers.utils.Interface(abi);
+
+    provider.on(filter, (ev) => {
+      if (processedEvents[ev.logIndex]) {
+        console.log("Skipping event", ev.logIndex);
+        return;
+      }
+      processedEvents[ev.logIndex] = true;
+      const parsedEv = iface.parseLog(ev);
+      // console.log("Events", ev, parsedEv.args.requestId.toString());
+      console.log(
+        `event RouletteLaunched(${parsedEv.args.requestId.toString()})`,
+        processedEvents
+      );
+    });
+  });
+
   const getcAccounts = async () => {
     try {
       const accounts = await window.ethereum.request({
@@ -43,7 +86,11 @@ function App() {
       console.error(error);
     }
   };
-
+  const clearErrorWithPause = () => {
+    setTimeout(() => {
+      setError("");
+    }, 3000);
+  };
   const gotAccounts = async (accounts) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const { chainId } = await provider.getNetwork();
@@ -225,6 +272,101 @@ function App() {
     }
   };
 
+  const placeBet = async () => {
+    try {
+      if (window.ethereum) {
+        const signer = provider.getSigner();
+        const rouletteContaract = new ethers.Contract(
+          diamondAddress,
+          rouletteFacet.abi,
+          signer
+        );
+        await rouletteContaract.placeBet([
+          {
+            amount: 100,
+            betType: 1,
+            betDet: 22,
+          },
+        ]);
+        console.log("Bet is placed");
+      } else {
+        console.log("Ethereum object not found, install Metamask.");
+      }
+    } catch (error) {
+      let message =
+        _.get(error, "error.data.message") || _.get(error, "reason");
+      if (message) {
+        setError(message);
+        console.error(message);
+      } else {
+        setError(error);
+      }
+      console.log(error);
+      clearErrorWithPause();
+    }
+  };
+  const checkBet = async () => {
+    try {
+      if (window.ethereum) {
+        const signer = provider.getSigner();
+        const rouletteContaract = new ethers.Contract(
+          diamondAddress,
+          rouletteFacet.abi,
+          signer
+        );
+        await rouletteContaract.placeBet([
+          {
+            amount: 100,
+            betType: 1,
+            betDet: 22,
+          },
+        ]);
+        console.log("Bet is placed");
+      } else {
+        console.log("Ethereum object not found, install Metamask.");
+      }
+    } catch (error) {
+      let message =
+        _.get(error, "error.data.message") || _.get(error, "reason");
+      if (message) {
+        setError(message);
+        console.error(message);
+      } else {
+        setError(error);
+      }
+      console.log(error);
+      clearErrorWithPause();
+    }
+  };
+  window.placeBet = placeBet;
+  window.checkEv = async () => {
+    try {
+      if (window.ethereum) {
+        const signer = provider.getSigner();
+        const rouletteContract = new ethers.Contract(
+          diamondAddress,
+          rouletteFacet.abi,
+          signer
+        );
+        await rouletteContract.test1();
+        console.log("Bet is placed");
+      } else {
+        console.log("Ethereum object not found, install Metamask.");
+      }
+    } catch (error) {
+      let message =
+        _.get(error, "error.data.message") || _.get(error, "reason");
+      if (message) {
+        setError(message);
+        console.error(message);
+      } else {
+        setError(error);
+      }
+      console.log(error);
+      clearErrorWithPause();
+    }
+  };
+
   const handleInputChange = (event) => {
     setInputValue((prevFormData) => ({
       ...prevFormData,
@@ -260,6 +402,7 @@ function App() {
             handleInputChange,
             getPlayerBalanceHandler,
             setError,
+            clearErrorWithPause,
             setBusy,
             busy,
           }}
