@@ -46,4 +46,12 @@ yarn hardhat run test/deployRoulette.js --network mumbai
 
 Deploy diamond
 yarn hardhat run test/deploy.js --network mumbai
+yarn hardhat run test/deploy.js --network localhost
+
+Deploy diamond
+yarn hardhat run test/Cut.js --network mumbai
+yarn hardhat run test/Cut.js --network localhost
+
+
+ npx hardhat compile   
 

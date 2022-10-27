@@ -56,8 +56,10 @@ async function diamondDeploy({
     this.funcName = funcName;
     this.signature = signature;
   }
+  let addressDic = {};
   for (const [name, deployedFacet] of facets) {
     console.log(`Facet name:${name}`, deployedFacet.address);
+    addressDic[deployedFacet.address] = name;
     const exludeSignatures = _.get(excludes, name) || [];
     let signatures = getSignatures(deployedFacet, exludeSignatures);
     let signaturesList = [];
@@ -67,6 +69,7 @@ async function diamondDeploy({
       signaturesList.push(
         new TheSignature(sig, deployedFacet.interface.getSighash(sig))
       );
+      addressDic[deployedFacet.interface.getSighash(sig)] = sig;
       //   console.log("\t", sig, "\t\t", deployedFacet.interface.getSighash(sig));
     }
     console.table(signaturesList);
@@ -81,6 +84,9 @@ async function diamondDeploy({
       getSelectors(deployedFacet, exludeSignatures),
     ]);
   }
+  console.log("diamondCut++++++++++++++++++", diamondCut);
+  const fs = require("fs");
+  fs.writeFileSync("deployDic.json", JSON.stringify(addressDic, null, 2));
   console.log("--");
   // console.log(`Deploying ${diamondName}`)
   const constructorArguments = [diamondCut];
