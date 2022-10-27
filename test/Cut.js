@@ -8,19 +8,26 @@ const {
 } = require("../scripts/libraries/diamond-util");
 let diamondAddress;
 async function main() {
+  await copyArtifacts();
+  return;
   diamondAddress = await readDiamondAddress();
   await readDimondMap();
 
   // await upgrade({
   //   diamondAddress,
-  //   diamondCut: [[false, 2, ["getRnd()"]]],
+  //   diamondCut: [[false, 2, ["doEvents()"]]],
   // });
-
+  //Library deployed LibRulette: 0x1Cc1161F4AB263a091c07e25e108B7720bF3183B
   await upgradeWithNewFacets({
     diamondAddress,
     facetNames: ["RouletteFacet"],
     libraries: {
       RouletteFacet: ["LibRulette"],
+    },
+    librariesAddresses: {
+      RouletteFacet: {
+        LibRulette: "0x1Cc1161F4AB263a091c07e25e108B7720bF3183B",
+      },
     },
     // selectorsToRemove = [],
     // initFacetName = undefined,
@@ -106,6 +113,10 @@ async function copyArtifacts() {
   fs.copyFileSync(
     "./artifacts/contracts/AdminFacet.sol/AdminFacet.json",
     "./frontend/src/contracts/AdminFacet.json"
+  );
+  fs.copyFileSync(
+    "./artifacts/contracts/RouletteFacet.sol/RouletteFacet.json",
+    "./frontend/src/contracts/RouletteFacet.json"
   );
   fs.copyFileSync(
     "./artifacts/contracts/diamond/facets/DiamondLoupeFacet.sol/DiamondLoupeFacet.json",

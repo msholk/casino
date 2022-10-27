@@ -2,6 +2,7 @@
 /* global ethers */
 const _ = require("lodash");
 const fs = require("fs");
+const chalk = require("chalk");
 const FacetCutAction = {
   Add: 0,
   Replace: 1,
@@ -364,6 +365,7 @@ async function upgradeWithNewFacets({
   initFacetName = undefined,
   initArgs = [],
   libraries: {},
+  librariesAddresses: {},
 }) {
   console.log(arguments);
   if (arguments.length !== 1) {
@@ -395,7 +397,12 @@ async function upgradeWithNewFacets({
         const libDeployed = await libFactory.deploy();
         await libDeployed.deployed();
         theLibs[lib2Deploy] = libDeployed.address;
+        console.log(
+          chalk.red(`Library deployed ${lib2Deploy}: ${libDeployed.address}`)
+        );
       }
+    } else if (_.get(arguments, [0, "librariesAddresses", name])) {
+      theLibs = _.get(arguments, [0, "librariesAddresses", name]);
     }
     const facetFactory = await ethers.getContractFactory(name, {
       libraries: theLibs,
