@@ -23,31 +23,39 @@ contract RouletteFacet is VRFContract {
   );
   uint256 constant CHIPS_IN_ETH = 1000;
 
-  function test1() public {
-    emit RouletteLaunched(1);
-    emit RouletteLaunched(2);
-    emit RouletteLaunched(3);
-    emit RouletteLaunched(4);
+  function chipsToEth(uint256 chips) private pure returns (uint256 eth) {
+    return (chips * 1e18) / CHIPS_IN_ETH;
+  }
+
+  function ethToChips(uint256 eth) private pure returns (uint256 chips) {
+    return (eth * CHIPS_IN_ETH) / 1e18;
+  }
+
+  function resetRoulette() public {
+    s.vrf.requests[msg.sender] = 0;
+    delete s.rcs.playersLaunchedRoulette[msg.sender];
+    LibHLP.HouseUnlockAll(s.hs);
+    CashierStorageLib.PlayerUnlockAll(s.cs, msg.sender);
   }
 
   function placeBet(BetPointPrm[] calldata betPoints) public {
     RouletteLaunchLib.checkRouletteIsUnlockedForPlayer(s.rcs, betPoints);
 
     uint256 playerBalance = s.cs.playersBalances[msg.sender];
-    uint256 playerBalanceChips = (playerBalance * CHIPS_IN_ETH) / 10**15;
+    uint256 playerBalanceChips = ethToChips(playerBalance);
     require(playerBalanceChips >= 1, "Balance is insufficient");
-    uint256 totalBetChips = RouletteLaunchLib.getTotalBetSum(betPoints);
+    uint256 totalBetChipsChips = RouletteLaunchLib.getTotalBetSum(betPoints);
 
     uint256 lockHouseAmountInChips = LibRulette.getRequiredHouseLockAmount(
       betPoints
     );
-    uint256 lockHouseAmountInEth = lockHouseAmountInChips / CHIPS_IN_ETH;
+    uint256 lockHouseAmountInEth = chipsToEth(lockHouseAmountInChips);
     console.log("Locking total:", lockHouseAmountInEth);
 
     LibHLP.LockAmountFromHouse(s.hs, lockHouseAmountInEth);
     CashierStorageLib.LockBetAmount(
       s.cs,
-      totalBetChips / CHIPS_IN_ETH,
+      chipsToEth(totalBetChipsChips),
       msg.sender
     );
     // //console.log("**********************************");
@@ -99,14 +107,14 @@ contract RouletteFacet is VRFContract {
     emit RouletteStoppedRequestIdRecognized(true);
 
     RouletteLaunch memory rl = s.rcs.playersLaunchedRoulette[playerAddress];
-    if (rl.requestId != requestId) {
-      emit RouletteLaunchOfPlayerFound(false);
-      //console.log("rl.requestId != requestId");
-      return; //Don't revert
-    }
+    // if (rl.requestId != requestId) {
+    //   emit RouletteLaunchOfPlayerFound(false);
+    //   //console.log("rl.requestId != requestId");
+    //   return; //Don't revert
+    // }
     //console.log("emitting RouletteLaunchOfPlayerFound(true)");
-    emit RouletteLaunchOfPlayerFound(true);
-
+    // emit RouletteLaunchOfPlayerFound(true);
+    s.rcs.playersLaunchedRoulette[playerAddress].requestId = 0;
     delete s.rcs.playersLaunchedRoulette[playerAddress];
     uint256 totalBetChips;
     uint256 totalWinChips;
@@ -142,7 +150,7 @@ contract RouletteFacet is VRFContract {
     LibHLP.UnlockBalances(s.hs, rl.lockedHouseAmountEth);
     CashierStorageLib.UnlockBetAmount(
       s.cs,
-      totalBetChips / CHIPS_IN_ETH,
+      chipsToEth(totalBetChips),
       playerAddress
     );
     int256 payDiffChips = int256(totalBetChips);
@@ -153,7 +161,7 @@ contract RouletteFacet is VRFContract {
       //     totalWinChips * 1e2,
       //     s.cs.playersBalances[playerAddress]
       // );
-      s.cs.playersBalances[playerAddress] += totalWinChips / CHIPS_IN_ETH; //keeps in Cahsier
+      s.cs.playersBalances[playerAddress] += chipsToEth(totalWinChips); //keeps in Cahsier
       payDiffChips -= int256(totalWinChips);
     }
 
@@ -161,17 +169,11 @@ contract RouletteFacet is VRFContract {
       //console.log("House=>Cashier", uint256(-payDiffChips));
       //player wins amount
       //transfer from HLP to Cashier
-      LibHLP.transferFromHouse2Cashier(
-        s,
-        uint256(-payDiffChips) / CHIPS_IN_ETH
-      );
+      LibHLP.transferFromHouse2Cashier(s, chipsToEth(uint256(-payDiffChips)));
     } else if (payDiffChips > 0) {
       //player lost all
       //transfer from to Cashier to HLP
-      LibHLP.transferFromCashierToHouse(
-        s,
-        uint256(payDiffChips) / CHIPS_IN_ETH
-      );
+      LibHLP.transferFromCashierToHouse(s, chipsToEth(uint256(payDiffChips)));
     }
     /*  //console.log("payDiffChips", payDiffChips);
         //console.log("emitting RouletteStoppedPrizeInfo");*/

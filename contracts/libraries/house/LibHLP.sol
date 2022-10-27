@@ -5,6 +5,13 @@ import "contracts/libraries/UniswapV2.sol";
 import "hardhat/console.sol";
 
 library LibHLP {
+  function HouseUnlockAll(HouseStorage storage hs) internal {
+    if (hs.houseLockedBalance > 0) {
+      hs.houseBalance += hs.houseLockedBalance;
+      hs.houseLockedBalance = 0;
+    }
+  }
+
   function LockAmountFromHouse(
     HouseStorage storage hs,
     uint256 lockHouseAmountInEth

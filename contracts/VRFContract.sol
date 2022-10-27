@@ -37,6 +37,8 @@ contract VRFContract is VRFFacetMumbaiConstants {
 
     s.vrf.requests[msg.sender] = s_requestId;
     s.rcs.userAddressByRequestId[s_requestId] = msg.sender;
+    s.rcs.playersLaunchedRoulette[msg.sender].requestId = s_requestId;
+
     // requests_sender[s_requestId] = msg.sender;
   }
 

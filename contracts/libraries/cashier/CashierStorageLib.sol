@@ -16,6 +16,17 @@ library CashierStorageLib {
     cs.playersBalances[playerAddress] -= totalBetSum;
   }
 
+  function PlayerUnlockAll(CashierStorage storage cs, address playerAddress)
+    internal
+  {
+    if (cs.playersLockedBalances[playerAddress] > 0) {
+      cs.playersBalances[playerAddress] += cs.playersLockedBalances[
+        playerAddress
+      ];
+      cs.playersLockedBalances[playerAddress] = 0;
+    }
+  }
+
   function UnlockBetAmount(
     CashierStorage storage cs,
     uint256 totalBetSum,

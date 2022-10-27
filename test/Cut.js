@@ -9,21 +9,21 @@ const {
 let diamondAddress;
 async function main() {
   await copyArtifacts();
-  return;
+  // return;
   diamondAddress = await readDiamondAddress();
-  await readDimondMap();
+  // await readDimondMap();
 
   // await upgrade({
   //   diamondAddress,
-  //   diamondCut: [[false, 2, ["doEvents()"]]],
+  //   diamondCut: [[false, 2, ["test1()"]]],
   // });
   //Library deployed LibRulette: 0x1Cc1161F4AB263a091c07e25e108B7720bF3183B
   await upgradeWithNewFacets({
     diamondAddress,
     facetNames: ["RouletteFacet"],
-    libraries: {
-      RouletteFacet: ["LibRulette"],
-    },
+    // libraries: {
+    //   RouletteFacet: ["LibRulette"],
+    // },
     librariesAddresses: {
       RouletteFacet: {
         LibRulette: "0x1Cc1161F4AB263a091c07e25e108B7720bF3183B",

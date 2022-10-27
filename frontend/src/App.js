@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-
+import chalk from "chalk";
 import playersFacet from "./contracts/PlayersFacet.json";
 import stakerFacet from "./contracts/StakerFacet.json";
 import adminFacet from "./contracts/AdminFacet.json";
@@ -18,7 +18,7 @@ import {
 let ethInitialized;
 let lastAccountConnected = null;
 const processedEvents = {};
-debugger;
+
 function App() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -36,28 +36,119 @@ function App() {
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   window.ethers = ethers;
+  console.log(diamondAddress);
+
   provider.getBlockNumber().then((latestBlock) => {
     if (processedEvents.providerIsConnected) {
       return;
     }
     processedEvents.providerIsConnected = true;
-    console.log("latestBlock", latestBlock);
 
+    provider
+      .getLogs({
+        fromBlock: latestBlock - 500,
+        address: diamondAddress,
+        // topics: [ethers.utils.id("RouletteLaunched(uint256)")],
+      })
+      .then((result) => {
+        const red = (m) => {
+          console.log(chalk.red(m));
+        };
+        // console.log(result);
+        _.forEach(result, (res) => {
+          // event RouletteStoppedVRFCallReceived();
+          // event RouletteStoppedRequestIdRecognized(bool);
+          // event RouletteLaunchOfPlayerFound(bool);
+          // event RouletteStopped(uint256 requestId, uint256 randomWord, uint256 resultNum)
+          if (res.topics[0] == ethers.utils.id("RouletteLaunched(uint256)")) {
+            let abi = ["event RouletteLaunched(uint256 requestId)"];
+            let iface = new ethers.utils.Interface(abi);
+            const parsedEv = iface.parseLog(res);
+            red(
+              `event RouletteLaunched(requestId:${parsedEv.args.requestId.toString()})`
+            );
+          } else if (
+            res.topics[0] == ethers.utils.id("RouletteStoppedVRFCallReceived()")
+          ) {
+            let abi = ["event RouletteStoppedVRFCallReceived()"];
+            let iface = new ethers.utils.Interface(abi);
+            const parsedEv = iface.parseLog(res);
+            red(`event RouletteStoppedVRFCallReceived()`);
+          } else if (
+            res.topics[0] ==
+            ethers.utils.id("RouletteStoppedRequestIdRecognized(bool)")
+          ) {
+            let abi = ["event RouletteStoppedRequestIdRecognized(bool)"];
+            let iface = new ethers.utils.Interface(abi);
+            const parsedEv = iface.parseLog(res);
+            red(
+              `event RouletteStoppedRequestIdRecognized(${parsedEv.args[0].toString()})`
+            );
+          } else if (
+            res.topics[0] ==
+            ethers.utils.id("RouletteStopped(uint256,uint256,uint256)")
+          ) {
+            let abi = [
+              "event RouletteStopped(uint256 requestId, uint256 randomWord, uint256 resultNum)",
+            ];
+            let iface = new ethers.utils.Interface(abi);
+            const parsedEv = iface.parseLog(res);
+            red(
+              `event RouletteStopped(
+                requestId :${parsedEv.args.requestId.toString()},
+                randomWord:${parsedEv.args.randomWord.toString()},
+                resultNum :${parsedEv.args.resultNum.toString()})`
+            );
+          } else if (
+            res.topics[0] ==
+            ethers.utils.id("RouletteLaunchOfPlayerFound(bool)")
+          ) {
+            let abi = ["event RouletteLaunchOfPlayerFound(bool)"];
+            let iface = new ethers.utils.Interface(abi);
+            const parsedEv = iface.parseLog(res);
+            console.log(
+              `event RouletteLaunchOfPlayerFound(${parsedEv.args[0].toString()})`
+            );
+          } else {
+            console.log(res);
+          }
+        });
+      });
+
+    console.log("latestBlock", latestBlock);
+    listenRouletteLaunched(latestBlock);
+    // listenRouletteStopped(latestBlock);
+  });
+
+  function listenRouletteLaunched(latestBlock) {
     const filter = {
       address: diamondAddress,
       fromBlock: latestBlock,
-      topics: [
-        // the name of the event, parnetheses containing the data type of each event, no spaces
-        ethers.utils.id("RouletteLaunched(uint256)"),
-      ],
-      // topics: [
-      //   // the name of the event, parnetheses containing the data type of each event, no spaces
-      //   utils.id("Transfer(address,address,uint256)"),
-      // ],
+      topics: [ethers.utils.id("RouletteLaunched(uint256)")],
     };
-
     let abi = ["event RouletteLaunched(uint256 requestId)"];
+    let iface = new ethers.utils.Interface(abi);
 
+    provider.on(filter, (ev) => {
+      if (processedEvents[ev.logIndex]) {
+        console.log("Skipping event", ev.logIndex);
+        return;
+      }
+      processedEvents[ev.logIndex] = true;
+      const parsedEv = iface.parseLog(ev);
+      console.log(
+        ev.logIndex,
+        `event RouletteLaunched(${parsedEv.args.requestId.toString()})`
+      );
+    });
+  }
+  function listenRouletteStopped(latestBlock) {
+    const filter = {
+      address: diamondAddress,
+      fromBlock: latestBlock,
+      topics: [ethers.utils.id("RouletteStoppedVRFCallReceived()")],
+    };
+    let abi = ["RouletteStoppedVRFCallReceived()"];
     let iface = new ethers.utils.Interface(abi);
 
     provider.on(filter, (ev) => {
@@ -68,12 +159,9 @@ function App() {
       processedEvents[ev.logIndex] = true;
       const parsedEv = iface.parseLog(ev);
       // console.log("Events", ev, parsedEv.args.requestId.toString());
-      console.log(
-        `event RouletteLaunched(${parsedEv.args.requestId.toString()})`,
-        processedEvents
-      );
+      console.log(parsedEv);
     });
-  });
+  }
 
   const getcAccounts = async () => {
     try {
@@ -272,6 +360,60 @@ function App() {
     }
   };
 
+  const resetRoulette = async () => {
+    try {
+      if (window.ethereum) {
+        const signer = provider.getSigner();
+        const rouletteContaract = new ethers.Contract(
+          diamondAddress,
+          rouletteFacet.abi,
+          signer
+        );
+        await rouletteContaract.resetRoulette();
+        console.log("resetRoulette()");
+      } else {
+        console.log("Ethereum object not found, install Metamask.");
+      }
+    } catch (error) {
+      let message =
+        _.get(error, "error.data.message") || _.get(error, "reason");
+      if (message) {
+        setError(message);
+        console.error(message);
+      } else {
+        setError(error);
+      }
+      console.log(error);
+      clearErrorWithPause();
+    }
+  };
+  const setRouletteContract = () => {
+    try {
+      if (window.ethereum) {
+        const signer = provider.getSigner();
+        window.rouletteContaract = new ethers.Contract(
+          diamondAddress,
+          rouletteFacet.abi,
+          signer
+        );
+        window.BigNumber = ethers.BigNumber;
+      } else {
+        console.log("Ethereum object not found, install Metamask.");
+      }
+    } catch (error) {
+      let message =
+        _.get(error, "error.data.message") || _.get(error, "reason");
+      if (message) {
+        setError(message);
+        console.error(message);
+      } else {
+        setError(error);
+      }
+      console.log(error);
+      clearErrorWithPause();
+    }
+  };
+  window.setRouletteContract = setRouletteContract;
   const placeBet = async () => {
     try {
       if (window.ethereum) {
@@ -283,7 +425,7 @@ function App() {
         );
         await rouletteContaract.placeBet([
           {
-            amount: 100,
+            amount: 1,
             betType: 1,
             betDet: 22,
           },
@@ -339,6 +481,7 @@ function App() {
     }
   };
   window.placeBet = placeBet;
+  window.resetRoulette = resetRoulette;
   window.checkEv = async () => {
     try {
       if (window.ethereum) {
