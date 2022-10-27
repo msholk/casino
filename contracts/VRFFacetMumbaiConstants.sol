@@ -16,7 +16,7 @@ contract VRFFacetMumbaiConstants {
   bytes32 constant keyHash =
     0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
 
-  uint32 constant callbackGasLimit = 100000;
+  uint32 constant callbackGasLimit = 900_000;
 
   uint16 constant requestConfirmations = 3;
 

@@ -23,18 +23,21 @@ contract VRFContract is VRFFacetMumbaiConstants {
   }
 
   // Assumes the subscription is funded sufficiently.
-  function requestRandomWords() public {
+  function requestRandomWords(uint256 s_requestId) internal {
     //require(authorized[msg.sender], "not authorized");
 
     // Will revert if subscription is not set and funded.
-    uint256 s_requestId = COORDINATOR.requestRandomWords(
-      keyHash,
-      s_subscriptionId,
-      requestConfirmations,
-      callbackGasLimit,
-      numWords
-    );
-
+    if (s_requestId == 0) {
+      s_requestId = COORDINATOR.requestRandomWords(
+        keyHash,
+        s_subscriptionId,
+        requestConfirmations,
+        callbackGasLimit,
+        numWords
+      );
+    }
+    s.myLog.push(1000);
+    s.myLog.push(s_requestId);
     s.vrf.requests[msg.sender] = s_requestId;
     s.rcs.userAddressByRequestId[s_requestId] = msg.sender;
     s.rcs.playersLaunchedRoulette[msg.sender].requestId = s_requestId;
@@ -58,6 +61,8 @@ contract VRFContract is VRFFacetMumbaiConstants {
     internal
     virtual
   {
+    s.myLog.push(1001);
+    s.myLog.push(requestId);
     // s_randomWords = randomWords;
     s.vrf.requests_rand[requestId] = randomWords[0];
   }

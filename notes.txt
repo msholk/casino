@@ -55,3 +55,4 @@ yarn hardhat run test/Cut.js --network localhost
 
  npx hardhat compile   
 
+setRouletteContract()

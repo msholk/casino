@@ -20,9 +20,15 @@ export class AdminPanel extends React.PureComponent {
       active: "home",
     };
   }
+  getContractBalance() {
+    const { platformBalance } = this.props;
+    if (!platformBalance) return "0.00";
+
+    return platformBalance.contractBalance.toString() / 10 ** 18;
+  }
   getPlatformBalance() {
     const { platformBalance } = this.props;
-    if (!_.get(platformBalance, "houseBalance")) return "0.00";
+    if (!platformBalance) return "0.00";
 
     return platformBalance.platformBalance.toString() / 10 ** 18;
   }
@@ -69,6 +75,43 @@ export class AdminPanel extends React.PureComponent {
       setBusy("");
     }
   }
+  async withdrawAllContractFunds(event) {
+    const { getPlatformBalanceHandler, setError, setBusy } = this.props;
+    try {
+      event.preventDefault();
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const stakerContract = new ethers.Contract(
+          diamondAddress,
+          adminFacet.abi,
+          signer
+        );
+
+        let myAddress = await signer.getAddress();
+        console.log("provider signer...", myAddress);
+
+        const txn = await stakerContract.withdrawAllContractFunds();
+        console.log("Withdrawing money...");
+        setBusy("Withdrawing contract's funds...");
+        await txn.wait();
+        console.log("Money with drew...done", txn.hash);
+        setBusy("Updating balance...");
+        getPlatformBalanceHandler();
+      } else {
+        console.log("Ethereum object not found, install Metamask.");
+        setError("Please install a MetaMask wallet to use our bank.");
+      }
+    } catch (error) {
+      console.log(error);
+      setError(error.reason);
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+    } finally {
+      setBusy("");
+    }
+  }
   render() {
     const { busy, isWalletConnected, isAdmin, platformBalance } = this.props;
     console.log("platformBalance", platformBalance);
@@ -89,6 +132,15 @@ export class AdminPanel extends React.PureComponent {
             </div>
           </span>
         </div>
+        <div className="mt-1">
+          <span className="mr-5">
+            <div>
+              <strong>
+                Contract balance: {this.getContractBalance()} {nativeCoinName}
+              </strong>
+            </div>
+          </span>
+        </div>
 
         <div className="bg-white border rounded-5 p-2 mw-330">
           <MDBBtn
@@ -98,7 +150,19 @@ export class AdminPanel extends React.PureComponent {
               this.withdrawAllPlatformFunds(e);
             }}
           >
-            Withdraw All
+            Withdraw All platform funds
+          </MDBBtn>
+        </div>
+
+        <div className="bg-white border rounded-5 p-2 mw-330">
+          <MDBBtn
+            className="moveMoneyButton"
+            outline
+            onClick={(e) => {
+              this.withdrawAllContractFunds(e);
+            }}
+          >
+            Withdraw All contract funds
           </MDBBtn>
         </div>
       </>

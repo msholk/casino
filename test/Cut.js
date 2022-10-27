@@ -20,10 +20,10 @@ async function main() {
   //Library deployed LibRulette: 0x1Cc1161F4AB263a091c07e25e108B7720bF3183B
   await upgradeWithNewFacets({
     diamondAddress,
-    facetNames: ["RouletteFacet"],
-    // libraries: {
-    //   RouletteFacet: ["LibRulette"],
-    // },
+    facetNames: ["RouletteFacet", "AdminFacet"],
+    libraries: {
+      //  RouletteFacet: ["LibRulette"],
+    },
     librariesAddresses: {
       RouletteFacet: {
         LibRulette: "0x1Cc1161F4AB263a091c07e25e108B7720bF3183B",

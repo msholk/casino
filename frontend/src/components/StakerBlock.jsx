@@ -147,7 +147,8 @@ export class StakerBlock extends React.PureComponent {
     }
   }
   async withdrawAllStakerFunds(event) {
-    const { getStakerBalanceHandler, setError, setBusy } = this.props;
+    const { getStakerBalanceHandler, setError, setBusy, clearErrorWithPause } =
+      this.props;
     try {
       event.preventDefault();
       if (window.ethereum) {
@@ -174,11 +175,16 @@ export class StakerBlock extends React.PureComponent {
         setError("Please install a MetaMask wallet to use our bank.");
       }
     } catch (error) {
+      let message =
+        _.get(error, "error.data.message") || _.get(error, "reason");
+      if (message) {
+        setError(message);
+        console.error(message);
+      } else {
+        setError(error);
+      }
       console.log(error);
-      setError(error.message);
-      setTimeout(() => {
-        setError("");
-      }, 3000);
+      clearErrorWithPause();
     } finally {
       setBusy("");
     }

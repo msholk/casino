@@ -36,6 +36,7 @@ describe("DiamondTest", async function () {
   let receipt;
   let result;
   let TokensMock;
+  let rouletteFacet;
 
   const facetAddress = {};
   let vrfInfo = {};
@@ -96,12 +97,11 @@ describe("DiamondTest", async function () {
       playersFacet,
       stakerFacet,
       adminFacet,
+      rouletteFacet,
     } = res);
 
     await initializeTokensMock();
     await initializeVRF();
-
-    const player = await ethers.getContractAt("PlayersFacet", diamondAddress);
 
     const { subscriptionId, vrfCoordinatorAddress, keyHash } = vrfInfo;
     //await player.setVrfInfo({ subscriptionId, vrfCoordinatorAddress, keyHash });
@@ -121,6 +121,7 @@ describe("DiamondTest", async function () {
         playersFacet,
         stakerFacet,
         adminFacet,
+        rouletteFacet,
       });
       await checkFacets2({
         facetAddress,
@@ -131,6 +132,7 @@ describe("DiamondTest", async function () {
         playersFacet,
         stakerFacet,
         adminFacet,
+        rouletteFacet,
       });
     });
   });
@@ -239,7 +241,7 @@ describe("DiamondTest", async function () {
       let bal = await TokensMock.daiBalanceOf(diamondAddress);
       expect(bal).eq(0);
     });
-    describe("Player`s deposits", async () => {
+    describe("Player`s deposits 1ETH", async () => {
       it("Check player balance is zero ", async () => {
         const player = await ethers.getContractAt(
           "PlayersFacet",
@@ -324,176 +326,215 @@ describe("DiamondTest", async function () {
       });
     });
   });
-  xdescribe("Playing", async () => {
+
+  describe("Playing", async () => {
     let playerBalance;
     let houseBalance;
     let requestId = 1;
     it("Get initial players/house balance ", async () => {
-      const player = await ethers.getContractAt("PlayersFacet", diamondAddress);
-      let bal = await player.checkPlayerBalance();
-      playerBalance = bal[0];
-
-      const staker = await ethers.getContractAt("StakerFacet", diamondAddress);
-      bal = await staker.checkStakerBalance();
-      houseBalance = bal.newHouseBalance;
-      //expect(houseBalance).eq(1000)
+      const rouletteFacet = await ethers.getContractAt(
+        "RouletteFacet",
+        diamondAddress
+      );
+      const lockedAmounts = await rouletteFacet.testGetAmounts();
+      console.log(lockedAmounts);
+      expect(lockedAmounts.houseLocked).eq(utils.parseEther("0"));
+      expect(lockedAmounts.playerLocked).eq(utils.parseEther("0"));
+      expect(lockedAmounts.requestId).eq(0);
+      expect(lockedAmounts.playerBalance).eq(utils.parseEther("1"));
+      expect(lockedAmounts.stakerPercent).eq(
+        utils.parseEther("0.666666666666666667")
+      );
+      expect(lockedAmounts.houseBalance).eq(utils.parseEther("150"));
+      expect(lockedAmounts.platformBalance).eq(0);
     });
-    describe("Playing and winning", async () => {
+    xdescribe("Playing and winning", async () => {
       it("Place a winning bet: expect emit RouletteLaunched", async () => {
-        const player = await ethers.getContractAt(
-          "PlayersFacet",
+        const rouletteFacet = await ethers.getContractAt(
+          "RouletteFacet",
           diamondAddress
         );
         await expect(
-          player.placeBet([
-            {
-              amount: 100,
-              betType: 1,
-              betDet: 22,
-            },
-            {
-              amount: 10,
-              betType: 1,
-              betDet: 19,
-            },
-          ])
+          rouletteFacet.placeBet(
+            [
+              {
+                amount: 100,
+                betType: 1,
+                betDet: 36,
+              },
+              {
+                amount: 10,
+                betType: 1,
+                betDet: 19,
+              },
+            ],
+            31
+          )
         )
-          .to.emit(player, "RouletteLaunched")
-          .withArgs(1); //request id
+          .to.emit(rouletteFacet, "RouletteLaunched")
+          .withArgs(31); //request id
       });
-      it("Wait roulette to stop", async () => {
-        const player = await ethers.getContractAt(
-          "PlayersFacet",
+      it("Check locked amounts", async () => {
+        const rouletteFacet = await ethers.getContractAt(
+          "RouletteFacet",
           diamondAddress
         );
-        // simulate callback from the oracle network
-        // console.log("expecting event");
-        const tx = await vrfInfo.VRFCoordinatorV2Mock.fulfillRandomWords(
-          requestId,
+        const lockedAmounts = await rouletteFacet.testGetAmounts();
+        console.log(lockedAmounts);
+        expect(lockedAmounts.houseLocked).eq(utils.parseEther("3.5"));
+        expect(lockedAmounts.playerLocked).eq(utils.parseEther("0.11"));
+        expect(lockedAmounts.requestId).eq(31);
+        expect(lockedAmounts.playerBalance).eq(utils.parseEther("0.89"));
+        expect(lockedAmounts.stakerPercent).eq(
+          utils.parseEther("0.666666666666666667")
+        );
+        expect(lockedAmounts.houseBalance).eq(utils.parseEther("146.5")); //150-3.5
+        expect(lockedAmounts.platformBalance).eq(0);
+      });
+      it("Stopping roulette", async () => {
+        const rouletteFacet = await ethers.getContractAt(
+          "RouletteFacet",
           diamondAddress
         );
+
+        //Sending wrong request
+        let tx = await rouletteFacet.testFulfillRandomWords(32, [7984651]);
+        await expect(tx).to.emit(
+          rouletteFacet,
+          "RouletteStoppedRequestIdNotRecognized"
+        );
+
+        //Sending correct requestid
+        const theRandom = 89806461;
+        tx = await rouletteFacet.testFulfillRandomWords(31, [theRandom]);
+        const requestId = 31;
+        const winNumber = 36;
+        await expect(tx)
+          .to.emit(rouletteFacet, "RouletteStoppedVRFCallReceived")
+          .to.emit(rouletteFacet, "RouletteStopped")
+          .withArgs(requestId, theRandom, winNumber);
 
         await expect(tx)
-          .to.emit(player, "RouletteStoppedVRFCallReceived")
-          .to.emit(player, "RouletteStopped")
+          .to.emit(rouletteFacet, "RouletteStoppedRequestIdRecognized")
+          .to.emit(rouletteFacet, "RouletteLaunchOfPlayerFound");
+
+        await expect(tx)
+          .to.emit(rouletteFacet, "RouletteStoppedPrizeInfo")
           .withArgs(
             requestId,
-            BigNumber.from(
-              "78541660797044910968829902406342334108369226379826116161446442989268089806461"
-            ),
-            19
-          )
-          .to.emit(player, "RouletteStoppedRequestIdRecognized")
-          .withArgs(true)
-          .to.emit(player, "RouletteLaunchOfPlayerFound")
-          .to.emit(player, "RouletteStoppedPrizeInfo")
-          .withArgs(
-            requestId,
-            BigNumber.from(
-              "78541660797044910968829902406342334108369226379826116161446442989268089806461"
-            ),
-            19,
-            [0, 360, 0, 0, 0, 0, 0, 0, 0, 0]
+            theRandom,
+            winNumber,
+            [3600, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           );
       });
-      it("Check player balance increased 250", async () => {
-        const player = await ethers.getContractAt(
-          "PlayersFacet",
+      it("Checking balances after the bet", async () => {
+        const rouletteFacet = await ethers.getContractAt(
+          "RouletteFacet",
           diamondAddress
         );
-        let bal = await player.checkPlayerBalance();
-        const newBalance = bal[0];
-        expect(newBalance - playerBalance).eq(250 * 100); //250.00DAI
-        playerBalance = newBalance;
-      });
-      it("Check house liquidity decreased 250+0.075(0.03%)", async () => {
-        const staker = await ethers.getContractAt(
-          "StakerFacet",
-          diamondAddress
+        const lockedAmounts = await rouletteFacet.testGetAmounts();
+        console.log(lockedAmounts);
+        expect(lockedAmounts.houseLocked).eq(utils.parseEther("0"));
+        expect(lockedAmounts.playerLocked).eq(utils.parseEther("0"));
+        expect(lockedAmounts.requestId).eq(0);
+        expect(lockedAmounts.playerBalance).eq(utils.parseEther("4.49"));
+        expect(lockedAmounts.stakerPercent).eq(
+          utils.parseEther("0.666666666666666667")
         );
-
-        bal = await staker.checkStakerBalance();
-        const diff = houseBalance - bal.newHouseBalance;
-        //console.log(houseBalance, bal.newHouseBalance)
-        expect(diff / 1000000).eq(250 + 0.075);
-        houseBalance = bal.newHouseBalance;
+        //house pays 150-3.490000000000000000 + comission 0.001047000000000000
+        expect(lockedAmounts.houseBalance).eq(utils.parseEther("146.508953"));
+        expect(lockedAmounts.platformBalance).eq(utils.parseEther("0.001047"));
       });
     });
     describe("Playing and losing", async () => {
       it("Place a losing bet: expect emit RouletteLaunched", async () => {
-        requestId = 2;
-        const player = await ethers.getContractAt(
-          "PlayersFacet",
+        const rouletteFacet = await ethers.getContractAt(
+          "RouletteFacet",
           diamondAddress
         );
         await expect(
-          player.placeBet([
-            {
-              amount: 1000,
-              betType: 1, //bet single number
-              betDet: 31, //bet on 33
-            },
-          ])
+          rouletteFacet.placeBet(
+            [
+              {
+                amount: 100,
+                betType: 1,
+                betDet: 36,
+              },
+              {
+                amount: 10,
+                betType: 1,
+                betDet: 19,
+              },
+            ],
+            31
+          )
         )
-          .to.emit(player, "RouletteLaunched")
-          .withArgs(requestId); //request id
+          .to.emit(rouletteFacet, "RouletteLaunched")
+          .withArgs(31); //request id
       });
-      it("Wait roulette to stop", async () => {
-        const player = await ethers.getContractAt(
-          "PlayersFacet",
+      it("Check locked amounts", async () => {
+        const rouletteFacet = await ethers.getContractAt(
+          "RouletteFacet",
           diamondAddress
         );
-        // simulate callback from the oracle network
-        // console.log("expecting event");
-        const tx = await vrfInfo.VRFCoordinatorV2Mock.fulfillRandomWords(
-          requestId,
+        const lockedAmounts = await rouletteFacet.testGetAmounts();
+        console.log(lockedAmounts);
+        expect(lockedAmounts.houseLocked).eq(utils.parseEther("3.5"));
+        expect(lockedAmounts.playerLocked).eq(utils.parseEther("0.11"));
+        expect(lockedAmounts.requestId).eq(31);
+        expect(lockedAmounts.playerBalance).eq(utils.parseEther("0.89"));
+        expect(lockedAmounts.stakerPercent).eq(
+          utils.parseEther("0.666666666666666667")
+        );
+        expect(lockedAmounts.houseBalance).eq(utils.parseEther("146.5"));
+        expect(lockedAmounts.platformBalance).eq(0);
+      });
+      it("Stopping roulette", async () => {
+        const rouletteFacet = await ethers.getContractAt(
+          "RouletteFacet",
           diamondAddress
         );
 
+        //Sending correct requestid
+        const theRandom = 19;
+        tx = await rouletteFacet.testFulfillRandomWords(31, [theRandom]);
+        const requestId = 31;
+        const winNumber = 20; //must lose
         await expect(tx)
-          .to.emit(player, "RouletteStoppedVRFCallReceived")
-          .to.emit(player, "RouletteStopped")
+          .to.emit(rouletteFacet, "RouletteStoppedVRFCallReceived")
+          .to.emit(rouletteFacet, "RouletteStopped")
+          .withArgs(requestId, theRandom, winNumber);
+
+        await expect(tx)
+          .to.emit(rouletteFacet, "RouletteStoppedRequestIdRecognized")
+          .to.emit(rouletteFacet, "RouletteLaunchOfPlayerFound");
+
+        await expect(tx)
+          .to.emit(rouletteFacet, "RouletteStoppedPrizeInfo")
           .withArgs(
             requestId,
-            BigNumber.from(
-              "77676537065960878698898692042018114106337750925255485067533933387271373890921"
-            ),
-            33
-          )
-          .to.emit(player, "RouletteStoppedRequestIdRecognized")
-          .withArgs(true)
-          .to.emit(player, "RouletteLaunchOfPlayerFound")
-          .to.emit(player, "RouletteStoppedPrizeInfo")
-          .withArgs(
-            requestId,
-            BigNumber.from(
-              "77676537065960878698898692042018114106337750925255485067533933387271373890921"
-            ),
-            33,
+            theRandom,
+            winNumber,
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           );
       });
-      it("Check player balance decreased 1000", async () => {
-        const player = await ethers.getContractAt(
-          "PlayersFacet",
+      it("Checking lock balances after the bet", async () => {
+        const rouletteFacet = await ethers.getContractAt(
+          "RouletteFacet",
           diamondAddress
         );
-        let bal = await player.checkPlayerBalance();
-        const newBalance = bal[0];
-        expect(playerBalance - newBalance).eq(1000 * 100); //1000.00DAI
-        playerBalance = newBalance;
-      });
-      it("Check house liquidity increased 1000-2.6", async () => {
-        const staker = await ethers.getContractAt(
-          "StakerFacet",
-          diamondAddress
+        const lockedAmounts = await rouletteFacet.testGetAmounts();
+        console.log(lockedAmounts);
+        expect(lockedAmounts.houseLocked).eq(utils.parseEther("0"));
+        expect(lockedAmounts.playerLocked).eq(utils.parseEther("0"));
+        expect(lockedAmounts.requestId).eq(0);
+        expect(lockedAmounts.playerBalance).eq(utils.parseEther("0.89")); //1-0.11
+        expect(lockedAmounts.stakerPercent).eq(
+          utils.parseEther("0.666666666666666667")
         );
-
-        bal = await staker.checkStakerBalance();
-        const diff = bal.newHouseBalance - houseBalance;
-        // console.log(houseBalance, bal.newHouseBalance, diff)
-        expect(diff / 1000000).eq(1000 - 2.6); //1 means 100%
-        houseBalance = bal.newHouseBalance;
+        //house receives 150+0.110000000000000000 - 0.000286000000000000
+        expect(lockedAmounts.houseBalance).eq(utils.parseEther("150.109714"));
+        expect(lockedAmounts.platformBalance).eq(utils.parseEther("0.000286"));
       });
     });
   });

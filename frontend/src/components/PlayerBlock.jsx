@@ -152,7 +152,8 @@ export class PlayerBlock extends React.PureComponent {
     }
   }
   async withdrawAllPlayersFunds(event) {
-    const { getPlayerBalanceHandler, setError, setBusy } = this.props;
+    const { getPlayerBalanceHandler, setError, setBusy, clearErrorWithPause } =
+      this.props;
     try {
       event.preventDefault();
       if (window.ethereum) {
@@ -179,11 +180,16 @@ export class PlayerBlock extends React.PureComponent {
         setError("Please install a MetaMask wallet to use our bank.");
       }
     } catch (error) {
+      let message =
+        _.get(error, "error.data.message") || _.get(error, "reason");
+      if (message) {
+        setError(message);
+        console.error(message);
+      } else {
+        setError(error);
+      }
       console.log(error);
-      setError(error.message);
-      setTimeout(() => {
-        setError("");
-      }, 3000);
+      clearErrorWithPause();
     } finally {
       setBusy("");
     }

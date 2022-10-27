@@ -18,19 +18,28 @@ contract AdminFacet {
 
     ////////////////////////////////////////////////////////////////
     uint256 amount = s.platformBalance;
-    require(amount > 0, "Your balance iz ZERO");
-    require(amount <= address(this).balance);
+    require(amount > 0, "Your balance is ZERO");
+    require(
+      amount <= address(this).balance,
+      "Your balance is more than contract has"
+    );
 
     payable(msg.sender).transfer(amount);
+  }
+
+  function withdrawAllContractFunds() public {
+    LibDiamond.enforceIsContractOwner();
+
+    payable(msg.sender).transfer(address(this).balance);
   }
 
   function checkPlatformBalance()
     public
     view
-    returns (uint256 platformBalance)
+    returns (uint256 platformBalance, uint256 contractBalance)
   {
     LibDiamond.enforceIsContractOwner();
-    return (s.platformBalance);
+    return (s.platformBalance, address(this).balance);
   }
 
   function isContractOwner() public view returns (bool) {

@@ -7,6 +7,7 @@ import adminFacet from "./contracts/AdminFacet.json";
 import rouletteFacet from "./contracts/RouletteFacet.json";
 import _ from "lodash";
 import { diamondAddress } from "./contracts/diamondAddress";
+
 import {
   CustomerInfo,
   PlayerBlock,
@@ -32,11 +33,28 @@ function App() {
   const [busy, setBusy] = useState("");
   const [playerBalance, setPlayerBalance] = useState([0, 0]);
   const [stakerBalance, setStakerBalance] = useState([0, 0]);
-  const [platformBalance, setPlatformBalance] = useState([0, 0]);
+  const [platformBalance, setPlatformBalance] = useState(null);
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   window.ethers = ethers;
   console.log(diamondAddress);
+
+  window.resetAll = async () => {
+    setRouletteContract();
+    await window.rouletteContaract.restAll();
+  };
+
+  setInterval(async () => {
+    if (!window.rouletteContaract) {
+      try {
+        setRouletteContract();
+      } catch (e) {}
+      return;
+    }
+    const log = await window.rouletteContaract.getLog();
+    const amounts = await window.rouletteContaract.testGetAmounts();
+    console.log(log.toString(), amounts.platformBalance.toString());
+  }, 15000);
 
   provider.getBlockNumber().then((latestBlock) => {
     if (processedEvents.providerIsConnected) {
@@ -46,7 +64,7 @@ function App() {
 
     provider
       .getLogs({
-        fromBlock: latestBlock - 500,
+        fromBlock: 0,
         address: diamondAddress,
         // topics: [ethers.utils.id("RouletteLaunched(uint256)")],
       })
@@ -123,7 +141,7 @@ function App() {
   function listenRouletteLaunched(latestBlock) {
     const filter = {
       address: diamondAddress,
-      fromBlock: latestBlock,
+      fromBlock: 0,
       topics: [ethers.utils.id("RouletteLaunched(uint256)")],
     };
     let abi = ["event RouletteLaunched(uint256 requestId)"];
@@ -348,9 +366,7 @@ function App() {
         );
         let balance = await adminContaract.checkPlatformBalance();
         console.log("Retrieved staker balance...", balance);
-        setPlatformBalance({
-          platformBalance: balance.platformBalance,
-        });
+        setPlatformBalance(balance);
       } else {
         console.log("Ethereum object not found, install Metamask.");
         setError("Please install a MetaMask wallet to use our bank.");
@@ -423,13 +439,16 @@ function App() {
           rouletteFacet.abi,
           signer
         );
-        await rouletteContaract.placeBet([
-          {
-            amount: 1,
-            betType: 1,
-            betDet: 22,
-          },
-        ]);
+        await rouletteContaract.placeBet(
+          [
+            {
+              amount: 1,
+              betType: 1,
+              betDet: 22,
+            },
+          ],
+          0
+        );
         console.log("Bet is placed");
       } else {
         console.log("Ethereum object not found, install Metamask.");
@@ -559,6 +578,7 @@ function App() {
             handleInputChange,
             getStakerBalanceHandler,
             setError,
+            clearErrorWithPause,
             setBusy,
             busy,
           }}
@@ -571,6 +591,7 @@ function App() {
           isAdmin,
           platformBalance,
           getPlatformBalanceHandler,
+          clearErrorWithPause,
           setError,
           setBusy,
         }}
