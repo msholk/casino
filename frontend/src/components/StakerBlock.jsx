@@ -110,6 +110,9 @@ export class StakerBlock extends React.PureComponent {
       this.props;
     try {
       event.preventDefault();
+      if (!_.trim(inputValue.stake_deposit).length) {
+        return;
+      }
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
@@ -123,7 +126,7 @@ export class StakerBlock extends React.PureComponent {
           value: ethers.utils.parseEther(inputValue.stake_deposit),
           gasLimit: 5000000,
         });
-        console.log("Deposting money...");
+        console.log("Depositing money...");
         setBusy("Staking money...");
         await txn.wait();
         console.log("Deposited money...done", txn.hash);

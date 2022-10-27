@@ -101,9 +101,17 @@ export class PlayerBlock extends React.PureComponent {
   }
 
   async playerDepositsFunds(event) {
-    const { inputValue, getPlayerBalanceHandler, setError, setBusy } =
-      this.props;
+    const {
+      inputValue,
+      getPlayerBalanceHandler,
+      setError,
+      setBusy,
+      clearErrorWithPause,
+    } = this.props;
     try {
+      if (!_.trim(inputValue.player_deposit).length) {
+        return;
+      }
       event.preventDefault();
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -118,8 +126,8 @@ export class PlayerBlock extends React.PureComponent {
           value: ethers.utils.parseEther(inputValue.player_deposit),
           gasLimit: 5000000,
         });
-        console.log("Deposting money...");
-        setBusy("Deposting money...");
+        console.log("Depositing money...");
+        setBusy("Depositing money...");
         await txn.wait();
         console.log("Deposited money...done", txn.hash);
         setBusy("Updating balance...");
@@ -129,12 +137,16 @@ export class PlayerBlock extends React.PureComponent {
         setError("Please install a MetaMask wallet to use our bank.");
       }
     } catch (error) {
-      debugger;
+      let message =
+        _.get(error, "error.data.message") || _.get(error, "reason");
+      if (message) {
+        setError(message);
+        console.error(message);
+      } else {
+        setError(error);
+      }
       console.log(error);
-      setError(error.message);
-      setTimeout(() => {
-        setError("");
-      }, 3000);
+      clearErrorWithPause();
     } finally {
       setBusy("");
     }
