@@ -1,6 +1,8 @@
 ### Install
 
+Install solidity project
 `yarn install`
+Install front end part:
 `cd frontend`
 `yarn install`
 
@@ -26,7 +28,7 @@
 
 ###### Cut diamond: update a module
 
-`yarn hardhat run test/Cut.js --network mumbai``
+`yarn hardhat run test/Cut.js --network mumbai`
 The script shpuld be adjsuted in accordance to what module we want to update.
 
 ### Run frontend
