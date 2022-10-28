@@ -9,7 +9,6 @@ import { stableCoinName, nativeCoinName } from "../constants";
 PlayersFacet: {
         'checkPlayerBalance()': null,
         'depositToCashier()': null,
-        'placeBet((uint256,uint8,uint8)[])': null,
         'rawFulfillRandomWords(uint256,uint256[])': null,
         'setVrfInfo((uint64,address,bytes32))': null,
         'withdrawDAI()': null
@@ -103,7 +102,7 @@ export class PlayerBlock extends React.PureComponent {
   async playerDepositsFunds(event) {
     const {
       inputValue,
-      getPlayerBalanceHandler,
+      getBalanceHandler,
       setError,
       setBusy,
       clearErrorWithPause,
@@ -131,7 +130,7 @@ export class PlayerBlock extends React.PureComponent {
         await txn.wait();
         console.log("Deposited money...done", txn.hash);
         setBusy("Updating balance...");
-        getPlayerBalanceHandler();
+        getBalanceHandler();
       } else {
         console.log("Ethereum object not found, install Metamask.");
         setError("Please install a MetaMask wallet to use our bank.");
@@ -152,7 +151,7 @@ export class PlayerBlock extends React.PureComponent {
     }
   }
   async withdrawAllPlayersFunds(event) {
-    const { getPlayerBalanceHandler, setError, setBusy, clearErrorWithPause } =
+    const { getBalanceHandler, setError, setBusy, clearErrorWithPause } =
       this.props;
     try {
       event.preventDefault();
@@ -174,7 +173,7 @@ export class PlayerBlock extends React.PureComponent {
         await txn.wait();
         console.log("Money with drew...done", txn.hash);
         setBusy("Updating balance...");
-        getPlayerBalanceHandler();
+        getBalanceHandler();
       } else {
         console.log("Ethereum object not found, install Metamask.");
         setError("Please install a MetaMask wallet to use our bank.");

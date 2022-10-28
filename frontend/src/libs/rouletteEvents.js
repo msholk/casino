@@ -1,5 +1,8 @@
 import _ from "lodash";
 import chalk from "chalk";
+import { ethers } from "ethers";
+import { diamondAddress } from "../contracts/diamondAddress";
+import rouletteFacet from "../contracts/RouletteFacet";
 
 const isUniqueEvents = (ev) => {
   const key = `${ev.transactionhash}-${ev.logIndex}`;
@@ -95,6 +98,7 @@ const listenToRouletteStopped = async (customerAddress, requestId, state) => {
               )`
           );
           state.setRouletteStatus({ status: "STOPPED", randomWord, resultNum });
+          state.getBalanceHandler();
           console.log(ev);
         }
       );
@@ -117,7 +121,7 @@ const listenToRouletteStopped = async (customerAddress, requestId, state) => {
 /*
 placeBet(customerAddress,{setError,clearErrorWithPause,setRouletteStatus})
 */
-export const placeBet = async () => {
+export const placeBet = async (customerAddress, state) => {
   try {
     if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);

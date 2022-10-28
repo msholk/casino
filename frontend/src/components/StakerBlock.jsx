@@ -106,8 +106,7 @@ export class StakerBlock extends React.PureComponent {
   }
 
   async StakeEthHandler(event) {
-    const { inputValue, getStakerBalanceHandler, setError, setBusy } =
-      this.props;
+    const { inputValue, getBalanceHandler, setError, setBusy } = this.props;
     try {
       event.preventDefault();
       if (!_.trim(inputValue.stake_deposit).length) {
@@ -131,7 +130,7 @@ export class StakerBlock extends React.PureComponent {
         await txn.wait();
         console.log("Deposited money...done", txn.hash);
         setBusy("Updating balance...");
-        getStakerBalanceHandler();
+        getBalanceHandler();
       } else {
         console.log("Ethereum object not found, install Metamask.");
         setError("Please install a MetaMask wallet to use our bank.");
@@ -147,7 +146,7 @@ export class StakerBlock extends React.PureComponent {
     }
   }
   async withdrawAllStakerFunds(event) {
-    const { getStakerBalanceHandler, setError, setBusy, clearErrorWithPause } =
+    const { getBalanceHandler, setError, setBusy, clearErrorWithPause } =
       this.props;
     try {
       event.preventDefault();
@@ -169,7 +168,7 @@ export class StakerBlock extends React.PureComponent {
         await txn.wait();
         console.log("Money with drew...done", txn.hash);
         setBusy("Updating balance...");
-        getStakerBalanceHandler();
+        getBalanceHandler();
       } else {
         console.log("Ethereum object not found, install Metamask.");
         setError("Please install a MetaMask wallet to use our bank.");

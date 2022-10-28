@@ -33,13 +33,13 @@ export class AdminPanel extends React.PureComponent {
     return platformBalance.platformBalance.toString() / 10 ** 18;
   }
   componentDidMount() {
-    const { platformBalance, getPlatformBalanceHandler } = this.props;
+    const { platformBalance, getBalanceHandler } = this.props;
     if (!platformBalance) {
-      getPlatformBalanceHandler();
+      getBalanceHandler();
     }
   }
   async withdrawAllPlatformFunds(event) {
-    const { getPlatformBalanceHandler, setError, setBusy } = this.props;
+    const { getBalanceHandler, setError, setBusy } = this.props;
     try {
       event.preventDefault();
       if (window.ethereum) {
@@ -60,7 +60,7 @@ export class AdminPanel extends React.PureComponent {
         await txn.wait();
         console.log("Money with drew...done", txn.hash);
         setBusy("Updating balance...");
-        getPlatformBalanceHandler();
+        getBalanceHandler();
       } else {
         console.log("Ethereum object not found, install Metamask.");
         setError("Please install a MetaMask wallet to use our bank.");
@@ -76,7 +76,7 @@ export class AdminPanel extends React.PureComponent {
     }
   }
   async withdrawAllContractFunds(event) {
-    const { getPlatformBalanceHandler, setError, setBusy } = this.props;
+    const { getBalanceHandler, setError, setBusy } = this.props;
     try {
       event.preventDefault();
       if (window.ethereum) {
@@ -97,7 +97,7 @@ export class AdminPanel extends React.PureComponent {
         await txn.wait();
         console.log("Money with drew...done", txn.hash);
         setBusy("Updating balance...");
-        getPlatformBalanceHandler();
+        getBalanceHandler();
       } else {
         console.log("Ethereum object not found, install Metamask.");
         setError("Please install a MetaMask wallet to use our bank.");

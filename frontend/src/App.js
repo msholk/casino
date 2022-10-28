@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import chalk from "chalk";
 import playersFacet from "./contracts/PlayersFacet.json";
 import stakerFacet from "./contracts/StakerFacet.json";
 import adminFacet from "./contracts/AdminFacet.json";
-import rouletteFacet from "./contracts/RouletteFacet.json";
 import _ from "lodash";
 import { diamondAddress } from "./contracts/diamondAddress";
+import { checkBalances } from "./libs/BalanceHandlers";
 
 import {
   CustomerInfo,
+  RouletteBlock,
   PlayerBlock,
   StakerBlock,
   BusyBlock,
@@ -18,7 +18,6 @@ import {
 } from "./components";
 let ethInitialized;
 let lastAccountConnected = null;
-const processedEvents = {};
 
 function App() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -34,14 +33,10 @@ function App() {
   const [playerBalance, setPlayerBalance] = useState([0, 0]);
   const [stakerBalance, setStakerBalance] = useState([0, 0]);
   const [platformBalance, setPlatformBalance] = useState(null);
+  const [rouletteStatus, setRouletteStatus] = useState(null);
 
   window.ethers = ethers;
   console.log(diamondAddress);
-
-  window.resetAll = async () => {
-    setRouletteContract();
-    await window.rouletteContract.restAll();
-  };
 
   const getcAccounts = async () => {
     try {
@@ -103,8 +98,12 @@ function App() {
       return;
     }
     lastAccountConnected = account;
-    getPlayerBalanceHandler();
-    getStakerBalanceHandler();
+    checkBalances(isAdmin, {
+      setStakerBalance,
+      setError,
+      setPlayerBalance,
+      setPlatformBalance,
+    });
   };
   const checkIfWalletIsConnected = async () => {
     try {
@@ -151,94 +150,6 @@ function App() {
     }
   };
 
-  const getStakerBalanceHandler = async () => {
-    try {
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const stakerContaract = new ethers.Contract(
-          diamondAddress,
-          stakerFacet.abi,
-          signer
-        );
-        let balance = await stakerContaract.checkStakerBalance();
-        console.log("Retrieved staker balance...", balance);
-        setStakerBalance({
-          stakerPercent: balance.stakerPercent,
-          houseBalance: balance.newHouseBalance,
-        });
-      } else {
-        console.log("Ethereum object not found, install Metamask.");
-        setError("Please install a MetaMask wallet to use our bank.");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const getPlayerBalanceHandler = async () => {
-    // {
-    //   return;
-    //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-    //   const signer = provider.getSigner();
-    //   const diamond = new ethers.Contract(
-    //     diamondAddress,
-    //     DiamondLoupeFacet.abi,
-    //     signer
-    //   );
-    //   /*  'facetAddress(bytes4)': null,
-    //           'facetAddresses()': null,
-    //           'facetFunctionSelectors(address)': null,
-    //           'facets()': null,
-    //           'supportsInterface(bytes4)': null*=*/
-    //   const facets = await diamond.facets();
-    //   console.log(facets);
-    // }
-
-    try {
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const playerContract = new ethers.Contract(
-          diamondAddress,
-          playersFacet.abi,
-          signer
-        );
-        let balance = await playerContract.checkPlayerBalance();
-        console.log("Retrieved balance...", balance);
-        setPlayerBalance({
-          playerBalance: balance.playerBalance,
-          priceInStable: balance.priceInStable,
-        });
-      } else {
-        console.log("Ethereum object not found, install Metamask.");
-        setError("Please install a MetaMask wallet to use our bank.");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const getPlatformBalanceHandler = async () => {
-    try {
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const adminContaract = new ethers.Contract(
-          diamondAddress,
-          adminFacet.abi,
-          signer
-        );
-        let balance = await adminContaract.checkPlatformBalance();
-        console.log("Retrieved staker balance...", balance);
-        setPlatformBalance(balance);
-      } else {
-        console.log("Ethereum object not found, install Metamask.");
-        setError("Please install a MetaMask wallet to use our bank.");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleInputChange = (event) => {
     setInputValue((prevFormData) => ({
       ...prevFormData,
@@ -251,6 +162,14 @@ function App() {
     checkIsAdminHandler();
   });
 
+  const getBalanceHandler = () => {
+    checkBalances(isAdmin, {
+      setStakerBalance,
+      setError,
+      setPlayerBalance,
+      setPlatformBalance,
+    });
+  };
   return (
     <main className="main-container">
       <h2 className="h2">Casino Project 💰</h2>
@@ -266,13 +185,26 @@ function App() {
         />
         <BusyBlock {...{ busy }} />
         <hr></hr>
+        <RouletteBlock
+          {...{
+            customerAddress,
+            setError,
+            clearErrorWithPause,
+            setRouletteStatus,
+            rouletteStatus,
+            busy,
+            isWalletConnected,
+            getBalanceHandler,
+          }}
+        />
+        <hr></hr>
         <PlayerBlock
           {...{
             playerBalance,
             isWalletConnected,
             inputValue,
             handleInputChange,
-            getPlayerBalanceHandler,
+            getBalanceHandler,
             setError,
             clearErrorWithPause,
             setBusy,
@@ -286,7 +218,7 @@ function App() {
             isWalletConnected,
             inputValue,
             handleInputChange,
-            getStakerBalanceHandler,
+            getBalanceHandler,
             setError,
             clearErrorWithPause,
             setBusy,
@@ -300,7 +232,7 @@ function App() {
           isWalletConnected,
           isAdmin,
           platformBalance,
-          getPlatformBalanceHandler,
+          getBalanceHandler,
           clearErrorWithPause,
           setError,
           setBusy,
