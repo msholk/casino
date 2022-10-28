@@ -27,11 +27,11 @@ contract AdminFacet {
     payable(msg.sender).transfer(amount);
   }
 
-  function withdrawAllContractFunds() public {
-    LibDiamond.enforceIsContractOwner();
+  // function withdrawAllContractFunds() public {
+  //   LibDiamond.enforceIsContractOwner();
 
-    payable(msg.sender).transfer(address(this).balance);
-  }
+  //   payable(msg.sender).transfer(address(this).balance);
+  // }
 
   function checkPlatformBalance()
     public

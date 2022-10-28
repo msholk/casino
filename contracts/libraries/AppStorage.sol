@@ -12,5 +12,4 @@ struct AppStorage {
   VrfStruct vrf;
   uint256 platformBalance;
   bool locked;
-  uint256[] myLog;
 }

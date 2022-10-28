@@ -67,7 +67,7 @@ library LibHLP {
     //We take PLAYER_LOSE_COMISSION
     uint256 ourComission = (PLAYER_LOSE_COMISSION * payDiffEth) / 1e4; //add precision
     s.platformBalance += ourComission;
-    console.log("Houise receives", payDiffEth, ourComission);
+    // console.log("House receives", payDiffEth, ourComission);
     s.hs.houseBalance += payDiffEth - ourComission; //transfer from Cahsier to HLP
     // console.log(payDiff, payDiff, ourComission, payDiff);
   }

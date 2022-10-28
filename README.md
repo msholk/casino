@@ -1,23 +1,35 @@
-# Install
+### Install
 
-yarn install
+`yarn install`
+`cd frontend`
+`yarn install`
 
-# Install
+### Running tests
 
-To run test for player as single contract: yarn testPlayer
-To run test for player as part of Diamond: yarn testDiamondPlayer
-To run test for staker as single contract: yarn testStaker
+###### Test Staker
 
+`npx hardhat test test/testStaker.js`
 
+###### Test Player
 
+`npx hardhat test test/testPlayer.js`
 
-forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z -vvvvv --match-contract Sw --match-test testSwapSingleHopExactAmountIn
-forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z   --fork-block-number 15756971 --match-contract Sw --match-test testSwapSingleHopExactAmountIn
+###### Test Diamond
 
-test player deposit :  yarn forge2
+`npx hardhat test test/testDiamond.js`
 
-VRF on hardhat
-yarn add --dev @nomicfoundation/hardhat-toolbox @nomicfoundation/hardhat-network-helpers @nomicfoundation/hardhat-chai-matchers @nomiclabs/hardhat-ethers @nomiclabs/hardhat-etherscan chai ethers hardhat-gas-reporter solidity-coverage @typechain/hardhat typechain @typechain/ethers-v5 @ethersproject/abi @ethersproject/providers
-add helper-hardhat-config.js
-add contracts/test/VRFCoordinatorV2Mock.sol
-yarn add @chainlink/contracts --dev
+### Deployment to MUMBAI
+
+###### Deploy diamond
+
+`yarn hardhat run test/deploy.js --network mumbai`
+
+###### Cut diamond: update a module
+
+`yarn hardhat run test/Cut.js --network mumbai``
+The script shpuld be adjsuted in accordance to what module we want to update.
+
+### Run frontend
+
+`cd frontend`
+`npm run start`

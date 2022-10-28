@@ -36,8 +36,6 @@ contract VRFContract is VRFFacetMumbaiConstants {
         numWords
       );
     }
-    s.myLog.push(1000);
-    s.myLog.push(s_requestId);
     s.vrf.requests[msg.sender] = s_requestId;
     s.rcs.userAddressByRequestId[s_requestId] = msg.sender;
     s.rcs.playersLaunchedRoulette[msg.sender].requestId = s_requestId;
@@ -61,9 +59,6 @@ contract VRFContract is VRFFacetMumbaiConstants {
     internal
     virtual
   {
-    s.myLog.push(1001);
-    s.myLog.push(requestId);
-    // s_randomWords = randomWords;
     s.vrf.requests_rand[requestId] = randomWords[0];
   }
 }

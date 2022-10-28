@@ -33,7 +33,6 @@ describe("DiamondTest", async function () {
   let stakerFacet;
   let adminFacet;
   let tx;
-  let receipt;
   let result;
   let TokensMock;
   let rouletteFacet;
@@ -337,7 +336,7 @@ describe("DiamondTest", async function () {
         diamondAddress
       );
       const lockedAmounts = await rouletteFacet.testGetAmounts();
-      console.log(lockedAmounts);
+      // console.log(lockedAmounts);
       expect(lockedAmounts.houseLocked).eq(utils.parseEther("0"));
       expect(lockedAmounts.playerLocked).eq(utils.parseEther("0"));
       expect(lockedAmounts.requestId).eq(0);
@@ -380,7 +379,7 @@ describe("DiamondTest", async function () {
           diamondAddress
         );
         const lockedAmounts = await rouletteFacet.testGetAmounts();
-        console.log(lockedAmounts);
+        // console.log(lockedAmounts);
         expect(lockedAmounts.houseLocked).eq(utils.parseEther("3.5"));
         expect(lockedAmounts.playerLocked).eq(utils.parseEther("0.11"));
         expect(lockedAmounts.requestId).eq(31);
@@ -421,6 +420,7 @@ describe("DiamondTest", async function () {
         await expect(tx)
           .to.emit(rouletteFacet, "RouletteStoppedPrizeInfo")
           .withArgs(
+            signers[0].address,
             requestId,
             theRandom,
             winNumber,
@@ -433,7 +433,7 @@ describe("DiamondTest", async function () {
           diamondAddress
         );
         const lockedAmounts = await rouletteFacet.testGetAmounts();
-        console.log(lockedAmounts);
+        // console.log(lockedAmounts);
         expect(lockedAmounts.houseLocked).eq(utils.parseEther("0"));
         expect(lockedAmounts.playerLocked).eq(utils.parseEther("0"));
         expect(lockedAmounts.requestId).eq(0);
@@ -470,7 +470,7 @@ describe("DiamondTest", async function () {
           )
         )
           .to.emit(rouletteFacet, "RouletteLaunched")
-          .withArgs(31); //request id
+          .withArgs(signers[0].address, 31); //request id
       });
       it("Check locked amounts", async () => {
         const rouletteFacet = await ethers.getContractAt(
@@ -478,7 +478,7 @@ describe("DiamondTest", async function () {
           diamondAddress
         );
         const lockedAmounts = await rouletteFacet.testGetAmounts();
-        console.log(lockedAmounts);
+        // console.log(lockedAmounts);
         expect(lockedAmounts.houseLocked).eq(utils.parseEther("3.5"));
         expect(lockedAmounts.playerLocked).eq(utils.parseEther("0.11"));
         expect(lockedAmounts.requestId).eq(31);
@@ -503,7 +503,7 @@ describe("DiamondTest", async function () {
         await expect(tx)
           .to.emit(rouletteFacet, "RouletteStoppedVRFCallReceived")
           .to.emit(rouletteFacet, "RouletteStopped")
-          .withArgs(requestId, theRandom, winNumber);
+          .withArgs(signers[0].address, requestId, theRandom, winNumber);
 
         await expect(tx)
           .to.emit(rouletteFacet, "RouletteStoppedRequestIdRecognized")
@@ -512,6 +512,7 @@ describe("DiamondTest", async function () {
         await expect(tx)
           .to.emit(rouletteFacet, "RouletteStoppedPrizeInfo")
           .withArgs(
+            signers[0].address,
             requestId,
             theRandom,
             winNumber,
@@ -524,7 +525,7 @@ describe("DiamondTest", async function () {
           diamondAddress
         );
         const lockedAmounts = await rouletteFacet.testGetAmounts();
-        console.log(lockedAmounts);
+        // console.log(lockedAmounts);
         expect(lockedAmounts.houseLocked).eq(utils.parseEther("0"));
         expect(lockedAmounts.playerLocked).eq(utils.parseEther("0"));
         expect(lockedAmounts.requestId).eq(0);
@@ -536,40 +537,30 @@ describe("DiamondTest", async function () {
         expect(lockedAmounts.houseBalance).eq(utils.parseEther("150.109714"));
         expect(lockedAmounts.platformBalance).eq(utils.parseEther("0.000286"));
       });
-    });
-  });
-  xdescribe("Platformadmin", async () => {
-    let playerBalance;
 
-    it("Check platfrom balance is 2.67", async () => {
-      const adminFacet = await ethers.getContractAt(
-        "AdminFacet",
-        diamondAddress
-      );
-      let bal = await adminFacet.checkPlatformBalance();
-      expect(bal.platformBalanceP2 / 100).eq(2.67);
-    });
-    it("Check platfrom access allowed only to owner", async () => {
-      const adminFacet = await ethers.getContractAt(
-        "AdminFacet",
-        diamondAddress
-      );
-      await expect(
-        adminFacet.connect(signers[1]).checkPlatformBalance()
-      ).revertedWith("LibDiamond: Must be contract owner");
-    });
-    it("Withdraw balance", async () => {
-      let bal = await TokensMock.daiBalanceOf(signers[0].address);
-      expect(bal).eq(0);
+      describe("Platform Admin", async () => {
+        let playerBalance;
 
-      const adminFacet = await ethers.getContractAt(
-        "AdminFacet",
-        diamondAddress
-      );
-      await expect(adminFacet.withdrawAllPlatformDAI()).not.to.be.reverted;
-      let bal2 = await TokensMock.daiBalanceOf(signers[0].address);
-      console.log(bal2);
-      expect(Math.floor(bal2 / 10 ** 16) / 100).eq(2.67);
+        it("Check platfrom balance is 2.67", async () => {
+          const adminFacet = await ethers.getContractAt(
+            "AdminFacet",
+            diamondAddress
+          );
+          let bal = await adminFacet.checkPlatformBalance();
+          // console.log(bal);
+          expect(bal.platformBalance).eq(utils.parseEther("0.000286"));
+          expect(bal.contractBalance).eq(utils.parseEther("151"));
+        });
+        it("Check platfrom access allowed only to owner", async () => {
+          const adminFacet = await ethers.getContractAt(
+            "AdminFacet",
+            diamondAddress
+          );
+          await expect(
+            adminFacet.connect(signers[1]).checkPlatformBalance()
+          ).revertedWith("LibDiamond: Must be contract owner");
+        });
+      });
     });
   });
 });
