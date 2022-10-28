@@ -33,5 +33,7 @@
   "0x0936bdf9": "resetRoulette()",
   "0x691db5ce": "restAll()",
   "0x02c4d72b": "testFulfillRandomWords(uint256,uint256[])",
-  "0x2fcd1bef": "testGetAmounts()"
+  "0x2fcd1bef": "testGetAmounts()",
+  "0x250d2A8864Cb84a9400cefCDE136E13B045c3c95": "RouletteFacet",
+  "0xD007b7DB36bD9A8705C1Ab6539028BDCB3b50c2b": "AdminFacet"
 }

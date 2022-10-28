@@ -6,19 +6,21 @@ import "contracts/libraries/roulette/RouletteLaunchLib.sol";
 import "contracts/libraries/house/LibHLP.sol";
 
 contract RouletteFacet is VRFContract {
-  event RouletteLaunched(uint256 requestId);
+  event RouletteLaunched(address indexed sender, uint256 requestId);
   event RouletteStopped(
-    uint256 requestId,
+    address indexed sender,
+    uint256 indexed requestId,
     uint256 randomWord,
     uint256 resultNum
   );
-  event RouletteStoppedVRFCallReceived();
-  event RouletteStoppedRequestIdRecognized();
-  event RouletteStoppedRequestIdNotRecognized();
-  event RouletteLaunchOfPlayerFound();
-  event RouletteLaunchOfPlayerNotFound();
+  event RouletteStoppedVRFCallReceived(uint256 indexed requestId);
+  event RouletteStoppedRequestIdRecognized(uint256 indexed requestId);
+  event RouletteStoppedRequestIdNotRecognized(uint256 indexed requestId);
+  event RouletteLaunchOfPlayerFound(uint256 indexed requestId);
+  event RouletteLaunchOfPlayerNotFound(uint256 indexed requestId);
   event RouletteStoppedPrizeInfo(
-    uint256 requestId,
+    address indexed sender,
+    uint256 indexed requestId,
     uint256 randomWord,
     uint256 resultNum,
     uint256[10] winByPosition
@@ -114,7 +116,7 @@ contract RouletteFacet is VRFContract {
     //     msg.sender,
     //     userAddressByRequestId[rl.requestId]
     // );
-    emit RouletteLaunched(rl.requestId);
+    emit RouletteLaunched(msg.sender, rl.requestId);
   }
 
   function testFulfillRandomWords(
@@ -144,13 +146,13 @@ contract RouletteFacet is VRFContract {
     // myLog.push(string(abi.encodePacked("requestId:", requestId)));
     // myLog.push(string(abi.encodePacked(randomWords[0])));
     console.log("fulfillRandomWords", requestId, randomWords[0]);
-    emit RouletteStoppedVRFCallReceived();
+    emit RouletteStoppedVRFCallReceived(requestId);
 
     uint256 resultnum = (randomWords[0] % 38) + 1;
 
     uint8 resultnum8 = uint8(resultnum);
     // myLog.push(string(abi.encodePacked("resultnum8:", requestId)));
-    emit RouletteStopped(requestId, randomWords[0], resultnum);
+
     // //console.log(
     //     "emitting RouletteStopped",
     //     requestId,
@@ -158,6 +160,7 @@ contract RouletteFacet is VRFContract {
     //     resultnum
     // );
     address playerAddress = s.rcs.userAddressByRequestId[requestId];
+    emit RouletteStopped(playerAddress, requestId, randomWords[0], resultnum);
     s.myLog.push(1004);
     s.myLog.push(uint256(uint160(playerAddress)));
 
@@ -166,13 +169,13 @@ contract RouletteFacet is VRFContract {
       // myLog.push("player not found for this address");
       //request not registered
       //console.log("playerAddress is empty");
-      emit RouletteStoppedRequestIdNotRecognized();
+      emit RouletteStoppedRequestIdNotRecognized(requestId);
       return;
     }
     // myLog.push("player is found ");
     s.myLog.push(1007);
     delete s.rcs.userAddressByRequestId[requestId];
-    emit RouletteStoppedRequestIdRecognized();
+    emit RouletteStoppedRequestIdRecognized(requestId);
 
     RouletteLaunch memory rl = s.rcs.playersLaunchedRoulette[playerAddress];
     s.myLog.push(1008);
@@ -181,13 +184,13 @@ contract RouletteFacet is VRFContract {
       // s.myLog.push(string(abi.encodePacked(rl.requestId)));
       s.myLog.push(1009);
       s.myLog.push(rl.requestId);
-      emit RouletteLaunchOfPlayerNotFound();
+      emit RouletteLaunchOfPlayerNotFound(requestId);
       //   //console.log("rl.requestId != requestId");
       return; //Don't revert
     }
     s.myLog.push(1010);
     //console.log("emitting RouletteLaunchOfPlayerFound(true)");
-    emit RouletteLaunchOfPlayerFound();
+    emit RouletteLaunchOfPlayerFound(requestId);
     // myLog.push("RouletteLaunchOfPlayer Found ");
     s.rcs.playersLaunchedRoulette[playerAddress].requestId = 0;
     s.vrf.requests_rand[requestId] = randomWords[0];
@@ -263,6 +266,7 @@ contract RouletteFacet is VRFContract {
     }
 
     emit RouletteStoppedPrizeInfo(
+      playerAddress,
       requestId,
       randomWords[0],
       resultnum,
