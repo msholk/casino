@@ -1,10 +1,11 @@
 import React from "react";
-import { ethers } from "ethers";
-import PlayersFacet from "contracts/PlayersFacet.json";
-import { diamondAddress } from "contracts/diamondAddress";
 import { MDBInputGroup, MDBBtn } from "mdb-react-ui-kit";
 import _ from "lodash";
 import { stableCoinName, nativeCoinName } from "../constants";
+import {
+  playerDepositsFunds,
+  withdrawAllPlayersFunds,
+} from "../libs/playerLibs";
 /*
 PlayersFacet: {
         'checkPlayerBalance()': null,
@@ -76,7 +77,7 @@ export class PlayerBlock extends React.PureComponent {
                 className="moveMoneyButton"
                 outline
                 onClick={(e) => {
-                  this.playerDepositsFunds(e);
+                  this.playerDepositsFundsHandler(e);
                 }}
               >
                 Deposit funds In {nativeCoinName}
@@ -88,7 +89,7 @@ export class PlayerBlock extends React.PureComponent {
               className="moveMoneyButton"
               outline
               onClick={(e) => {
-                this.withdrawAllPlayersFunds(e);
+                this.withdrawAllPlayersFundsHandler(e);
               }}
             >
               Withdraw All
@@ -99,7 +100,7 @@ export class PlayerBlock extends React.PureComponent {
     );
   }
 
-  async playerDepositsFunds(event) {
+  async playerDepositsFundsHandler(event) {
     const {
       inputValue,
       getBalanceHandler,
@@ -107,90 +108,24 @@ export class PlayerBlock extends React.PureComponent {
       setBusy,
       clearErrorWithPause,
     } = this.props;
-    try {
-      if (!_.trim(inputValue.player_deposit).length) {
-        return;
-      }
-      event.preventDefault();
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const playerContract = new ethers.Contract(
-          diamondAddress,
-          PlayersFacet.abi,
-          signer
-        );
-
-        const txn = await playerContract.depositToCashier({
-          value: ethers.utils.parseEther(inputValue.player_deposit),
-          gasLimit: 5000000,
-        });
-        console.log("Depositing money...");
-        setBusy("Depositing money...");
-        await txn.wait();
-        console.log("Deposited money...done", txn.hash);
-        setBusy("Updating balance...");
-        getBalanceHandler();
-      } else {
-        console.log("Ethereum object not found, install Metamask.");
-        setError("Please install a MetaMask wallet to use our bank.");
-      }
-    } catch (error) {
-      let message =
-        _.get(error, "error.data.message") || _.get(error, "reason");
-      if (message) {
-        setError(message);
-        console.error(message);
-      } else {
-        setError(error);
-      }
-      console.log(error);
-      clearErrorWithPause();
-    } finally {
-      setBusy("");
-    }
+    event.preventDefault();
+    playerDepositsFunds({
+      inputValue,
+      getBalanceHandler,
+      setError,
+      setBusy,
+      clearErrorWithPause,
+    });
   }
-  async withdrawAllPlayersFunds(event) {
+  async withdrawAllPlayersFundsHandler(event) {
     const { getBalanceHandler, setError, setBusy, clearErrorWithPause } =
       this.props;
-    try {
-      event.preventDefault();
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const playerContract = new ethers.Contract(
-          diamondAddress,
-          PlayersFacet.abi,
-          signer
-        );
-
-        let myAddress = await signer.getAddress();
-        console.log("provider signer...", myAddress);
-
-        const txn = await playerContract.withdrawPlayerBalance();
-        console.log("Withdrawing money...");
-        setBusy("Withdrawing money...");
-        await txn.wait();
-        console.log("Money with drew...done", txn.hash);
-        setBusy("Updating balance...");
-        getBalanceHandler();
-      } else {
-        console.log("Ethereum object not found, install Metamask.");
-        setError("Please install a MetaMask wallet to use our bank.");
-      }
-    } catch (error) {
-      let message =
-        _.get(error, "error.data.message") || _.get(error, "reason");
-      if (message) {
-        setError(message);
-        console.error(message);
-      } else {
-        setError(error);
-      }
-      console.log(error);
-      clearErrorWithPause();
-    } finally {
-      setBusy("");
-    }
+    event.preventDefault();
+    withdrawAllPlayersFunds({
+      getBalanceHandler,
+      setError,
+      setBusy,
+      clearErrorWithPause,
+    });
   }
 }

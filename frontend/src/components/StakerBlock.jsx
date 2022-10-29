@@ -1,5 +1,4 @@
 import React from "react";
-
 import { MDBInputGroup, MDBBtn } from "mdb-react-ui-kit";
 import _ from "lodash";
 import { nativeCoinName } from "../constants";
