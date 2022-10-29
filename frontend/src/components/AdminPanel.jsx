@@ -1,11 +1,11 @@
 import React from "react";
-import { ethers } from "ethers";
-import _ from "lodash";
 
 import { MDBNavbarBrand, MDBBtn } from "mdb-react-ui-kit";
 import { nativeCoinName } from "../constants";
-import adminFacet from "../contracts/AdminFacet.json";
-import { diamondAddress } from "../contracts/diamondAddress";
+import {
+  withdrawAllPlatformFunds,
+  withdrawAllContractFunds,
+} from "../libs/adminLib";
 
 /*
 dminFacet: {
@@ -38,79 +38,15 @@ export class AdminPanel extends React.PureComponent {
       getBalanceHandler();
     }
   }
-  async withdrawAllPlatformFunds(event) {
+  async withdrawAllPlatformFundsHandler(event) {
     const { getBalanceHandler, setError, setBusy } = this.props;
-    try {
-      event.preventDefault();
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const stakerContract = new ethers.Contract(
-          diamondAddress,
-          adminFacet.abi,
-          signer
-        );
-
-        let myAddress = await signer.getAddress();
-        console.log("provider signer...", myAddress);
-
-        const txn = await stakerContract.withdrawAllPlatformFunds();
-        console.log("Withdrawing money...");
-        setBusy("Withdrawing platform's funds...");
-        await txn.wait();
-        console.log("Money with drew...done", txn.hash);
-        setBusy("Updating balance...");
-        getBalanceHandler();
-      } else {
-        console.log("Ethereum object not found, install Metamask.");
-        setError("Please install a MetaMask wallet to use our bank.");
-      }
-    } catch (error) {
-      console.log(error);
-      setError(error.reason);
-      setTimeout(() => {
-        setError("");
-      }, 3000);
-    } finally {
-      setBusy("");
-    }
+    event.preventDefault();
+    withdrawAllPlatformFunds({ getBalanceHandler, setError, setBusy });
   }
-  async withdrawAllContractFunds(event) {
+  async withdrawAllContractFundsHandler(event) {
     const { getBalanceHandler, setError, setBusy } = this.props;
-    try {
-      event.preventDefault();
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const stakerContract = new ethers.Contract(
-          diamondAddress,
-          adminFacet.abi,
-          signer
-        );
-
-        let myAddress = await signer.getAddress();
-        console.log("provider signer...", myAddress);
-
-        const txn = await stakerContract.withdrawAllContractFunds();
-        console.log("Withdrawing money...");
-        setBusy("Withdrawing contract's funds...");
-        await txn.wait();
-        console.log("Money with drew...done", txn.hash);
-        setBusy("Updating balance...");
-        getBalanceHandler();
-      } else {
-        console.log("Ethereum object not found, install Metamask.");
-        setError("Please install a MetaMask wallet to use our bank.");
-      }
-    } catch (error) {
-      console.log(error);
-      setError(error.reason);
-      setTimeout(() => {
-        setError("");
-      }, 3000);
-    } finally {
-      setBusy("");
-    }
+    event.preventDefault();
+    withdrawAllContractFunds(getBalanceHandler, setError, setBusy);
   }
   render() {
     const { busy, isWalletConnected, isAdmin, platformBalance } = this.props;
@@ -147,7 +83,7 @@ export class AdminPanel extends React.PureComponent {
             className="moveMoneyButton"
             outline
             onClick={(e) => {
-              this.withdrawAllPlatformFunds(e);
+              this.withdrawAllPlatformFundsHandler(e);
             }}
           >
             Withdraw All platform funds
@@ -159,7 +95,7 @@ export class AdminPanel extends React.PureComponent {
             className="moveMoneyButton"
             outline
             onClick={(e) => {
-              this.withdrawAllContractFunds(e);
+              this.withdrawAllContractFundsHandler(e);
             }}
           >
             Withdraw All contract funds

@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import playersFacet from "./contracts/PlayersFacet.json";
-import stakerFacet from "./contracts/StakerFacet.json";
-import adminFacet from "./contracts/AdminFacet.json";
-import _ from "lodash";
 import { diamondAddress } from "./contracts/diamondAddress";
 import { checkBalances } from "./libs/BalanceHandlers";
+import { checkIsAdmin } from "./libs/adminLib";
 
 import {
   CustomerInfo,
@@ -126,28 +123,7 @@ function App() {
   };
 
   const checkIsAdminHandler = async () => {
-    try {
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const adminContract = new ethers.Contract(
-          diamondAddress,
-          adminFacet.abi,
-          signer
-        );
-
-        let _isAdmin = await adminContract.isContractOwner();
-        if (isAdmin === _isAdmin) {
-          return;
-        }
-        setIsAdmin(_isAdmin);
-      } else {
-        console.log("Ethereum object not found, install Metamask.");
-        setError("Please install a MetaMask wallet to use our bank.");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    checkIsAdmin({ isAdmin, setIsAdmin, setError });
   };
 
   const handleInputChange = (event) => {
