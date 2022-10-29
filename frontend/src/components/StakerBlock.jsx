@@ -1,11 +1,9 @@
 import React from "react";
-import { ethers } from "ethers";
-import StakerFacet from "contracts/StakerFacet.json";
-import { diamondAddress } from "contracts/diamondAddress";
+
 import { MDBInputGroup, MDBBtn } from "mdb-react-ui-kit";
 import _ from "lodash";
-import { stableCoinName, nativeCoinName } from "../constants";
-
+import { nativeCoinName } from "../constants";
+import { withdrawAllStakerFunds, stakeFunds } from "../libs/stakerLib";
 /*
 StakerFacet: {
          'checkStakerBalance()': null,
@@ -94,7 +92,7 @@ export class StakerBlock extends React.PureComponent {
               className="moveMoneyButton"
               outline
               onClick={(e) => {
-                this.withdrawAllStakerFunds(e);
+                this.withdrawAllStakerFundsHandler(e);
               }}
             >
               Withdraw All
@@ -107,85 +105,15 @@ export class StakerBlock extends React.PureComponent {
 
   async StakeEthHandler(event) {
     const { inputValue, getBalanceHandler, setError, setBusy } = this.props;
-    try {
-      event.preventDefault();
-      if (!_.trim(inputValue.stake_deposit).length) {
-        return;
-      }
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const stakerContract = new ethers.Contract(
-          diamondAddress,
-          StakerFacet.abi,
-          signer
-        );
-
-        const txn = await stakerContract.stakeETH({
-          value: ethers.utils.parseEther(inputValue.stake_deposit),
-          gasLimit: 5000000,
-        });
-        console.log("Depositing money...");
-        setBusy("Staking money...");
-        await txn.wait();
-        console.log("Deposited money...done", txn.hash);
-        setBusy("Updating balance...");
-        getBalanceHandler();
-      } else {
-        console.log("Ethereum object not found, install Metamask.");
-        setError("Please install a MetaMask wallet to use our bank.");
-      }
-    } catch (error) {
-      console.log(error);
-      setError(error.message);
-      setTimeout(() => {
-        setError("");
-      }, 3000);
-    } finally {
-      setBusy("");
-    }
+    event.preventDefault();
+    stakeFunds({ inputValue, getBalanceHandler, setError, setBusy });
   }
-  async withdrawAllStakerFunds(event) {
+  async withdrawAllStakerFundsHandler(event) {
+    event.preventDefault();
+
     const { getBalanceHandler, setError, setBusy, clearErrorWithPause } =
       this.props;
-    try {
-      event.preventDefault();
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const stakerContract = new ethers.Contract(
-          diamondAddress,
-          StakerFacet.abi,
-          signer
-        );
-
-        let myAddress = await signer.getAddress();
-        console.log("provider signer...", myAddress);
-
-        const txn = await stakerContract.withdrawAllStakerDAI();
-        console.log("Withdrawing money...");
-        setBusy("Withdrawing money...");
-        await txn.wait();
-        console.log("Money with drew...done", txn.hash);
-        setBusy("Updating balance...");
-        getBalanceHandler();
-      } else {
-        console.log("Ethereum object not found, install Metamask.");
-        setError("Please install a MetaMask wallet to use our bank.");
-      }
-    } catch (error) {
-      let message =
-        _.get(error, "error.data.message") || _.get(error, "reason");
-      if (message) {
-        setError(message);
-        console.error(message);
-      } else {
-        setError(error);
-      }
-      console.log(error);
-      clearErrorWithPause();
-    } finally {
-      setBusy("");
-    }
+    const st = { getBalanceHandler, setError, setBusy, clearErrorWithPause };
+    withdrawAllStakerFunds(st);
   }
 }
