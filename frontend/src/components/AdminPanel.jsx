@@ -50,7 +50,7 @@ export class AdminPanel extends React.PureComponent {
   }
   render() {
     const { busy, isWalletConnected, isAdmin, platformBalance } = this.props;
-    console.log("platformBalance", platformBalance);
+    // console.log("platformBalance", platformBalance);
 
     if (busy || !isWalletConnected || !isAdmin) {
       return null;

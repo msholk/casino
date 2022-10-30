@@ -43,7 +43,7 @@ export class StakerBlock extends React.PureComponent {
     if (busy || !isWalletConnected) {
       return null;
     }
-    console.log(stakerBalance);
+    // console.log(stakerBalance);
 
     return (
       <>

@@ -43,7 +43,7 @@ export class PlayerBlock extends React.PureComponent {
     if (busy || !isWalletConnected) {
       return null;
     }
-    console.log(playerBalance);
+    // console.log(playerBalance);
 
     return (
       <>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { diamondAddress } from "./contracts/diamondAddress";
 import { checkBalances } from "./libs/BalanceHandlers";
 import { checkIsAdmin } from "./libs/adminLib";
@@ -27,15 +27,24 @@ function App() {
   const [customerAddress, setCustomerAddress] = useState(null);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState("");
-  const [playerBalance, setPlayerBalance] = useState([0, 0]);
-  const [stakerBalance, setStakerBalance] = useState([0, 0]);
-  const [platformBalance, setPlatformBalance] = useState(null);
+  const [playerBalance, setPlayerBalance] = useState({
+    playerBalance: BigNumber.from("0"),
+    priceInStable: BigNumber.from("0"),
+  });
+  const [stakerBalance, setStakerBalance] = useState({
+    stakerPercent: BigNumber.from("0"),
+    houseBalance: BigNumber.from("0"),
+  });
+  const [platformBalance, setPlatformBalance] = useState({
+    contractBalance: BigNumber.from("0"),
+    platformBalance: BigNumber.from("0"),
+  });
   const [rouletteStatus, setRouletteStatus] = useState(null);
 
   window.ethers = ethers;
-  console.log(diamondAddress);
+  // console.log(diamondAddress);
 
-  const getAccounts = async () => {
+  const getAccounts = async (prm) => {
     try {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
@@ -46,7 +55,6 @@ function App() {
       _.set(window, "lastAccounts", JSON.stringify(accounts));
 
       gotAccounts(accounts);
-      checkIsAdmin({ isAdmin, setIsAdmin, setError });
     } catch (e) {
       console.error(error);
     }
@@ -100,15 +108,12 @@ function App() {
       return;
     }
     lastAccountConnected = account;
-    if (isAdmin == undefined) return;
-    checkBalances(isAdmin, {
-      setStakerBalance,
-      setError,
-      setPlayerBalance,
-      setPlatformBalance,
-    });
   };
-  const checkIfWalletIsConnected = async () => {
+  const checkIfWalletIsConnected = async (prm) => {
+    if (_.get(window, "checkIfWalletIsConnected_locked")) {
+      return;
+    }
+    _.set(window, "checkIfWalletIsConnected_locked", true);
     try {
       if (window.ethereum) {
         if (!ethInitialized) {
@@ -118,13 +123,15 @@ function App() {
             window.location.reload();
           });
         }
-        getAccounts();
+        await getAccounts(prm);
       } else {
         setError("Please install a MetaMask wallet to use our bank.");
         console.log("No Metamask detected");
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      _.set(window, "checkIfWalletIsConnected_locked", false);
     }
   };
 
@@ -135,17 +142,28 @@ function App() {
     }));
   };
 
-  useEffect(() => {
-    checkIfWalletIsConnected();
-    getBalanceHandler();
+  useEffect(async () => {
+    const prm = { calledToBalanceHandler: false };
+    await checkIfWalletIsConnected(prm);
+    if (!isWalletConnected) {
+      return;
+    }
+    if (isAdmin == undefined) {
+      checkIsAdmin({ isAdmin, setIsAdmin, setError });
+      return;
+    }
+    await getBalanceHandler();
   });
 
   const getBalanceHandler = () => {
     if (isAdmin == undefined) return;
     checkBalances(isAdmin, {
+      stakerBalance,
       setStakerBalance,
       setError,
+      playerBalance,
       setPlayerBalance,
+      platformBalance,
       setPlatformBalance,
     });
   };
