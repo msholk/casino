@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { diamondAddress } from "./contracts/diamondAddress";
 import { checkBalances } from "./libs/BalanceHandlers";
 import { checkIsAdmin } from "./libs/adminLib";
-
+import _ from "lodash";
 import {
   CustomerInfo,
   RouletteBlock,
@@ -18,7 +18,7 @@ let lastAccountConnected = null;
 
 function App() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(undefined);
   const [inputValue, setInputValue] = useState({
     withdraw: "",
     stake_deposit: "",
@@ -35,13 +35,18 @@ function App() {
   window.ethers = ethers;
   console.log(diamondAddress);
 
-  const getcAccounts = async () => {
+  const getAccounts = async () => {
     try {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
+      if (_.get(window, "lastAccounts") == JSON.stringify(accounts)) {
+        return;
+      }
+      _.set(window, "lastAccounts", JSON.stringify(accounts));
 
       gotAccounts(accounts);
+      checkIsAdmin({ isAdmin, setIsAdmin, setError });
     } catch (e) {
       console.error(error);
     }
@@ -95,6 +100,7 @@ function App() {
       return;
     }
     lastAccountConnected = account;
+    if (isAdmin == undefined) return;
     checkBalances(isAdmin, {
       setStakerBalance,
       setError,
@@ -112,7 +118,7 @@ function App() {
             window.location.reload();
           });
         }
-        getcAccounts();
+        getAccounts();
       } else {
         setError("Please install a MetaMask wallet to use our bank.");
         console.log("No Metamask detected");
@@ -120,10 +126,6 @@ function App() {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const checkIsAdminHandler = async () => {
-    checkIsAdmin({ isAdmin, setIsAdmin, setError });
   };
 
   const handleInputChange = (event) => {
@@ -135,10 +137,11 @@ function App() {
 
   useEffect(() => {
     checkIfWalletIsConnected();
-    checkIsAdminHandler();
+    getBalanceHandler();
   });
 
   const getBalanceHandler = () => {
+    if (isAdmin == undefined) return;
     checkBalances(isAdmin, {
       setStakerBalance,
       setError,

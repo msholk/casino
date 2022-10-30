@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import adminFacet from "../contracts/AdminFacet.json";
 import { diamondAddress } from "../contracts/diamondAddress";
-
+import _ from "lodash";
 export const withdrawAllPlatformFunds = async ({
   getBalanceHandler,
   setError,
@@ -82,7 +82,11 @@ export const withdrawAllContractFunds = async ({
 };
 
 export const checkIsAdmin = async ({ isAdmin, setIsAdmin, setError }) => {
+  if (_.get(window, "checkIsAdmin_Locked")) {
+    return;
+  }
   try {
+    _.set(window, "checkIsAdmin_Locked", true);
     if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
@@ -103,5 +107,7 @@ export const checkIsAdmin = async ({ isAdmin, setIsAdmin, setError }) => {
     }
   } catch (error) {
     console.log(error);
+  } finally {
+    _.set(window, "checkIsAdmin_Locked", false);
   }
 };

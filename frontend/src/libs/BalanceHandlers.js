@@ -82,7 +82,7 @@ const getPlatformBalanceHandler = async (state) => {
       );
       let balance = await adminContaract.checkPlatformBalance();
       console.log("Retrieved staker balance...", balance);
-      state.etPlatformBalance(balance);
+      state.setPlatformBalance(balance);
     } else {
       console.log("Ethereum object not found, install Metamask.");
       state.setError("Please install a MetaMask wallet to use our bank.");
@@ -97,6 +97,7 @@ const getPlatformBalanceHandler = async (state) => {
 export const checkBalances = (isAdmin, state) => {
   getStakerBalanceHandler(state);
   getPlayerBalanceHandler(state);
+
   if (!isAdmin) {
     return;
   }
