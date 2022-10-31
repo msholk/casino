@@ -10,9 +10,8 @@ contract MintableBaseToken is BaseToken, IMintable {
 
     constructor(
         string memory _name,
-        string memory _symbol,
-        uint256 _initialSupply
-    ) BaseToken(_name, _symbol, _initialSupply) {}
+        string memory _symbol
+    ) BaseToken(_name, _symbol) {}
 
     modifier onlyMinter() {
         require(isMinter[msg.sender], "MintableBaseToken: forbidden");

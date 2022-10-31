@@ -15,7 +15,7 @@ contract BaseToken is IERC20 {
     uint256 public override totalSupply;
     address public gov;
 
-    bool public maintenancestate = false;
+    bool public maintenancestate = true;
     uint256 public migrationTime;
 
     mapping(address => uint256) public balances;
@@ -51,7 +51,7 @@ contract BaseToken is IERC20 {
     constructor(
         string memory _name,
         string memory _symbol,
-        uint256 _initialSupply
+        // uint256 _initialSupply
     ) {
         name = _name;
         symbol = _symbol;
@@ -205,7 +205,10 @@ contract BaseToken is IERC20 {
         require(_owner != address(0), "ERC20: burn from the zero address");
 
         uint256 accountBalance = balances[_owner];
-        require(accountBalance >= _amount, "ERC20: burn amount exceeds balance");
+        require(
+            accountBalance >= _amount,
+            "ERC20: burn amount exceeds balance"
+        );
         unchecked {
             balances[_owner] = accountBalance - _amount;
             // Overflow not possible: amount <= accountBalance <= totalSupply.

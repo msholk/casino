@@ -71,7 +71,7 @@ contract Vault is ReentrancyGuard {
     // bool public includeAmmPrice = true;
     // bool public useSwapPricing = false;
 
-    // bool public override inManagerMode = false;
+    bool public override inManagerMode = false;
     // bool public override inPrivateLiquidationMode = false;
 
     // uint256 public override maxGasPrice;
@@ -172,10 +172,10 @@ contract Vault is ReentrancyGuard {
     //     return allWhitelistedTokens.length;
     // }
 
-    // function setInManagerMode(bool _inManagerMode) external override {
-    //     _onlyGov();
-    //     inManagerMode = _inManagerMode;
-    // }
+    function setInManagerMode(bool _inManagerMode) external override {
+        _onlyGov();
+        inManagerMode = _inManagerMode;
+    }
 
     // function setManager(address _manager, bool _isManager) external override {
     //     _onlyGov();
