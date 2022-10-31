@@ -50,6 +50,7 @@
     "@uniswap/v3-periphery": "^1.4.2",
     "dotenv": "^16.0.3",
     "forge-std": "^1.1.2",
+    "hardhat-deploy": "^0.11.19",
     "solhint": "^3.3.7"
   }
 }

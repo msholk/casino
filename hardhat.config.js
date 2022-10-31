@@ -1,6 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-gas-reporter");
 require("hardhat-storage-layout");
+require("hardhat-deploy");
 require("dotenv").config();
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const MUMBAI_RPC = process.env.MUMBAI_RPC;
