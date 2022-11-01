@@ -50,7 +50,7 @@ contract BaseToken is IERC20 {
 
     constructor(
         string memory _name,
-        string memory _symbol,
+        string memory _symbol
         // uint256 _initialSupply
     ) {
         name = _name;

@@ -9,19 +9,13 @@ import "../libraries/utils/ReentrancyGuard.sol";
 
 // import "./interfaces/IVault.sol";
 
-
 contract Vault is ReentrancyGuard {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    struct Position {
-        uint256 size;
-        uint256 collateral;
-        uint256 averagePrice;
-        uint256 entryFundingRate;
-        uint256 reserveAmount;
-        int256 realisedPnl;
-        uint256 lastIncreasedTime;
+    struct HlpStaker {
+        address staker;
+        uint256 amountstake;
     }
 
     // uint256 public constant BASIS_POINTS_DIVISOR = 10000;
@@ -72,6 +66,7 @@ contract Vault is ReentrancyGuard {
     // bool public useSwapPricing = false;
 
     bool public override inManagerMode = false;
+
     // bool public override inPrivateLiquidationMode = false;
 
     // uint256 public override maxGasPrice;
@@ -80,9 +75,10 @@ contract Vault is ReentrancyGuard {
     // mapping (address => bool) public override isLiquidator;
     // mapping (address => bool) public override isManager;
 
-    // address[] public override allWhitelistedTokens;
+    address[] public override allWhitelistedTokens;
 
-    // mapping (address => bool) public override whitelistedTokens;
+    mapping(address => bool) public override whitelistedTokens;
+
     // mapping (address => uint256) public override tokenDecimals;
     // mapping (address => uint256) public override minProfitBasisPoints;
     // mapping (address => bool) public override stableTokens;
@@ -135,7 +131,6 @@ contract Vault is ReentrancyGuard {
 
     // mapping (uint256 => string) public errors;
 
-    
     // event DirectPoolDeposit(address token, uint256 amount);
     // event IncreasePoolAmount(address token, uint256 amount);
     // event DecreasePoolAmount(address token, uint256 amount);
@@ -166,11 +161,14 @@ contract Vault is ReentrancyGuard {
     //     stableFundingRateFactor = _stableFundingRateFactor;
     // }
 
-    
-
-    // function allWhitelistedTokensLength() external override view returns (uint256) {
-    //     return allWhitelistedTokens.length;
-    // }
+    function allWhitelistedTokensLength()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return allWhitelistedTokens.length;
+    }
 
     function setInManagerMode(bool _inManagerMode) external override {
         _onlyGov();
@@ -197,39 +195,38 @@ contract Vault is ReentrancyGuard {
     //     stableFundingRateFactor = _stableFundingRateFactor;
     // }
 
-    // function setTokenConfig(
-    //     address _token,
-    //     uint256 _tokenDecimals,
-    //     uint256 _tokenWeight,
-    //     uint256 _minProfitBps,
-    //     uint256 _maxUsdgAmount,
-    //     bool _isStable,
-    //     bool _isShortable
-    // ) external override {
-    //     _onlyGov();
-    //     // increment token count for the first time
-    //     if (!whitelistedTokens[_token]) {
-    //         whitelistedTokenCount = whitelistedTokenCount.add(1);
-    //         allWhitelistedTokens.push(_token);
-    //     }
+    function setTokenConfig(
+        address _token,
+        uint256 _tokenDecimals,
+        uint256 _tokenWeight,
+        uint256 _minProfitBps,
+        uint256 _maxUsdgAmount,
+        bool _isStable,
+        bool _isShortable
+    ) external override {
+        _onlyGov();
+        // increment token count for the first time
+        if (!whitelistedTokens[_token]) {
+            whitelistedTokenCount = whitelistedTokenCount.add(1);
+            allWhitelistedTokens.push(_token);
+        }
 
-    //     uint256 _totalTokenWeights = totalTokenWeights;
-    //     _totalTokenWeights = _totalTokenWeights.sub(tokenWeights[_token]);
+        uint256 _totalTokenWeights = totalTokenWeights;
+        _totalTokenWeights = _totalTokenWeights.sub(tokenWeights[_token]);
 
-    //     whitelistedTokens[_token] = true;
-    //     tokenDecimals[_token] = _tokenDecimals;
-    //     tokenWeights[_token] = _tokenWeight;
-    //     minProfitBasisPoints[_token] = _minProfitBps;
-    //     maxUsdgAmounts[_token] = _maxUsdgAmount;
-    //     stableTokens[_token] = _isStable;
-    //     shortableTokens[_token] = _isShortable;
+        whitelistedTokens[_token] = true;
+        tokenDecimals[_token] = _tokenDecimals;
+        tokenWeights[_token] = _tokenWeight;
+        minProfitBasisPoints[_token] = _minProfitBps;
+        maxUsdgAmounts[_token] = _maxUsdgAmount;
+        stableTokens[_token] = _isStable;
+        shortableTokens[_token] = _isShortable;
 
-    //     totalTokenWeights = _totalTokenWeights.add(_tokenWeight);
+        totalTokenWeights = _totalTokenWeights.add(_tokenWeight);
 
-    //     // validate price feed
-    //     getMaxPrice(_token);
-    // }
-
+        // validate price feed
+        getMaxPrice(_token);
+    }
 
     // function addRouter(address _router) external {
     //     approvedRouters[msg.sender][_router] = true;
@@ -247,20 +244,43 @@ contract Vault is ReentrancyGuard {
 
     // // deposit into the pool without minting USDG tokens
     // // useful in allowing the pool to become over-collaterised
-    // function directPoolDeposit(address _token) external override nonReentrant {
-    //     _validate(whitelistedTokens[_token], 14);
-    //     uint256 tokenAmount = _transferIn(_token);
-    //     _validate(tokenAmount > 0, 15);
-    //     _increasePoolAmount(_token, tokenAmount);
-    //     emit DirectPoolDeposit(_token, tokenAmount);
-    // }
+    function _increasePoolAmount(address _token, uint256 _amount) private {
+        poolAmounts[_token] = poolAmounts[_token].add(_amount);
+        uint256 balance = IERC20(_token).balanceOf(address(this));
+        _validate(poolAmounts[_token] <= balance, 49);
+        emit IncreasePoolAmount(_token, _amount);
+    }
 
-    // function getRedemptionAmount(address _token, uint256 _usdgAmount) public override view returns (uint256) {
-    //     uint256 price = getMaxPrice(_token);
-    //     uint256 redemptionAmount = _usdgAmount.mul(PRICE_PRECISION).div(price);
-    //     return adjustForDecimals(redemptionAmount, usdg, _token);
-    // }
+    function hlpPoolDeposit(address _skater)
+        external
+        payable
+        override
+        nonReentrant
+    {
+        uint256 tokenAmount = msg.value;
+        if (tokenAmount > 0) {
+            
+        }
+        // emit DirectPoolDeposit(_token, tokenAmount);
+    }
 
+    function revenuePoolDeposit(address _token) external override nonReentrant {
+        uint256 tokenAmount = _transferIn(_token);
+        _validate(tokenAmount > 0, 15);
+        _increasePoolAmount(_token, tokenAmount);
+        // emit DirectPoolDeposit(_token, tokenAmount);
+    }
+
+    function getRedemptionAmount(address _token, uint256 _usdgAmount)
+        public
+        view
+        override
+        returns (uint256)
+    {
+        uint256 price = getMaxPrice(_token);
+        uint256 redemptionAmount = _usdgAmount.mul(PRICE_PRECISION).div(price);
+        return adjustForDecimals(redemptionAmount, usdg, _token);
+    }
 
     // function adjustForDecimals(uint256 _amount, address _tokenDiv, address _tokenMul) public view returns (uint256) {
     //     uint256 decimalsDiv = _tokenDiv == usdg ? USDG_DECIMALS : tokenDecimals[_tokenDiv];
@@ -290,8 +310,6 @@ contract Vault is ReentrancyGuard {
     //     uint256 decimals = tokenDecimals[_token];
     //     return _usdAmount.mul(10 ** decimals).div(_price);
     // }
-
-    
 
     // function getNextFundingRate(address _token) public override view returns (uint256) {
     //     if (lastFundingTimes[_token].add(fundingInterval) > block.timestamp) { return 0; }
@@ -326,5 +344,4 @@ contract Vault is ReentrancyGuard {
     // function _onlyGov() private view {
     //     _validate(msg.sender == gov, 53);
     // }
-
 }
