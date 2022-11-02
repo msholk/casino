@@ -35,3 +35,6 @@ The script shpuld be adjsuted in accordance to what module we want to update.
 
 `cd frontend`
 `npm run start`
+
+npx hardhat test test/unit/glp.test.js
+yarn hardhat run test/deployGLP.js

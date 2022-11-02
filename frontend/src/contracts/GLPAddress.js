@@ -1,0 +1,1 @@
+export const GLP = '0x6f11Ec3C998e39E771F8f2b249dc648367B08713';
