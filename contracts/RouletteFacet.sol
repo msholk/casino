@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
-import "./VRFContract.sol";
-import "contracts/diamond/libraries/LibDiamond.sol";
-import "contracts/libraries/roulette/BetPointPrm.sol";
-import "contracts/libraries/roulette/RouletteLaunchLib.sol";
-import "contracts/libraries/house/LibHLP.sol";
+import "./roulette_related/VRFContract.sol";
+import "./diamond/libraries/LibDiamond.sol";
+import "./libraries/roulette/BetPointPrm.sol";
+import "./libraries/roulette/RouletteLaunchLib.sol";
+import "./libraries/house/LibHLP.sol";
 
 contract RouletteFacet is VRFContract {
   event RouletteLaunched(address indexed sender, uint256 requestId);
