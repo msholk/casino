@@ -1,4 +1,4 @@
-const { diamondInit1 } = require("./utils/utils");
+const { diamondInit1 } = require("../test/utils/utils");
 const chalk = require("chalk");
 const fs = require("fs");
 async function main() {
@@ -27,7 +27,17 @@ async function deployDiamond() {
 
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
+
+  //Connect with GLP Token
+  const GLPAddress = await readGLPAddress();
+  const GLPContract = await ethers.getContractAt("GLP", GLPAddress);
+  // console.log(stakerAddress, GLPAddress);
+  const Staker = await ethers.getContractAt("StakerFacet", diamondAddress);
+  await GLPContract.setMinter(diamondAddress, true);
+  await GLPContract.clearMaintenance();
+  Staker.setGLPTokenAddress(GLPAddress);
 }
+
 async function deployStakerFacet() {
   const facet = "StakerFacet";
   const facetFactory = await ethers.getContractFactory(facet, {
@@ -38,6 +48,27 @@ async function deployStakerFacet() {
   await deployedFactory.deployed();
   console.log(`${facet} deployed: ${deployedFactory.address}`);
   saveDiamondAddress(deployedFactory.address);
+}
+
+async function readGLPAddress() {
+  const fs = require("fs");
+  const content = `export const GLPAddress = '`;
+  try {
+    const diamondAddressPath = "./frontend/src/contracts/GLPAddress.js";
+    let res = fs.readFileSync(diamondAddressPath, {
+      encoding: "utf8",
+      flag: "r",
+    });
+    // file written successfully
+    res = res.replace(content, "");
+    res = res.replace("';", "");
+    console.log(res);
+    return res;
+  } catch (err) {
+    console.error(err);
+  }
+  // console.log('AdminFacet deployed to:', AdminFacet.address);
+  //console.log("Diamond deployed to:", addr);
 }
 
 async function copyArtifacts() {

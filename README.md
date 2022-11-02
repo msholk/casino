@@ -22,13 +22,22 @@ Install front end part:
 
 ### Deployment to MUMBAI
 
+###### Deploy GLP
+
+`yarn hardhat run deploy/deployGLP.js --network mumbai`
+
+###### Deploy Staker
+
+`yarn hardhat run deploy/deployStaker.js --network mumbai`
+
 ###### Deploy diamond
 
-`yarn hardhat run test/deploy.js --network mumbai`
+Deploy GLP first
+`yarn hardhat run deploy/deploy.js --network mumbai`
 
 ###### Cut diamond: update a module
 
-`yarn hardhat run test/Cut.js --network mumbai`
+`yarn hardhat run deploy/Cut.js --network mumbai`
 The script shpuld be adjsuted in accordance to what module we want to update.
 
 ### Run frontend

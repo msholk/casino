@@ -1,4 +1,4 @@
-const { diamondInit1 } = require("./utils/utils");
+const { diamondInit1 } = require("../test/utils/utils");
 async function main() {
   await deploySingleFacet();
   await copyArtifacts();

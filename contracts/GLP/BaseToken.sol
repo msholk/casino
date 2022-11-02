@@ -62,6 +62,14 @@ contract BaseToken is IERC20 {
     maintenancestate = !maintenancestate;
   }
 
+  function clearMaintenance() external onlyAdmin {
+    maintenancestate = false;
+  }
+
+  function setMaintenance() external onlyAdmin {
+    maintenancestate = true;
+  }
+
   function getMaintenance() external view returns (bool) {
     return maintenancestate;
   }

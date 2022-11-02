@@ -37,9 +37,24 @@ describe("Staking test", async function () {
   let result;
   let TokensMock;
   let Staker;
+  let GLP;
+  let GLPAddress;
 
   const facetAddress = {};
   let vrfInfo = {};
+
+  async function deployGLP() {
+    const contractName = "GLP";
+    const facetFactory = await ethers.getContractFactory(contractName, {
+      libraries: {},
+    });
+    console.log(`Deploying ${contractName}`);
+    deployedFactory = await facetFactory.deploy();
+    await deployedFactory.deployed();
+    console.log(`${contractName} deployed: ${deployedFactory.address}`);
+    GLPAddress = deployedFactory.address;
+    GLP = await ethers.getContractAt(contractName, deployedFactory.address);
+  }
 
   async function deployContract() {
     let contractName = "StakerFacet";
@@ -52,24 +67,27 @@ describe("Staking test", async function () {
   }
 
   before(async function () {
-    await deployContract();
+    const stakerAddress = await deployContract();
+    await deployGLP();
+
+    const signers = await ethers.getSigners();
+    await GLP.setMinter(signers[0].getAddress(), true);
+    await GLP.setMinter(stakerAddress, true);
+    await GLP.toggleMaintenance();
+    Staker.setGLPTokenAddress(GLPAddress);
   });
 
   describe("Stake House Liquidity", async () => {
-    xit("The first staker should have some 66%", async () => {
-      let bal = await Staker.checkStakerBalance();
-      //console.log(bal)
-      expect(bal.stakerPercent).eq(0); //1 means 100%
-      expect(bal.newHouseBalance).eq(0); //1 means 100%
-    });
     it("Staker0 stakes 1ETH", async () => {
       await expect(Staker.stakeETH({ value: utils.parseEther("1.0") })).not.to
         .be.reverted;
 
       bal = await Staker.checkStakerBalance();
-      //   // console.log(bal)
+      console.log(bal);
       expect(bal.stakerPercent).eq(utils.parseEther("1")); //1 means 100%
-      expect(bal.newHouseBalance).eq(utils.parseEther("1")); //1 means 100%
+      expect(bal.houseBalance).eq(utils.parseEther("1")); //1 means 100%
+      expect(bal.userbalance).eq(utils.parseEther("1000"));
+      expect(bal.glpSupply).eq(utils.parseEther("1000")); //1 means 100%
     });
     it("Staker1 stakes: 2ETH", async () => {
       const signers = await ethers.getSigners();
@@ -82,21 +100,25 @@ describe("Staking test", async function () {
       let bal = await Staker.checkStakerBalance();
       //console.log(bal)
       expect(bal.stakerPercent).eq(utils.parseEther("0.333333333333333333")); //1 means 100%
-      expect(bal.newHouseBalance).eq(utils.parseEther("3")); //1 means 100%
+      expect(bal.houseBalance).eq(utils.parseEther("3")); //1 means 100%
+      expect(bal.userbalance).eq(utils.parseEther("1000"));
+      expect(bal.glpSupply).eq(utils.parseEther("3000.000000000000003")); //1 means 100%
     });
-    it("The second staker should have some 33%", async () => {
+    it("The second staker should have some 66%", async () => {
       const signers = await ethers.getSigners();
       let bal = await Staker.connect(signers[1]).checkStakerBalance();
       //console.log(bal)
-      expect(bal.stakerPercent).eq(utils.parseEther("0.666666666666666667")); //1 means 100%
-      expect(bal.newHouseBalance).eq(utils.parseEther("3")); //1 means 100%
+      expect(bal.stakerPercent).eq(utils.parseEther("0.666666666666666666")); //1 means 100%
+      expect(bal.houseBalance).eq(utils.parseEther("3")); //1 means 100%
+      expect(bal.userbalance).eq(utils.parseEther("2000.000000000000003"));
+      expect(bal.glpSupply).eq(utils.parseEther("3000.000000000000003")); //1 means 100%
     });
-    it("Withdraw funds", async () => {
+    xit("Withdraw funds", async () => {
       await expect(Staker.withdrawAllStakerDAI()).not.to.be.reverted;
       let bal = await Staker.checkStakerBalance();
       //console.log(bal)
       expect(bal.stakerPercent).eq(0); //1 means 100%
-      expect(bal.newHouseBalance).eq(utils.parseEther("2.000000000000000001")); //1 means 100%
+      expect(bal.houseBalance).eq(utils.parseEther("2.000000000000000001")); //1 means 100%
     });
   });
 });

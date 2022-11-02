@@ -1,4 +1,4 @@
-const { diamondInit1 } = require("./utils/utils");
+const { diamondInit1 } = require("../test/utils/utils");
 const contractName = "GLP";
 let deployedFactory;
 async function main() {
@@ -24,7 +24,7 @@ async function deploySingleContract() {
 
 async function saveCntractAddress(addr) {
   const fs = require("fs");
-  const content = `export const ${contractName} = '${addr}';`;
+  const content = `export const ${contractName}Address = '${addr}';`;
   try {
     const contractAddressPath = `./frontend/src/contracts/${contractName}Address.js`;
     fs.writeFileSync(contractAddressPath, content);

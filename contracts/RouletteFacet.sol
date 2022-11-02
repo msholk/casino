@@ -44,7 +44,6 @@ contract RouletteFacet is VRFContract {
       uint256 playerLocked,
       uint256 requestId,
       uint256 playerBalance,
-      uint256 stakerPercent,
       uint256 houseBalance,
       uint256 platformBalance
     )
@@ -54,7 +53,6 @@ contract RouletteFacet is VRFContract {
       s.cs.playersLockedBalances[msg.sender],
       s.rcs.playersLaunchedRoulette[msg.sender].requestId,
       s.cs.playersBalances[msg.sender],
-      s.hs.stakersPercentages[msg.sender],
       s.hs.houseBalance,
       s.platformBalance
     );

@@ -1,4 +1,4 @@
-const { diamondInit1 } = require("./utils/utils");
+const { diamondInit1 } = require("../test/utils/utils");
 const fs = require("fs");
 const _ = require("lodash");
 const chalk = require("chalk");

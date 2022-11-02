@@ -1,11 +1,11 @@
-const { diamondInit1 } = require("./utils/utils");
+const { diamondInit1 } = require("../test/utils/utils");
 async function main() {
   await deployStakerFacet();
   await copyArtifacts();
 }
 
 async function deployStakerFacet() {
-  const facet = "StakerFacet";
+  const facet = "PlayersFacet";
   const facetFactory = await ethers.getContractFactory(facet, {
     libraries: {},
   });
