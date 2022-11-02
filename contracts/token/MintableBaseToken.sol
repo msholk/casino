@@ -6,7 +6,7 @@ import "./BaseToken.sol";
 import "../interfaces/IMintable.sol";
 
 contract MintableBaseToken is BaseToken, IMintable {
-    mapping(address => bool) public override isMinter;
+    mapping(address => bool) public isMinter;
 
     constructor(
         string memory _name,
@@ -20,7 +20,7 @@ contract MintableBaseToken is BaseToken, IMintable {
 
     function setMinter(address _minter, bool _isActive)
         external
-        override
+        virtual
         onlyGov
     {
         isMinter[_minter] = _isActive;
@@ -28,7 +28,7 @@ contract MintableBaseToken is BaseToken, IMintable {
 
     function mint(address _account, uint256 _amount)
         external
-        override
+        virtual
         onlyMinter
     {
         _mint(_account, _amount);
@@ -36,7 +36,7 @@ contract MintableBaseToken is BaseToken, IMintable {
 
     function burn(address _account, uint256 _amount)
         external
-        override
+        virtual
         onlyMinter
     {
         _burn(_account, _amount);

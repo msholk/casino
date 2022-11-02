@@ -12,4 +12,5 @@ struct AppStorage {
   VrfStruct vrf;
   uint256 platformBalance;
   bool locked;
+  address hlptoken;
 }

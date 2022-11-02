@@ -5,12 +5,13 @@ import "../libraries/token/IERC20.sol";
 import "../libraries/token/SafeERC20.sol";
 import "../libraries/utils/ReentrancyGuard.sol";
 
-// import "./interfaces/IVault.sol";
+import "../interfaces/IVault.sol";
+import "../interfaces/IHLP.sol";
 import "../interfaces/IHlpManager.sol";
 import "../interfaces/IMintable.sol";
 import "./Governable.sol";
 
-contract Hlpmanager is ReentrancyGuard, Governable, IHlpManager {
+contract HLPmanager is ReentrancyGuard, Governable, IHlpManager {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -20,11 +21,11 @@ contract Hlpmanager is ReentrancyGuard, Governable, IHlpManager {
     uint256 public constant MAX_COOLDOWN_DURATION = 48 hours;
     uint256 public constant BASIS_POINTS_DIVISOR = 10000;
 
-    address public override usdg;
+    address public vault;
     address public hlp;
 
-    uint256 public override cooldownDuration;
-    mapping(address => uint256) public override lastAddedAt;
+    uint256 public cooldownDuration;
+    mapping(address => uint256) public lastAddedAt;
 
     uint256 public aumAddition;
     uint256 public aumDeduction;
@@ -50,88 +51,87 @@ contract Hlpmanager is ReentrancyGuard, Governable, IHlpManager {
         uint256 amountOut
     );
 
-    constructor(
-        address _hlp
-    ) public {
+    constructor(address _hlp, address _vault) public {
         gov = msg.sender;
         // usdg = _usdg;
         hlp = _hlp;
+        vault = _vault;
     }
 
-    function setInPrivateMode(bool _inPrivateMode) external onlyGov {
-        inPrivateMode = _inPrivateMode;
-    }
+    // function setInPrivateMode(bool _inPrivateMode) external onlyGov {
+    //     inPrivateMode = _inPrivateMode;
+    // }
 
-    function setHandler(address _handler, bool _isActive) external onlyGov {
-        isHandler[_handler] = _isActive;
-    }
+    // function setHandler(address _handler, bool _isActive) external onlyGov {
+    //     isHandler[_handler] = _isActive;
+    // }
 
-    function setCooldownDuration(uint256 _cooldownDuration)
-        external
-        override
-        onlyGov
-    {
-        require(
-            _cooldownDuration <= MAX_COOLDOWN_DURATION,
-            "hlpManager: invalid _cooldownDuration"
-        );
-        cooldownDuration = _cooldownDuration;
-    }
+    // function setCooldownDuration(uint256 _cooldownDuration)
+    //     external
+    //
+    //     onlyGov
+    // {
+    //     require(
+    //         _cooldownDuration <= MAX_COOLDOWN_DURATION,
+    //         "hlpManager: invalid _cooldownDuration"
+    //     );
+    //     cooldownDuration = _cooldownDuration;
+    // }
 
-    function setAumAdjustment(uint256 _aumAddition, uint256 _aumDeduction)
-        external
-        onlyGov
-    {
-        aumAddition = _aumAddition;
-        aumDeduction = _aumDeduction;
-    }
+    // function setAumAdjustment(uint256 _aumAddition, uint256 _aumDeduction)
+    //     external
+    //     onlyGov
+    // {
+    //     aumAddition = _aumAddition;
+    //     aumDeduction = _aumDeduction;
+    // }
 
-    function addLiquidity(
-        address _token,
-        uint256 _amount,
-        uint256 _minUsdg,
-        uint256 _minhlp
-    ) external override nonReentrant returns (uint256) {
-        if (inPrivateMode) {
-            revert("hlpManager: action not enabled");
-        }
-        return
-            _addLiquidity(
-                msg.sender,
-                msg.sender,
-                _token,
-                _amount,
-                // _minUsdg,
-                _minhlp
-            );
-    }
+    // function addLiquidity(
+    //     address _token,
+    //     uint256 _amount,
+    //     uint256 _minUsdg,
+    //     uint256 _minhlp
+    // ) external  nonReentrant returns (uint256) {
+    //     if (inPrivateMode) {
+    //         revert("hlpManager: action not enabled");
+    //     }
+    //     return
+    //         _addLiquidity(
+    //             msg.sender,
+    //             msg.sender,
+    //             _token,
+    //             _amount,
+    //             // _minUsdg,
+    //             _minhlp
+    //         );
+    // }
 
-    function addLiquidityForAccount(
-        address _fundingAccount,
-        address _account,
-        address _token,
-        uint256 _amount,
-        uint256 _minUsdg,
-        uint256 _minhlp
-    ) external override nonReentrant returns (uint256) {
-        _validateHandler();
-        return
-            _addLiquidity(
-                _fundingAccount,
-                _account,
-                _token,
-                _amount,
-                // _minUsdg,
-                _minhlp
-            );
-    }
+    // function addLiquidityForAccount(
+    //     address _fundingAccount,
+    //     address _account,
+    //     address _token,
+    //     uint256 _amount,
+    //     uint256 _minUsdg,
+    //     uint256 _minhlp
+    // ) external  nonReentrant returns (uint256) {
+    //     _validateHandler();
+    //     return
+    //         _addLiquidity(
+    //             _fundingAccount,
+    //             _account,
+    //             _token,
+    //             _amount,
+    //             // _minUsdg,
+    //             _minhlp
+    //         );
+    // }
 
     // function removeLiquidity(
     //     address _tokenOut,
     //     uint256 _hlpAmount,
     //     uint256 _minOut,
     //     address _receiver
-    // ) external override nonReentrant returns (uint256) {
+    // ) external  nonReentrant returns (uint256) {
     //     if (inPrivateMode) {
     //         revert("hlpManager: action not enabled");
     //     }
@@ -151,7 +151,7 @@ contract Hlpmanager is ReentrancyGuard, Governable, IHlpManager {
     //     uint256 _hlpAmount,
     //     uint256 _minOut,
     //     address _receiver
-    // ) external override nonReentrant returns (uint256) {
+    // ) external  nonReentrant returns (uint256) {
     //     _validateHandler();
     //     return
     //         _removeLiquidity(
@@ -168,48 +168,42 @@ contract Hlpmanager is ReentrancyGuard, Governable, IHlpManager {
     //     return aum.mul(hlp_PRECISION).div(supply);
     // }
 
-    function _addLiquidity(
-        address _fundingAccount,
-        address _account,
-        address _token,
-        uint256 _amount,
-        // uint256 _minUsdg,
-        uint256 _minhlp
-    ) private returns (uint256) {
+    function _addLiquidity(address _account, uint256 _amount)
+        external
+        payable
+        returns (uint256)
+    {
         require(_amount > 0, "hlpManager: invalid _amount");
 
         // // calculate aum before buyUSDG
         // uint256 aumInUsdg = getAumInUsdg(true);
         uint256 hlpSupply = IERC20(hlp).totalSupply();
+        uint glp2Mint;
+        
+        // IERC20(hlp).safeTransferFrom(_fundingAccount, address(this), _amount);
+        // // uint256 usdgAmount = vault.buyUSDG(_token, address(this));
+        // // require(usdgAmount >= _minUsdg, "hlpManager: insufficient USDG output");
 
-        IERC20(_token).safeTransferFrom(
-            _fundingAccount,
-            address(this),
-            _amount
-        );
-        // uint256 usdgAmount = vault.buyUSDG(_token, address(this));
-        // require(usdgAmount >= _minUsdg, "hlpManager: insufficient USDG output");
+        // // uint256 mintAmount = aumInUsdg == 0
+        // //     ? usdgAmount
+        // //     : usdgAmount.mul(hlpSupply).div(aumInUsdg);
+        // // require(mintAmount >= _minhlp, "hlpManager: insufficient hlp output");
 
-        // uint256 mintAmount = aumInUsdg == 0
-        //     ? usdgAmount
-        //     : usdgAmount.mul(hlpSupply).div(aumInUsdg);
-        // require(mintAmount >= _minhlp, "hlpManager: insufficient hlp output");
+        // IMintable(hlp).mint(_account, 10);
 
-        IMintable(hlp).mint(_account, 10);
+        // lastAddedAt[_account] = block.timestamp;
 
-        lastAddedAt[_account] = block.timestamp;
+        // emit AddLiquidity(
+        //     _account,
+        //     _token,
+        //     _amount,
+        //     // aumInUsdg,
+        //     hlpSupply,
+        //     // usdgAmount,
+        //     10
+        // );
 
-        emit AddLiquidity(
-            _account,
-            _token,
-            _amount,
-            // aumInUsdg,
-            hlpSupply,
-            // usdgAmount,
-            10
-        );
-
-        return 10;
+        // return 10;
     }
 
     // function _removeLiquidity(
@@ -254,7 +248,7 @@ contract Hlpmanager is ReentrancyGuard, Governable, IHlpManager {
     //     return amountOut;
     // }
 
-    function _validateHandler() private view {
-        require(isHandler[msg.sender], "hlpManager: forbidden");
-    }
+    //     function _validateHandler() private view {
+    //         require(isHandler[msg.sender], "hlpManager: forbidden");
+    //     }
 }
