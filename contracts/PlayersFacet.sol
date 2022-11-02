@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
-import "contracts/libraries/AppStorage.sol";
+import "contracts/storage/AppStorage.sol";
 import "contracts/libraries/constants.sol";
 import "hardhat/console.sol";
 import "contracts/diamond/libraries/LibDiamond.sol";

@@ -3,7 +3,7 @@ pragma solidity ^0.8.9;
 //  https://vrf.chain.link/mumbai/2190
 //published at 0xc64af37e244960fc5d0f39596512c89ae6c82659
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import "contracts/libraries/AppStorage.sol";
+import "contracts/storage/AppStorage.sol";
 import "./VRFFacetMumbaiConstants.sol";
 
 contract VRFContract is VRFFacetMumbaiConstants {

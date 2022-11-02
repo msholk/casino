@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 
-import "./CashierStorage.sol";
+import "contracts/storage/CashierStorage.sol";
 
 library CashierStorageLib {
   function LockBetAmount(

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 import "contracts/libraries/roulette/BetPointPrm.sol";
-import "contracts/libraries/roulette/RouletCroupierStorage.sol";
+import "contracts/storage/RouletCroupierStorage.sol";
 import "./LibRulette.sol";
 
 library RouletteLaunchLib {

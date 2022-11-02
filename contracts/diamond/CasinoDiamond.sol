@@ -9,7 +9,7 @@ pragma solidity 0.8.9;
 import "contracts/diamond/libraries/LibDiamond.sol";
 import "./interfaces/IDiamondLoupe.sol";
 import "./interfaces/IDiamondCut.sol";
-import "contracts/libraries/AppStorage.sol";
+import "contracts/storage/AppStorage.sol";
 
 contract CasinoDiamond {
   AppStorage s;

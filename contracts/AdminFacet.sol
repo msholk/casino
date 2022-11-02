@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
-import "contracts/diamond/libraries/LibDiamond.sol";
-import "contracts/libraries/AppStorage.sol";
+import "./diamond/libraries/LibDiamond.sol";
+import "./storage/AppStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "contracts/libraries/constants.sol";
+import "./libraries/constants.sol";
 
 contract AdminFacet {
   AppStorage s;

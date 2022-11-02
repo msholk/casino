@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
-import "contracts/libraries/roulette/BetPoint.sol";
+import "./BetPoint.sol";
 
 struct RouletteLaunch {
   BetPoint[] betPoints;
