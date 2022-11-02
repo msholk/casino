@@ -35,8 +35,10 @@ const getStakerBalanceHandler = async (state) => {
       }
       window.lastStakerCheck = new Date();
       state.setStakerBalance({
+        glpSupply: balance.glpSupply,
+        houseBalance: balance.houseBalance,
         stakerPercent: balance.stakerPercent,
-        houseBalance: balance.newHouseBalance,
+        userbalance: balance.userbalance,
       });
     } else {
       console.log("Ethereum object not found, install Metamask.");

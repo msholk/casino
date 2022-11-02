@@ -11,16 +11,15 @@ async function main() {
   await copyArtifacts();
   // return;
   diamondAddress = await readDiamondAddress();
-  // await readDimondMap();
+  await upgradeStaker();
+  await checkStakerBalance();
 
-  // await upgrade({
-  //   diamondAddress,
-  //   diamondCut: [[false, 2, ["test1()"]]],
-  // });
-  //Library deployed LibRulette: 0x1Cc1161F4AB263a091c07e25e108B7720bF3183B
+  await readDiamondMap();
+}
+async function upgradeStaker() {
   await upgradeWithNewFacets({
     diamondAddress,
-    facetNames: ["RouletteFacet", "AdminFacet"],
+    facetNames: ["StakerFacet"],
     libraries: {
       //  RouletteFacet: ["LibRulette"],
     },
@@ -33,10 +32,8 @@ async function main() {
     // initFacetName = undefined,
     // initArgs = [],
   });
-
-  await readDimondMap();
 }
-async function readDimondMap() {
+async function readDiamondMap() {
   // console.log("diamondAddress", diamondAddress);
   const loupe = await ethers.getContractAt("DiamondLoupeFacet", diamondAddress);
   const facetAddresses = await loupe.facetAddresses();
@@ -67,6 +64,17 @@ async function readDimondMap() {
 
   /*'facetFunctionSelectors(address)' │ '0xadfca15e' │
 │    3    │            'facets()'       */
+}
+async function updateGlpTokenAddress() {
+  const stakerFacet = await ethers.getContractAt("StakerFacet", diamondAddress);
+  await stakerFacet.setGLPTokenAddress(
+    "0x2F5f2332aC95f40F966dcb71862D2204Dce012d9"
+  );
+}
+async function checkStakerBalance() {
+  const stakerFacet = await ethers.getContractAt("StakerFacet", diamondAddress);
+  const StakerBalance = await stakerFacet.checkStakerBalance();
+  console.log(StakerBalance);
 }
 async function readDeployDic() {
   let json = fs.readFileSync("deployDic.json");

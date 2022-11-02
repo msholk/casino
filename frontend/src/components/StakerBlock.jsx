@@ -10,27 +10,25 @@ StakerFacet: {
         'withdrawAllStakerDAI()': null
     },*/
 export class StakerBlock extends React.PureComponent {
-  getStakerPerecent() {
+  getSupply() {
     const { stakerBalance } = this.props;
-    if (!_.get(stakerBalance, "stakerPercent")) return "0.00";
-    return stakerBalance.stakerPercent.toString() / 10 ** 16;
+    if (!_.get(stakerBalance, "glpSupply")) return "0.00";
+    return stakerBalance.glpSupply.toString() / 10 ** 18;
   }
   getHouseBalance() {
     const { stakerBalance } = this.props;
     if (!_.get(stakerBalance, "houseBalance")) return "0.00";
-
     return stakerBalance.houseBalance.toString() / 10 ** 18;
+  }
+  getStakerPercent() {
+    const { stakerBalance } = this.props;
+    if (!_.get(stakerBalance, "stakerPercent")) return "0.00";
+    return stakerBalance.stakerPercent.toString() / 10 ** 16;
   }
   getStakerBalance() {
     const { stakerBalance } = this.props;
-    if (!_.get(stakerBalance, "houseBalance")) return "0.00";
-    if (!_.get(stakerBalance, "stakerPercent")) return "0.00";
-
-    return (
-      stakerBalance.houseBalance.mul(stakerBalance.stakerPercent).toString() /
-      10 ** 18 /
-      10 ** 18
-    );
+    if (!_.get(stakerBalance, "userbalance")) return "0.00";
+    return stakerBalance.userbalance.toString() / 10 ** 18;
   }
   render() {
     const {
@@ -50,17 +48,16 @@ export class StakerBlock extends React.PureComponent {
         <div className="mt-1">
           <span className="mr-5">
             <div>
-              <strong>Staker percent: {this.getStakerPerecent()} %</strong>
+              <strong>House balance: {this.getHouseBalance()} MATIC</strong>
             </div>
             <div>
-              <strong>
-                House balance: {this.getHouseBalance()} {nativeCoinName}
-              </strong>
+              <strong>Staker percent: {this.getStakerPercent()} %</strong>
             </div>
             <div>
-              <strong>
-                Staker balance: {this.getStakerBalance()} {nativeCoinName}
-              </strong>
+              <strong>Supply: {this.getSupply()} GLP </strong>
+            </div>
+            <div>
+              <strong>Staker balance: {this.getStakerBalance()} GLP</strong>
             </div>
           </span>
         </div>

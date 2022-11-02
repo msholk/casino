@@ -46,6 +46,10 @@ contract StakerFacet is IStakerFacet {
     s.hs.GLPTokenAddress = GLPtokenAddress;
   }
 
+  function getGLPTokenAddress() public view returns (address GLPtokenAddress) {
+    return s.hs.GLPTokenAddress;
+  }
+
   function stakeETH() public payable {
     require(s.hs.GLPTokenAddress != address(0), "GLPTokenAddress is not set");
     //console.log("stakeETH()******************************************");
@@ -83,7 +87,10 @@ contract StakerFacet is IStakerFacet {
   {
     glpSupply = IERC20(s.hs.GLPTokenAddress).totalSupply();
     userbalance = IERC20(s.hs.GLPTokenAddress).balanceOf(msg.sender);
-    stakerPercent = (userbalance * 1e18) / glpSupply;
+    stakerPercent = 0;
+    if (glpSupply > 0) {
+      stakerPercent = (userbalance * 1e18) / glpSupply;
+    }
 
     return (stakerPercent, s.hs.houseBalance, userbalance, glpSupply);
   }

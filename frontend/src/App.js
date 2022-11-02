@@ -32,8 +32,10 @@ function App() {
     priceInStable: BigNumber.from("0"),
   });
   const [stakerBalance, setStakerBalance] = useState({
-    stakerPercent: BigNumber.from("0"),
+    glpSupply: BigNumber.from("0"),
     houseBalance: BigNumber.from("0"),
+    stakerPercent: BigNumber.from("0"),
+    userbalance: BigNumber.from("0"),
   });
   const [platformBalance, setPlatformBalance] = useState({
     contractBalance: BigNumber.from("0"),
