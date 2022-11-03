@@ -2,7 +2,8 @@ import { ethers } from "ethers";
 import StakerFacet from "contracts/StakerFacet.json";
 import { diamondAddress } from "contracts/diamondAddress";
 import _ from "lodash";
-export const withdrawAllStakerFunds = async ({
+export const reclaimGLP = async ({
+  cliamAmount,
   getBalanceHandler,
   setError,
   setBusy,
@@ -21,7 +22,7 @@ export const withdrawAllStakerFunds = async ({
       let myAddress = await signer.getAddress();
       console.log("provider signer...", myAddress);
 
-      const txn = await stakerContract.withdrawAllStakerDAI();
+      const txn = await stakerContract.reclaimGLP(cliamAmount);
       console.log("Withdrawing money...");
       setBusy("Withdrawing money...");
       await txn.wait();

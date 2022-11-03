@@ -2,7 +2,7 @@ import React from "react";
 import { MDBInputGroup, MDBBtn } from "mdb-react-ui-kit";
 import _ from "lodash";
 import { nativeCoinName } from "../constants";
-import { withdrawAllStakerFunds, stakeFunds } from "../libs/stakerLib";
+import { reclaimGLP, stakeFunds } from "../libs/stakerLib";
 /*
 StakerFacet: {
          'checkStakerBalance()': null,
@@ -107,9 +107,20 @@ export class StakerBlock extends React.PureComponent {
   async withdrawAllStakerFundsHandler(event) {
     event.preventDefault();
 
-    const { getBalanceHandler, setError, setBusy, clearErrorWithPause } =
-      this.props;
-    const st = { getBalanceHandler, setError, setBusy, clearErrorWithPause };
-    withdrawAllStakerFunds(st);
+    const {
+      inputValue,
+      getBalanceHandler,
+      setError,
+      setBusy,
+      clearErrorWithPause,
+    } = this.props;
+    const st = {
+      cliamAmount: inputValue.stake_deposit,
+      getBalanceHandler,
+      setError,
+      setBusy,
+      clearErrorWithPause,
+    };
+    reclaimGLP(st);
   }
 }
