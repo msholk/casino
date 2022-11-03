@@ -24,7 +24,10 @@ const facetSelectors = {
   StakerFacet: {
     "checkStakerBalance()": null,
     "stakeETH()": null,
-    "withdrawAllStakerDAI()": null,
+    "getGLPTokenAddress()": null,
+    "reclaimGLP(uint256)": null,
+    "setGLPTokenAddress(address)": null,
+    // "withdrawAllStakerDAI()": null,
   },
   AdminFacet: {
     "withdrawAllPlatformFunds()": null,

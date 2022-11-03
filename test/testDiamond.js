@@ -35,6 +35,7 @@ describe("DiamondTest", async function () {
   let tx;
   let result;
   let TokensMock;
+  let GLPToken;
   let rouletteFacet;
 
   const facetAddress = {};
@@ -85,6 +86,10 @@ describe("DiamondTest", async function () {
     const TokensMockFactory = await ethers.getContractFactory("TokensMock");
     TokensMock = await TokensMockFactory.deploy();
   }
+  async function initializeGLPToken() {
+    const factory = await ethers.getContractFactory("GLP");
+    GLPToken = await factory.deploy();
+  }
 
   before(async function () {
     const res = await diamondInit1();
@@ -100,7 +105,17 @@ describe("DiamondTest", async function () {
     } = res);
 
     await initializeTokensMock();
+    await initializeGLPToken();
     await initializeVRF();
+
+    const staker = await ethers.getContractAt("StakerFacet", diamondAddress);
+    await staker.setGLPTokenAddress(GLPToken.address);
+    await GLPToken.setMinter(diamondAddress, true);
+    await GLPToken.clearMaintenance();
+
+    const isMinter = await GLPToken.isMinter(diamondAddress);
+
+    console.log("is minter:", isMinter);
 
     const { subscriptionId, vrfCoordinatorAddress, keyHash } = vrfInfo;
     //await player.setVrfInfo({ subscriptionId, vrfCoordinatorAddress, keyHash });
@@ -277,6 +292,7 @@ describe("DiamondTest", async function () {
           "StakerFacet",
           diamondAddress
         );
+
         await expect(staker.stakeETH({ value: utils.parseEther("100.0") })).not
           .to.be.reverted;
 
@@ -284,9 +300,11 @@ describe("DiamondTest", async function () {
         expect(bal).eq(utils.parseEther("101.0")); //precision 18
 
         bal = await staker.checkStakerBalance();
-        // console.log(bal)
+        console.log(bal);
         expect(bal.stakerPercent).eq(utils.parseEther("1")); //1 means 100%
-        expect(bal.newHouseBalance).eq(utils.parseEther("100.0")); //1 means 100%
+        expect(bal.houseBalance).eq(utils.parseEther("100.0")); //1 means 100%
+        expect(bal.userbalance).eq(utils.parseEther("100000.0")); //10'000glp
+        expect(bal.glpSupply).eq(utils.parseEther("100000.0")); //10'000glp
       });
       it("Staker1 stakes: 50ETH", async () => {
         const staker = await ethers.getContractAt(
@@ -310,8 +328,10 @@ describe("DiamondTest", async function () {
         );
         let bal = await staker.checkStakerBalance();
         //console.log(bal)
-        expect(bal.stakerPercent).eq(utils.parseEther("0.666666666666666667")); //1 means 100%
-        expect(bal.newHouseBalance).eq(utils.parseEther("150")); //1 means 100%
+        expect(bal.stakerPercent).eq(utils.parseEther("0.666666666666666666")); //1 means 100%
+        expect(bal.houseBalance).eq(utils.parseEther("150.0")); //1 means 100%
+        expect(bal.userbalance).eq(utils.parseEther("100000.0")); //100'000glp
+        expect(bal.glpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000glp
       });
       it("The second staker should have some 33%", async () => {
         const staker = await ethers.getContractAt(
@@ -321,7 +341,11 @@ describe("DiamondTest", async function () {
         let bal = await staker.connect(signers[1]).checkStakerBalance();
         //console.log(bal)
         expect(bal.stakerPercent).eq(utils.parseEther("0.333333333333333333")); //1 means 100%
-        expect(bal.newHouseBalance).eq(utils.parseEther("150")); //1 means 100%
+        expect(bal.houseBalance).eq(utils.parseEther("150.0")); //1 means 100%
+        expect(bal.userbalance).eq(
+          utils.parseEther("50000.000000000000150000")
+        ); //100'000glp
+        expect(bal.glpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000glp
       });
     });
   });
@@ -336,14 +360,11 @@ describe("DiamondTest", async function () {
         diamondAddress
       );
       const lockedAmounts = await rouletteFacet.testGetAmounts();
-      // console.log(lockedAmounts);
+      console.log(lockedAmounts);
       expect(lockedAmounts.houseLocked).eq(utils.parseEther("0"));
       expect(lockedAmounts.playerLocked).eq(utils.parseEther("0"));
       expect(lockedAmounts.requestId).eq(0);
       expect(lockedAmounts.playerBalance).eq(utils.parseEther("1"));
-      expect(lockedAmounts.stakerPercent).eq(
-        utils.parseEther("0.666666666666666667")
-      );
       expect(lockedAmounts.houseBalance).eq(utils.parseEther("150"));
       expect(lockedAmounts.platformBalance).eq(0);
     });
@@ -483,9 +504,7 @@ describe("DiamondTest", async function () {
         expect(lockedAmounts.playerLocked).eq(utils.parseEther("0.11"));
         expect(lockedAmounts.requestId).eq(31);
         expect(lockedAmounts.playerBalance).eq(utils.parseEther("0.89"));
-        expect(lockedAmounts.stakerPercent).eq(
-          utils.parseEther("0.666666666666666667")
-        );
+
         expect(lockedAmounts.houseBalance).eq(utils.parseEther("146.5"));
         expect(lockedAmounts.platformBalance).eq(0);
       });
@@ -530,9 +549,7 @@ describe("DiamondTest", async function () {
         expect(lockedAmounts.playerLocked).eq(utils.parseEther("0"));
         expect(lockedAmounts.requestId).eq(0);
         expect(lockedAmounts.playerBalance).eq(utils.parseEther("0.89")); //1-0.11
-        expect(lockedAmounts.stakerPercent).eq(
-          utils.parseEther("0.666666666666666667")
-        );
+
         //house receives 150+0.110000000000000000 - 0.000286000000000000
         expect(lockedAmounts.houseBalance).eq(utils.parseEther("150.109714"));
         expect(lockedAmounts.platformBalance).eq(utils.parseEther("0.000286"));
