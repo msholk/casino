@@ -12,7 +12,7 @@ async function main() {
   // return;
   diamondAddress = await readDiamondAddress();
   await upgradeStaker();
-  await checkStakerBalance();
+  // await checkStakerBalance();
 
   await readDiamondMap();
 }
@@ -50,7 +50,34 @@ async function readDiamondMap() {
   for (let index = 0; index < facetAddresses.length; index++) {
     const facetAddr = facetAddresses[index];
     const selectors = await loupe.facetFunctionSelectors(facetAddr);
-    console.log("    ", chalk.green(facetAddr), deployDic[facetAddr]);
+    let facetName = deployDic[facetAddr];
+    if (!facetName) {
+      console.log(deployDic[selectors[0]], "************************");
+      switch (deployDic[selectors[0]]) {
+        case "diamondCut((address,uint8,bytes4[])[],address,bytes)":
+          facetName = "DiamondCutFacet";
+          break;
+        case "facetAddress(bytes4)":
+          facetName = "DiamondLoupeFacet";
+          break;
+        case "owner()":
+          facetName = "OwnershipFacet";
+          break;
+        case "checkPlayerBalance()":
+          facetName = "PlayersFacet";
+          break;
+        case "checkStakerBalance()":
+          facetName = "StakerFacet";
+          break;
+        case "checkPlatformBalance()":
+          facetName = "AdminFacet";
+          break;
+        case "getReqID()":
+          facetName = "RouletteFacet";
+          break;
+      }
+    }
+    console.log("    ", chalk.green(facetAddr), facetName);
     // console.log(selectors);
     for (let iF = 0; iF < selectors.length; iF++) {
       const selector = selectors[iF];

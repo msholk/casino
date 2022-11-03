@@ -34,5 +34,9 @@
   "0x3E8aB629Fd45A2FAE70921E97eCB043016CD50Aa": "VaultFacet",
   "0x4a8c110a": "getVaultState()",
   "0xaf1adb62": "redeemFromVault()",
-  "0xf8a8fd6d": "test()"
+  "0xf8a8fd6d": "test()",
+  "0x3Bd0455C7e417fBD142B36C11d4A335B4a91C105": "VaultFacet",
+  "0x5D5dC518e58Cd1bef9046d414BDD741CE90973d6": "VaultFacet",
+  "0xaF600180b26f05F9CFF68aEaa326186c02b6C7ed": "VaultFacet",
+  "0xD62ecb80a39c3c424414b80D6328AA2Da485caf5": "StakerFacet"
 }
