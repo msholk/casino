@@ -31,6 +31,8 @@ const facetSelectors = {
   },
   VaultFacet: {
     "test()": null,
+    "getVaultState()": null,
+    "redeemFromVault()": null,
   },
   AdminFacet: {
     "withdrawAllPlatformFunds()": null,

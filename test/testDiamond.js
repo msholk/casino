@@ -7,7 +7,7 @@ const {
   developmentChains,
 } = require("../helper-hardhat-config");
 const _ = require("lodash");
-const { assert, expect } = require("chai");
+const { assert, expect, should } = require("chai");
 const { BigNumber } = require("ethers");
 const {
   getSelectors,
@@ -351,10 +351,83 @@ describe("DiamondTest", async function () {
         ); //100'000glp
         expect(bal.glpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000glp
       });
+      describe("Vault", async () => {
+        it("The first staker reclaims 1000 GLP", async () => {
+          const staker = await ethers.getContractAt(
+            "StakerFacet",
+            diamondAddress
+          );
+          expect(await staker.reclaimGLP(utils.parseEther("1000.0"))).not.to.be
+            .reverted;
+          let bal = await staker.checkStakerBalance();
+          //console.log(bal)
+          expect(bal.stakerPercent).eq(
+            utils.parseEther("0.659999999999999999")
+          ); //1 means 100%
+          expect(bal.houseBalance).eq(utils.parseEther("150.0")); //1 means 100%
+          expect(bal.userbalance).eq(utils.parseEther("99000.0")); //99'000glp -- decreased
+          expect(bal.glpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000glp --did not change
+        });
+        it("Check Vault status", async () => {
+          const vault = await ethers.getContractAt(
+            "VaultFacet",
+            diamondAddress
+          );
+
+          let bal = await vault.getVaultState();
+
+          expect(bal.totalReclaimed).eq(utils.parseEther("1000.0")); //1 means 100%
+          expect(bal.totalLeft2Redeem).eq(utils.parseEther("1000.0")); //1 means 100%
+          expect(bal.totalReady2Redeem).eq(utils.parseEther("0.0")); //1 means 100%
+
+          //Next day
+          await network.provider.send("evm_increaseTime", [3600 * 24]);
+          await network.provider.send("evm_mine");
+
+          bal = await vault.getVaultState();
+
+          expect(bal.totalReclaimed).eq(utils.parseEther("1000.0")); //1 means 100%
+          expect(bal.totalLeft2Redeem).eq(utils.parseEther("1000.0")); //1 means 100%
+          expect(bal.totalReady2Redeem).eq(utils.parseEther("50.0")); //1 means 100%
+
+          //Five days more (total 6 days)
+          await network.provider.send("evm_increaseTime", [3600 * 24 * 5]);
+          await network.provider.send("evm_mine");
+
+          bal = await vault.getVaultState();
+          console.log(bal);
+
+          expect(bal.totalReclaimed).eq(utils.parseEther("1000.0")); //1 means 100%
+          expect(bal.totalLeft2Redeem).eq(utils.parseEther("1000.0")); //1 means 100%
+          expect(bal.totalReady2Redeem).eq(utils.parseEther("300.0")); //1 means 100%
+
+          //************************************* */
+          await vault.redeemFromVault();
+
+          bal = await vault.getVaultState();
+          console.log(bal);
+
+          expect(bal.totalReclaimed).eq(utils.parseEther("1000.0")); //1 means 100%
+          expect(bal.totalLeft2Redeem).eq(utils.parseEther("700.0")); //1 means 100%
+          expect(bal.totalReady2Redeem).eq(utils.parseEther("0.0")); //1 means 100%
+
+          //15 days more (total 21 days) ************************************
+          await network.provider.send("evm_increaseTime", [3600 * 24 * 15]);
+          await network.provider.send("evm_mine");
+          await vault.redeemFromVault();
+
+          bal = await vault.getVaultState();
+          console.log(bal);
+
+          expect(bal.totalReclaimed).eq(utils.parseEther("0.0")); //1 means 100%
+          expect(bal.totalLeft2Redeem).eq(utils.parseEther("0.0")); //1 means 100%
+          expect(bal.totalReady2Redeem).eq(utils.parseEther("0.0")); //1 means 100%
+        });
+      });
     });
   });
 
-  describe("Playing", async () => {
+  xdescribe("Playing", async () => {
     let playerBalance;
     let houseBalance;
     let requestId = 1;
