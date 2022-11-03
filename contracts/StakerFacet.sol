@@ -8,6 +8,7 @@ import "contracts/diamond/libraries/LibDiamond.sol";
 import "contracts/libraries/house/LibHLP.sol";
 import "contracts/libraries/cashier/CashierStorageLib.sol";
 import "contracts/GLP/IGLP.sol";
+import "contracts/storage/VaultStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IStakerFacet {
@@ -93,5 +94,23 @@ contract StakerFacet is IStakerFacet {
     }
 
     return (stakerPercent, s.hs.houseBalance, userbalance, glpSupply);
+  }
+
+  function reclaimGLP(uint256 glp2Reclaim) public {
+    uint256 stakerBalance = IERC20(s.hs.GLPTokenAddress).balanceOf(msg.sender);
+    require(
+      glp2Reclaim <= stakerBalance,
+      "Not enough GLP balance to cliam this quantity"
+    );
+    //Pass the GLP to contract's address
+    IGLP(s.hs.GLPTokenAddress).burn(msg.sender, glp2Reclaim);
+    IGLP(s.hs.GLPTokenAddress).mint(address(this), glp2Reclaim);
+
+    ReclaimedGLP memory reclaimedGLP = ReclaimedGLP({
+      reclaimedGlpAmount: glp2Reclaim,
+      redeemedGLPAmount: 0,
+      timeOfReclaim: block.timestamp
+    });
+    s.vault.stakers[msg.sender].push(reclaimedGLP);
   }
 }

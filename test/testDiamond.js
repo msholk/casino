@@ -31,6 +31,7 @@ describe("DiamondTest", async function () {
   let ownershipFacet;
   let playersFacet;
   let stakerFacet;
+  let vaultFacet;
   let adminFacet;
   let tx;
   let result;
@@ -100,6 +101,7 @@ describe("DiamondTest", async function () {
       ownershipFacet,
       playersFacet,
       stakerFacet,
+      vaultFacet,
       adminFacet,
       rouletteFacet,
     } = res);
@@ -134,6 +136,7 @@ describe("DiamondTest", async function () {
         ownershipFacet,
         playersFacet,
         stakerFacet,
+        vaultFacet,
         adminFacet,
         rouletteFacet,
       });
@@ -145,6 +148,7 @@ describe("DiamondTest", async function () {
         ownershipFacet,
         playersFacet,
         stakerFacet,
+        vaultFacet,
         adminFacet,
         rouletteFacet,
       });

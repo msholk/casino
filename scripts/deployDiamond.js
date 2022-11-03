@@ -19,6 +19,7 @@ async function deployDiamond() {
       "StakerFacet",
       "AdminFacet",
       "RouletteFacet",
+      "VaultFacet",
     ],
     args: [account],
     deployLibraries: {

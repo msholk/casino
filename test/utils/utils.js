@@ -3,7 +3,7 @@ const _ = require("lodash");
 const { assert } = require("chai");
 require("./BigNum-utils.js");
 const { facetSelectors } = require("./facetSelectors");
-const FACETS_COUNT = 7;
+const FACETS_COUNT = 8;
 const getSignature = (stringSignature) => {
   return utils.keccak256(utils.toUtf8Bytes(stringSignature)).substring(0, 10);
 };
@@ -63,6 +63,7 @@ async function diamondInit1() {
     diamondAddress
   );
   const stakerFacet = await ethers.getContractAt("StakerFacet", diamondAddress);
+  const vaultFacet = await ethers.getContractAt("VaultFacet", diamondAddress);
   const adminFacet = await ethers.getContractAt("AdminFacet", diamondAddress);
   const rouletteFacet = await ethers.getContractAt(
     "RouletteFacet",
@@ -76,6 +77,7 @@ async function diamondInit1() {
     ownershipFacet,
     playersFacet,
     stakerFacet,
+    vaultFacet,
     adminFacet,
     rouletteFacet,
   };
@@ -115,6 +117,7 @@ async function checkFacets1(facets) {
   facetAddress.StakerFacet = addresses[4];
   facetAddress.AdminFacet = addresses[5];
   facetAddress.RouletteFacet = addresses[6];
+  facetAddress.VaultFacet = addresses[7];
 }
 async function checkFacets2(facets) {
   const {
@@ -125,6 +128,7 @@ async function checkFacets2(facets) {
     ownershipFacet,
     playersFacet,
     stakerFacet,
+    vaultFacet,
     adminFacet,
     rouletteFacet,
   } = facets;
@@ -211,6 +215,22 @@ async function checkFacets2(facets) {
   );
   facetSelectors.StakerFacet = {
     ...facetSelectors.StakerFacet,
+    ...selectorsToDic(selectors),
+  };
+
+  selectors = getSelectors(vaultFacet);
+  result = await diamondLoupeFacet.facetFunctionSelectors(
+    facetAddress.VaultFacet
+  );
+  assert.sameMembers(result, selectors);
+  assert.sameKeys(
+    facetSelectors.VaultFacet,
+    selectorsToDic(selectors),
+    "VaultFacet expected functions",
+    "VaultFacet deployed functions"
+  );
+  facetSelectors.VaultFacet = {
+    ...facetSelectors.VaultFacet,
     ...selectorsToDic(selectors),
   };
 

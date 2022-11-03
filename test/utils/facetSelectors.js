@@ -29,6 +29,9 @@ const facetSelectors = {
     "setGLPTokenAddress(address)": null,
     // "withdrawAllStakerDAI()": null,
   },
+  VaultFacet: {
+    "test()": null,
+  },
   AdminFacet: {
     "withdrawAllPlatformFunds()": null,
     "checkPlatformBalance()": null,
