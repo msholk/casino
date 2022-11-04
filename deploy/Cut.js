@@ -9,7 +9,7 @@ const {
 let diamondAddress;
 async function main() {
   await copyArtifacts();
-  // return;
+  return;
   diamondAddress = await readDiamondAddress();
   await upgradeStaker();
   // await checkStakerBalance();
@@ -144,6 +144,10 @@ async function copyArtifacts() {
   fs.copyFileSync(
     "./artifacts/contracts/StakerFacet.sol/StakerFacet.json",
     "./frontend/src/contracts/StakerFacet.json"
+  );
+  fs.copyFileSync(
+    "./artifacts/contracts/VaultFacet.sol/VaultFacet.json",
+    "./frontend/src/contracts/VaultFacet.json"
   );
   fs.copyFileSync(
     "./artifacts/contracts/AdminFacet.sol/AdminFacet.json",
