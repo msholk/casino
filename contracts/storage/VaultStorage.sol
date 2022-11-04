@@ -3,7 +3,8 @@ pragma solidity 0.8.9;
 
 struct VaultStorage {
   mapping(address => ReclaimedGLP[]) stakers;
-  uint256 totalReclaimedGlpAmount;
+  //Total glp in reclaiming state
+  uint256 totalGlpBeingReclaimed;
 }
 struct ReclaimedGLP {
   uint256 reclaimedGlpAmount;

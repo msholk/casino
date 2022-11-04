@@ -67,6 +67,7 @@ contract VaultFacet {
 
     payable(msg.sender).transfer(ethAmount);
     IGLP(s.hs.GLPTokenAddress).burn(address(this), redeemGlpAmount);
+    s.vault.totalGlpBeingReclaimed -= redeemGlpAmount;
   }
 
   function _remove(uint256 position, ReclaimedGLP[] storage reclaims) private {
@@ -92,13 +93,6 @@ contract VaultFacet {
           uint256 canBeRedeemed = (((daysPassed * 1e18) / DELAY_PERIOD) *
             reclaim.reclaimedGlpAmount) / 1e18;
           uint256 redeemGlpAmount = (canBeRedeemed - reclaim.redeemedGLPAmount);
-
-          // console.log("daysPassed", daysPassed);
-          // console.log("glpSupply", glpSupply);
-          // console.log("redeemGlpAmount", redeemGlpAmount);
-          // console.log("redeemPercent", redeemPercent);
-          // console.log("ethAmount", ethAmount);
-          // console.log("s.hs.houseBalance", s.hs.houseBalance);
 
           _doRedeem(redeemGlpAmount);
           reclaim.redeemedGLPAmount += redeemGlpAmount;

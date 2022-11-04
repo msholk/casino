@@ -112,5 +112,6 @@ contract StakerFacet is IStakerFacet {
       timeOfReclaim: block.timestamp
     });
     s.vault.stakers[msg.sender].push(reclaimedGLP);
+    s.vault.totalGlpBeingReclaimed += glp2Reclaim;
   }
 }
