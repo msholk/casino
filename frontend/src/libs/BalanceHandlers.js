@@ -3,6 +3,7 @@ import { diamondAddress } from "../contracts/diamondAddress";
 import playersFacet from "../contracts/PlayersFacet.json";
 import stakerFacet from "../contracts/StakerFacet.json";
 import adminFacet from "../contracts/AdminFacet.json";
+import vaultFacet from "../contracts/VaultFacet.json";
 import _ from "lodash";
 
 const getStakerBalanceHandler = async (state) => {
@@ -23,7 +24,13 @@ const getStakerBalanceHandler = async (state) => {
         stakerFacet.abi,
         signer
       );
+      const vaultContaract = new ethers.Contract(
+        diamondAddress,
+        vaultFacet.abi,
+        signer
+      );
       let balance = await stakerContaract.checkStakerBalance();
+      let vaultBalance = await vaultContaract.getVaultState();
       console.log("Retrieved staker balance...", balance);
       if (
         _.get(state, "stakerBalance.stakerPercent") &&
@@ -39,6 +46,11 @@ const getStakerBalanceHandler = async (state) => {
         houseBalance: balance.houseBalance,
         stakerPercent: balance.stakerPercent,
         userbalance: balance.userbalance,
+        vault: {
+          totalReclaimed: vaultBalance.totalReclaimed,
+          totalLeft2Redeem: vaultBalance.totalLeft2Redeem,
+          totalReady2Redeem: vaultBalance.totalReady2Redeem,
+        },
       });
     } else {
       console.log("Ethereum object not found, install Metamask.");
@@ -57,23 +69,6 @@ const getPlayerBalanceHandler = async (state) => {
       console.log("Continue player", new Date() - window.lastPlayerCheck);
     }
   }
-  // {
-  //   return;
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //   const signer = provider.getSigner();
-  //   const diamond = new ethers.Contract(
-  //     diamondAddress,
-  //     DiamondLoupeFacet.abi,
-  //     signer
-  //   );
-  //   /*  'facetAddress(bytes4)': null,
-  //           'facetAddresses()': null,
-  //           'facetFunctionSelectors(address)': null,
-  //           'facets()': null,
-  //           'supportsInterface(bytes4)': null*=*/
-  //   const facets = await diamond.facets();
-  //   console.log(facets);
-  // }
 
   try {
     if (window.ethereum) {
