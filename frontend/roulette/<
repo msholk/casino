@@ -1,0 +1,46 @@
+import Board from '../board/board'
+import ChipContainer from '../chips/chipsContainer'
+import FakeRngScore from '../blockchain/fakeRngScore'
+import SpinButton from '../roulette/spinButton'
+
+
+export default class MainScene extends Phaser.Scene {
+    spinButton: SpinButton
+    chipContainer: ChipContainer
+    fakeRngScore: FakeRngScore
+    board: Board
+
+    constructor() {
+        super({ key: 'MainScene' })
+    }
+
+    create() {
+        // let bg = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'board')
+
+        this.chipContainer = new ChipContainer(this, 0, 960)
+        this.add.existing(this.chipContainer)
+
+        // this.spinButton = new SpinButton(this, 1100, 600, 200, 200)
+        // this.add.existing(this.spinButton)
+
+        this.fakeRngScore = new FakeRngScore(this, 200, 200, {font: "74px Arial Black", color: "#fff"})
+        this.add.existing(this.fakeRngScore)
+
+        this.board = new Board(this, 1400, 450)
+        this.add.existing(this.board)
+
+    }
+
+    update() {
+        // check if the mouse is on board
+        // if(this.board.mouseOnBoard){
+        //     let xPointer = this.game.input.pointers[0].x
+        //     let yPointer = this.game.input.pointers[0].y
+        //     this.board.update(xPointer, yPointer)
+        // }
+    }
+
+    spinRoulette(){
+        this.fakeRngScore.generateResult()
+    }
+}
