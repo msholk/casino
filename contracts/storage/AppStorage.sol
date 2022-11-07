@@ -4,6 +4,7 @@ import "contracts/libraries/cashier/CashierStorageLib.sol";
 import "./HouseStorage.sol";
 import "./RouletCroupierStorage.sol";
 import "./VrfStruct.sol";
+import "./VaultStorage.sol";
 
 struct AppStorage {
   CashierStorage cs;
@@ -12,4 +13,5 @@ struct AppStorage {
   VrfStruct vrf;
   uint256 platformBalance;
   bool locked;
+  VaultStorage vault;
 }

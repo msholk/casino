@@ -1,8 +1,10 @@
 import { ethers } from "ethers";
 import StakerFacet from "contracts/StakerFacet.json";
+import vaultFacet from "contracts/VaultFacet.json";
 import { diamondAddress } from "contracts/diamondAddress";
 import _ from "lodash";
-export const withdrawAllStakerFunds = async ({
+export const reclaimGLP = async ({
+  cliamAmount,
   getBalanceHandler,
   setError,
   setBusy,
@@ -21,7 +23,51 @@ export const withdrawAllStakerFunds = async ({
       let myAddress = await signer.getAddress();
       console.log("provider signer...", myAddress);
 
-      const txn = await stakerContract.withdrawAllStakerDAI();
+      const txn = await stakerContract.reclaimGLP(cliamAmount);
+      console.log("Withdrawing money...");
+      setBusy("Withdrawing money...");
+      await txn.wait();
+      console.log("Money with drew...done", txn.hash);
+      setBusy("Updating balance...");
+      getBalanceHandler();
+    } else {
+      console.log("Ethereum object not found, install Metamask.");
+      setError("Please install a MetaMask wallet to use our bank.");
+    }
+  } catch (error) {
+    let message = _.get(error, "error.data.message") || _.get(error, "reason");
+    if (message) {
+      setError(message);
+      console.error(message);
+    } else {
+      setError(error);
+    }
+    console.log(error);
+    clearErrorWithPause();
+  } finally {
+    setBusy("");
+  }
+};
+export const redeemGLP = async ({
+  getBalanceHandler,
+  setError,
+  setBusy,
+  clearErrorWithPause,
+}) => {
+  try {
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const vaultContract = new ethers.Contract(
+        diamondAddress,
+        vaultFacet.abi,
+        signer
+      );
+
+      let myAddress = await signer.getAddress();
+      console.log("provider signer...", myAddress);
+
+      const txn = await vaultContract.redeemFromVault();
       console.log("Withdrawing money...");
       setBusy("Withdrawing money...");
       await txn.wait();

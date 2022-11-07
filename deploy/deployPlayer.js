@@ -47,6 +47,10 @@ async function copyArtifacts() {
     "./frontend/src/contracts/StakerFacet.json"
   );
   fs.copyFileSync(
+    "./artifacts/contracts/VaultFacet.sol/VaultFacet.json",
+    "./frontend/src/contracts/VaultFacet.json"
+  );
+  fs.copyFileSync(
     "./artifacts/contracts/AdminFacet.sol/AdminFacet.json",
     "./frontend/src/contracts/AdminFacet.json"
   );
