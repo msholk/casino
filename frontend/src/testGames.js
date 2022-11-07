@@ -28,9 +28,9 @@ function playManyGeames() {
     let rouletteGives = getRandomIntInclusive(1, 38);
     const winFact = bet2WinFactor(userBetsOn, rouletteGives);
     if (winFact) {
-      haouseBalance -= 18;
+      haouseBalance -= 17.3;
     } else {
-      haouseBalance += 1;
+      haouseBalance += 0.7;
     }
     //   console.log(
     //     `${iGame}: house balance:${haouseBalance} ${userBetsOn}:${rouletteGives}`
@@ -38,7 +38,9 @@ function playManyGeames() {
     minB = Math.min(minB, haouseBalance);
     maxB = Math.max(maxB, haouseBalance);
   }
-  console.log(`${minB}:  ${maxB}  `);
+  console.log(
+    `${Math.floor(minB)}:  ${Math.floor(maxB)}  ${Math.floor(haouseBalance)}`
+  );
 }
 for (let index = 0; index < 10; index++) {
   playManyGeames();
