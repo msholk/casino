@@ -21,6 +21,9 @@ function getRandomIntInclusive(min, max) {
 function playManyGeames() {
   let GAMES_TO_PLAY = 10000000;
   let haouseBalance = 10000;
+  let initHouseBalance = 10000;
+  let playerBetsAmount = 200;
+  let comission = playerBetsAmount * 0.0526 * 0.3;
   let minB = haouseBalance;
   let maxB = haouseBalance;
   for (let iGame = 0; iGame < GAMES_TO_PLAY; iGame++) {
@@ -28,18 +31,25 @@ function playManyGeames() {
     let rouletteGives = getRandomIntInclusive(1, 38);
     const winFact = bet2WinFactor(userBetsOn, rouletteGives);
     if (winFact) {
-      haouseBalance -= 17.3;
+      haouseBalance -= 17;
     } else {
-      haouseBalance += 0.7;
+      haouseBalance += 1;
     }
+    // haouseBalance -= comission;
     //   console.log(
     //     `${iGame}: house balance:${haouseBalance} ${userBetsOn}:${rouletteGives}`
     //   );
     minB = Math.min(minB, haouseBalance);
     maxB = Math.max(maxB, haouseBalance);
   }
+  let netWin = haouseBalance - initHouseBalance;
+  let allBetSum = playerBetsAmount * GAMES_TO_PLAY;
   console.log(
-    `${Math.floor(minB)}:  ${Math.floor(maxB)}  ${Math.floor(haouseBalance)}`
+    `${Math.floor(minB)}:  ${Math.floor(maxB)}  ${Math.floor(
+      haouseBalance
+    )} ${comission} Profit over all bets:${
+      Math.round((netWin / allBetSum) * 10000) / 100
+    }%`
   );
 }
 for (let index = 0; index < 10; index++) {

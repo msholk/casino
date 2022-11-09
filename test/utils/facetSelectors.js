@@ -19,6 +19,7 @@ const facetSelectors = {
     // "placeBet((uint256,uint8,uint8)[])": null,
     // "rawFulfillRandomWords(uint256,uint256[])": null,
     // "setVrfInfo((uint64,address,bytes32))": null,
+    "withdrawPlayerBalanceAmount(uint256)": null,
     "withdrawPlayerBalance()": null,
   },
   StakerFacet: {

@@ -9,12 +9,29 @@ const {
 let diamondAddress;
 async function main() {
   await copyArtifacts();
-  return;
+
   diamondAddress = await readDiamondAddress();
-  await upgradeStaker();
+  await upgradePlayer();
   // await checkStakerBalance();
 
   await readDiamondMap();
+}
+async function upgradePlayer() {
+  await upgradeWithNewFacets({
+    diamondAddress,
+    facetNames: ["PlayersFacet"],
+    libraries: {
+      //  RouletteFacet: ["LibRulette"],
+    },
+    librariesAddresses: {
+      RouletteFacet: {
+        LibRulette: "0x1Cc1161F4AB263a091c07e25e108B7720bF3183B",
+      },
+    },
+    // selectorsToRemove = [],
+    // initFacetName = undefined,
+    // initArgs = [],
+  });
 }
 async function upgradeStaker() {
   await upgradeWithNewFacets({

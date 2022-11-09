@@ -64,4 +64,18 @@ contract PlayersFacet {
     s.cs.playersBalances[msg.sender] = 0;
     payable(msg.sender).transfer(balance);
   }
+
+  function withdrawPlayerBalanceAmount(uint256 amount) public noReentrant {
+    mapping(address => uint256) storage playersBalances = s.cs.playersBalances;
+    uint256 balance = playersBalances[msg.sender];
+
+    require(balance > 0, "Your balance is ZERO");
+    require(amount <= balance, "Your balance is insufficient");
+    require(
+      amount <= address(this).balance,
+      "Amount is bigger than platform has"
+    );
+    s.cs.playersBalances[msg.sender] = balance - amount;
+    payable(msg.sender).transfer(amount);
+  }
 }
