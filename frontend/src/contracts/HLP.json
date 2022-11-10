@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "GLP",
-  "sourceName": "contracts/GLP/GLP.sol",
+  "contractName": "HLP",
+  "sourceName": "contracts/HLP/HLP.sol",
   "abi": [
     {
       "inputs": [],

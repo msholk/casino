@@ -7,7 +7,7 @@ import "hardhat/console.sol";
 import "contracts/diamond/libraries/LibDiamond.sol";
 import "contracts/libraries/house/LibHLP.sol";
 import "contracts/libraries/cashier/CashierStorageLib.sol";
-import "contracts/GLP/IHlp.sol";
+import "contracts/HLP/IHlp.sol";
 import "contracts/storage/VaultStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 

@@ -6,7 +6,7 @@ import "./storage/AppStorage.sol";
 import "contracts/diamond/libraries/LibDiamond.sol";
 import "contracts/storage/VaultStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "contracts/GLP/IHlp.sol";
+import "contracts/HLP/IHlp.sol";
 
 uint256 constant DELAY_PERIOD = 20; //DAYS
 
