@@ -35,7 +35,7 @@ const getStakerBalanceHandler = async (state) => {
       if (
         _.get(state, "stakerBalance.stakerPercent") &&
         state.stakerBalance.stakerPercent.eq(balance.stakerPercent) &&
-        state.stakerBalance.houseBalance.eq(balance.newHouseBalance)
+        state.stakerBalance.houseBalance.eq(balance.houseBalance)
       ) {
         console.log("Skipping update");
         return;
