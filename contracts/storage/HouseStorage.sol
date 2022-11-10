@@ -5,4 +5,5 @@ struct HouseStorage {
   uint256 houseBalance;
   uint256 houseLockedBalance;
   address HLPTokenAddress;
+  uint256 revenueBalance;
 }

@@ -45,7 +45,8 @@ contract RouletteFacet is VRFContract {
       uint256 requestId,
       uint256 playerBalance,
       uint256 houseBalance,
-      uint256 platformBalance
+      uint256 platformBalance,
+      uint256 revenueBalance
     )
   {
     return (
@@ -54,7 +55,8 @@ contract RouletteFacet is VRFContract {
       s.rcs.playersLaunchedRoulette[msg.sender].requestId,
       s.cs.playersBalances[msg.sender],
       s.hs.houseBalance,
-      s.platformBalance
+      s.platformBalance,
+      s.hs.revenueBalance
     );
   }
 

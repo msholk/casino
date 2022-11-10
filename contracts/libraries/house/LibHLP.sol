@@ -36,39 +36,20 @@ library LibHLP {
     internal
   {
     //Amount goes from  House to Cashier
-    //We take PLAYER_WINS_COMISSION
-    uint256 PLAYER_WINS_COMISSION = 3; //0.0003 0.03%
-    uint256 ourComission = (PLAYER_WINS_COMISSION * payDiffEth) / 1e4; //add precision
-
-    s.platformBalance += ourComission;
-    uint256 removeFromHouse = (payDiffEth + ourComission);
-    console.log("payDiffEth", payDiffEth);
-    console.log("ourComission", ourComission);
-    // console.log("ourComission/14", ourComission / 1e14);
-    // console.log("removeFromHouse", removeFromHouse);
-    console.log(s.hs.houseBalance, removeFromHouse);
     s.hs.houseBalance -= removeFromHouse;
-    console.log(s.hs.houseBalance, removeFromHouse);
-
-    // console.log(
-    //     "ourComission",
-    //     ourComission,
-    //     payDiff,
-    //     PLAYER_WINS_COMISSION
-    // );
-    // console.log(s.hs.houseBalance, removeFromHouse);
   }
 
   function transferFromCashierToHouse(AppStorage storage s, uint256 payDiffEth)
     internal
   {
-    uint256 PLAYER_LOSE_COMISSION = 26; //0.0026 0.26%
-    //Amount from Cashier goes to HLP
-    //We take PLAYER_LOSE_COMISSION
-    uint256 ourComission = (PLAYER_LOSE_COMISSION * payDiffEth) / 1e4; //add precision
-    s.platformBalance += ourComission;
-    // console.log("House receives", payDiffEth, ourComission);
-    s.hs.houseBalance += payDiffEth - ourComission; //transfer from Cahsier to HLP
-    // console.log(payDiff, payDiff, ourComission, payDiff);
+    if (s.hs.houseBalance >= s.hs.revenueBalance) {
+      //Get 30% from benefit only
+      uint256 add2House = (playerBetsAmount * 70) / 100;
+      s.hs.houseBalance += add2House;
+      s.platformBalance += (payDiffEth - add2House);
+      s.hs.revenueBalance = s.hs.houseBalance;
+    } else {
+      s.hs.houseBalance += payDiffEth;
+    }
   }
 }

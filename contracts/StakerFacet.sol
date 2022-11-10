@@ -59,6 +59,7 @@ contract StakerFacet is IStakerFacet {
 
     uint256 oldHouseBalance = s.hs.houseBalance;
     s.hs.houseBalance += stakedValue;
+    s.hs.revenueBalance += stakedValue;
     uint256 newHouseBalance = oldHouseBalance + stakedValue;
 
     uint256 hlp2Mint;

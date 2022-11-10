@@ -60,9 +60,11 @@ contract VaultFacet {
     uint256 redeemPercent = (redeemHlpAmount * 1e18) / hlpSupply;
     uint256 ethAmount = (redeemPercent * s.hs.houseBalance) / 1e18;
 
-    payable(msg.sender).transfer(ethAmount);
     IHlp(s.hs.HLPTokenAddress).burn(address(this), redeemHlpAmount);
     s.vault.totalHlpBeingReclaimed -= redeemHlpAmount;
+    s.hs.houseBalance -= ethAmount;
+    s.hs.revenueBalance -= ethAmount;
+    payable(msg.sender).transfer(ethAmount);
   }
 
   function _remove(uint256 position, ReclaimedHLP[] storage reclaims) private {
@@ -77,7 +79,7 @@ contract VaultFacet {
     ReclaimedHLP[] storage reclaims = s.vault.stakers[msg.sender];
     uint256 reclaimsCnt = reclaims.length;
     uint256 incompleteReclaims;
-
+    uint256 totalRedeemAmount;
     for (int256 index = 0; index < int256(reclaimsCnt); ++index) {
       ReclaimedHLP storage reclaim = reclaims[uint256(index)];
 
@@ -89,14 +91,14 @@ contract VaultFacet {
             reclaim.reclaimedHlpAmount) / 1e18;
           uint256 redeemHlpAmount = (canBeRedeemed - reclaim.redeemedHLPAmount);
 
-          _doRedeem(redeemHlpAmount);
+          totalRedeemAmount += redeemHlpAmount;
           reclaim.redeemedHLPAmount += redeemHlpAmount;
           incompleteReclaims++;
         } else {
           uint256 redeemHlpAmount = (reclaim.reclaimedHlpAmount -
             reclaim.redeemedHLPAmount);
 
-          _doRedeem(redeemHlpAmount);
+          totalRedeemAmount += redeemHlpAmount;
           reclaim.redeemedHLPAmount = reclaim.reclaimedHlpAmount;
 
           _remove(uint256(index), reclaims);
@@ -104,6 +106,9 @@ contract VaultFacet {
           --index;
         }
       }
+    }
+    if (totalRedeemAmount > 0) {
+      _doRedeem(totalRedeemAmount);
     }
     if (incompleteReclaims == 0) {
       delete s.vault.stakers[msg.sender];
