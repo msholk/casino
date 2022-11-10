@@ -54,10 +54,10 @@ export class StakerBlock extends React.PureComponent {
               <strong>Staker percent: {this.getStakerPercent()} %</strong>
             </div>
             <div>
-              <strong>Supply: {this.getSupply()} GLP </strong>
+              <strong>Supply: {this.getSupply()} HLP </strong>
             </div>
             <div>
-              <strong>Staker balance: {this.getStakerBalance()} GLP</strong>
+              <strong>Staker balance: {this.getStakerBalance()} HLP</strong>
             </div>
           </span>
         </div>

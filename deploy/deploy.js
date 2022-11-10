@@ -28,9 +28,9 @@ async function deployDiamond() {
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  //Connect with GLP Token
+  //Connect with HLP Token
   const GLPAddress = await readGLPAddress();
-  const GLPContract = await ethers.getContractAt("GLP", GLPAddress);
+  const GLPContract = await ethers.getContractAt("HLP", GLPAddress);
   // console.log(stakerAddress, GLPAddress);
   const Staker = await ethers.getContractAt("StakerFacet", diamondAddress);
   await GLPContract.setMinter(diamondAddress, true);

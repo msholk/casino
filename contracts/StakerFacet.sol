@@ -100,9 +100,9 @@ contract StakerFacet is IStakerFacet {
     uint256 stakerBalance = IERC20(s.hs.GLPTokenAddress).balanceOf(msg.sender);
     require(
       glp2Reclaim <= stakerBalance,
-      "Not enough GLP balance to cliam this quantity"
+      "Not enough HLP balance to cliam this quantity"
     );
-    //Pass the GLP to contract's address
+    //Pass the HLP to contract's address
     IHlp(s.hs.GLPTokenAddress).burn(msg.sender, glp2Reclaim);
     IHlp(s.hs.GLPTokenAddress).mint(address(this), glp2Reclaim);
 

@@ -88,7 +88,7 @@ describe("DiamondTest", async function () {
     TokensMock = await TokensMockFactory.deploy();
   }
   async function initializeGLPToken() {
-    const factory = await ethers.getContractFactory("GLP");
+    const factory = await ethers.getContractFactory("HLP");
     GLPToken = await factory.deploy();
   }
 
@@ -352,7 +352,7 @@ describe("DiamondTest", async function () {
         expect(bal.glpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000glp
       });
       describe("Vault", async () => {
-        it("The first staker reclaims 1000 GLP", async () => {
+        it("The first staker reclaims 1000 HLP", async () => {
           const staker = await ethers.getContractAt(
             "StakerFacet",
             diamondAddress

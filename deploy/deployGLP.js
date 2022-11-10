@@ -1,14 +1,14 @@
 const { diamondInit1 } = require("../test/utils/utils");
-const contractName = "GLP";
+const contractName = "HLP";
 let deployedFactory;
 async function main() {
   await deploySingleContract();
   await copyArtifacts();
 
-  const GLP = await ethers.getContractAt(contractName, deployedFactory.address);
+  const HLP = await ethers.getContractAt(contractName, deployedFactory.address);
   const signers = await ethers.getSigners();
-  await GLP.setMinter(signers[0].getAddress(), true);
-  await GLP.toggleMaintenance();
+  await HLP.setMinter(signers[0].getAddress(), true);
+  await HLP.toggleMaintenance();
 }
 
 async function deploySingleContract() {

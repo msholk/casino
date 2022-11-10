@@ -6,7 +6,7 @@ async function main() {
   await copyArtifacts();
 
   const GLPAddress = await readGLPAddress();
-  const GLPContract = await ethers.getContractAt("GLP", GLPAddress);
+  const GLPContract = await ethers.getContractAt("HLP", GLPAddress);
   // console.log(stakerAddress, GLPAddress);
   const Staker = await ethers.getContractAt("StakerFacet", stakerAddress);
   await GLPContract.setMinter(stakerAddress, true);

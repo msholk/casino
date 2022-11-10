@@ -22,7 +22,7 @@ Install front end part:
 
 ### Deployment to MUMBAI
 
-###### Deploy GLP
+###### Deploy HLP Token
 
 `yarn hardhat run deploy/deployGLP.js --network mumbai`
 
@@ -32,7 +32,7 @@ Install front end part:
 
 ###### Deploy diamond
 
-Deploy GLP first
+Deploy HLP first
 `yarn hardhat run deploy/deploy.js --network mumbai`
 
 ###### Cut diamond: update a module

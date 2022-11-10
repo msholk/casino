@@ -37,14 +37,14 @@ describe("Staking test", async function () {
   let result;
   let TokensMock;
   let Staker;
-  let GLP;
+  let HLP;
   let GLPAddress;
 
   const facetAddress = {};
   let vrfInfo = {};
 
   async function deployGLP() {
-    const contractName = "GLP";
+    const contractName = "HLP";
     const facetFactory = await ethers.getContractFactory(contractName, {
       libraries: {},
     });
@@ -53,7 +53,7 @@ describe("Staking test", async function () {
     await deployedFactory.deployed();
     console.log(`${contractName} deployed: ${deployedFactory.address}`);
     GLPAddress = deployedFactory.address;
-    GLP = await ethers.getContractAt(contractName, deployedFactory.address);
+    HLP = await ethers.getContractAt(contractName, deployedFactory.address);
   }
 
   async function deployContract() {
@@ -71,9 +71,9 @@ describe("Staking test", async function () {
     await deployGLP();
 
     const signers = await ethers.getSigners();
-    await GLP.setMinter(signers[0].getAddress(), true);
-    await GLP.setMinter(stakerAddress, true);
-    await GLP.toggleMaintenance();
+    await HLP.setMinter(signers[0].getAddress(), true);
+    await HLP.setMinter(stakerAddress, true);
+    await HLP.toggleMaintenance();
     Staker.setGLPTokenAddress(GLPAddress);
   });
 
