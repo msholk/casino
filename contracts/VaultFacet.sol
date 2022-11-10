@@ -6,7 +6,7 @@ import "./storage/AppStorage.sol";
 import "contracts/diamond/libraries/LibDiamond.sol";
 import "contracts/storage/VaultStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "contracts/GLP/IGLP.sol";
+import "contracts/GLP/IHlp.sol";
 
 uint256 constant DELAY_PERIOD = 20; //DAYS
 
@@ -66,7 +66,7 @@ contract VaultFacet {
     uint256 ethAmount = (redeemPercent * s.hs.houseBalance) / 1e18;
 
     payable(msg.sender).transfer(ethAmount);
-    IGLP(s.hs.GLPTokenAddress).burn(address(this), redeemGlpAmount);
+    IHlp(s.hs.GLPTokenAddress).burn(address(this), redeemGlpAmount);
     s.vault.totalGlpBeingReclaimed -= redeemGlpAmount;
   }
 

@@ -7,7 +7,7 @@ import "hardhat/console.sol";
 import "contracts/diamond/libraries/LibDiamond.sol";
 import "contracts/libraries/house/LibHLP.sol";
 import "contracts/libraries/cashier/CashierStorageLib.sol";
-import "contracts/GLP/IGLP.sol";
+import "contracts/GLP/IHlp.sol";
 import "contracts/storage/VaultStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -73,7 +73,7 @@ contract StakerFacet is IStakerFacet {
       console.log("glpSupply", glpSupply);
       glp2Mint = (glpSupply * (1e18 - OldVsNew)) / OldVsNew;
     }
-    IGLP(s.hs.GLPTokenAddress).mint(msg.sender, glp2Mint);
+    IHlp(s.hs.GLPTokenAddress).mint(msg.sender, glp2Mint);
   }
 
   function checkStakerBalance()
@@ -103,8 +103,8 @@ contract StakerFacet is IStakerFacet {
       "Not enough GLP balance to cliam this quantity"
     );
     //Pass the GLP to contract's address
-    IGLP(s.hs.GLPTokenAddress).burn(msg.sender, glp2Reclaim);
-    IGLP(s.hs.GLPTokenAddress).mint(address(this), glp2Reclaim);
+    IHlp(s.hs.GLPTokenAddress).burn(msg.sender, glp2Reclaim);
+    IHlp(s.hs.GLPTokenAddress).mint(address(this), glp2Reclaim);
 
     ReclaimedGLP memory reclaimedGLP = ReclaimedGLP({
       reclaimedGlpAmount: glp2Reclaim,
