@@ -5,7 +5,7 @@ pragma solidity 0.8.9;
 import "./MintableBaseToken.sol";
 
 contract GLP is MintableBaseToken {
-  constructor() MintableBaseToken("House of Matrix GLP token", "GLP") {}
+  constructor() MintableBaseToken("House of Matrix Liquidity token", "HLP") {}
 
   function id() external pure returns (string memory _name) {
     return "GLP";
