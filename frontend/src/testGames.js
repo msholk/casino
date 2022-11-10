@@ -42,7 +42,7 @@ function playManyGeames() {
       // houseBalance -= comissionAmount;
       // revenue += comissionAmount;
     } else {
-      if (houseBalance > revenuBalance) {
+      if (houseBalance >= revenuBalance) {
         houseBalance += playerBetsAmount * 0.7;
         revenue += playerBetsAmount * 0.3;
         revenuBalance = houseBalance;
