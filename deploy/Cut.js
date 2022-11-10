@@ -109,9 +109,9 @@ async function readDiamondMap() {
   /*'facetFunctionSelectors(address)' │ '0xadfca15e' │
 │    3    │            'facets()'       */
 }
-async function updateGlpTokenAddress() {
+async function updateHlpTokenAddress() {
   const stakerFacet = await ethers.getContractAt("StakerFacet", diamondAddress);
-  await stakerFacet.setGLPTokenAddress(
+  await stakerFacet.setHLPTokenAddress(
     "0x2F5f2332aC95f40F966dcb71862D2204Dce012d9"
   );
 }

@@ -24,7 +24,7 @@ Install front end part:
 
 ###### Deploy HLP Token
 
-`yarn hardhat run deploy/deployGLP.js --network mumbai`
+`yarn hardhat run deploy/deployHLP.js --network mumbai`
 
 ###### Deploy Staker
 
@@ -45,8 +45,7 @@ The script shpuld be adjsuted in accordance to what module we want to update.
 `cd frontend`
 `npm run start`
 
-npx hardhat test test/unit/glp.test.js
-yarn hardhat run test/deployGLP.js
+yarn hardhat run test/deployHLP.js
 
 ### Vrf Subscription
 

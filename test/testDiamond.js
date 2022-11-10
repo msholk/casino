@@ -36,7 +36,7 @@ describe("DiamondTest", async function () {
   let tx;
   let result;
   let TokensMock;
-  let GLPToken;
+  let HLPToken;
   let rouletteFacet;
 
   const facetAddress = {};
@@ -87,9 +87,9 @@ describe("DiamondTest", async function () {
     const TokensMockFactory = await ethers.getContractFactory("TokensMock");
     TokensMock = await TokensMockFactory.deploy();
   }
-  async function initializeGLPToken() {
+  async function initializeHLPToken() {
     const factory = await ethers.getContractFactory("HLP");
-    GLPToken = await factory.deploy();
+    HLPToken = await factory.deploy();
   }
 
   before(async function () {
@@ -107,15 +107,15 @@ describe("DiamondTest", async function () {
     } = res);
 
     await initializeTokensMock();
-    await initializeGLPToken();
+    await initializeHLPToken();
     await initializeVRF();
 
     const staker = await ethers.getContractAt("StakerFacet", diamondAddress);
-    await staker.setGLPTokenAddress(GLPToken.address);
-    await GLPToken.setMinter(diamondAddress, true);
-    await GLPToken.clearMaintenance();
+    await staker.setHLPTokenAddress(HLPToken.address);
+    await HLPToken.setMinter(diamondAddress, true);
+    await HLPToken.clearMaintenance();
 
-    const isMinter = await GLPToken.isMinter(diamondAddress);
+    const isMinter = await HLPToken.isMinter(diamondAddress);
 
     console.log("is minter:", isMinter);
 
@@ -307,8 +307,8 @@ describe("DiamondTest", async function () {
         console.log(bal);
         expect(bal.stakerPercent).eq(utils.parseEther("1")); //1 means 100%
         expect(bal.houseBalance).eq(utils.parseEther("100.0")); //1 means 100%
-        expect(bal.userbalance).eq(utils.parseEther("100000.0")); //10'000glp
-        expect(bal.glpSupply).eq(utils.parseEther("100000.0")); //10'000glp
+        expect(bal.userbalance).eq(utils.parseEther("100000.0")); //10'000hlp
+        expect(bal.hlpSupply).eq(utils.parseEther("100000.0")); //10'000hlp
       });
       it("Staker1 stakes: 50ETH", async () => {
         const staker = await ethers.getContractAt(
@@ -334,8 +334,8 @@ describe("DiamondTest", async function () {
         //console.log(bal)
         expect(bal.stakerPercent).eq(utils.parseEther("0.666666666666666666")); //1 means 100%
         expect(bal.houseBalance).eq(utils.parseEther("150.0")); //1 means 100%
-        expect(bal.userbalance).eq(utils.parseEther("100000.0")); //100'000glp
-        expect(bal.glpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000glp
+        expect(bal.userbalance).eq(utils.parseEther("100000.0")); //100'000hlp
+        expect(bal.hlpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000hlp
       });
       it("The second staker should have some 33%", async () => {
         const staker = await ethers.getContractAt(
@@ -348,8 +348,8 @@ describe("DiamondTest", async function () {
         expect(bal.houseBalance).eq(utils.parseEther("150.0")); //1 means 100%
         expect(bal.userbalance).eq(
           utils.parseEther("50000.000000000000150000")
-        ); //100'000glp
-        expect(bal.glpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000glp
+        ); //100'000hlp
+        expect(bal.hlpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000hlp
       });
       describe("Vault", async () => {
         it("The first staker reclaims 1000 HLP", async () => {
@@ -357,7 +357,7 @@ describe("DiamondTest", async function () {
             "StakerFacet",
             diamondAddress
           );
-          expect(await staker.reclaimGLP(utils.parseEther("1000.0"))).not.to.be
+          expect(await staker.reclaimHLP(utils.parseEther("1000.0"))).not.to.be
             .reverted;
           let bal = await staker.checkStakerBalance();
           //console.log(bal)
@@ -365,8 +365,8 @@ describe("DiamondTest", async function () {
             utils.parseEther("0.659999999999999999")
           ); //1 means 100%
           expect(bal.houseBalance).eq(utils.parseEther("150.0")); //1 means 100%
-          expect(bal.userbalance).eq(utils.parseEther("99000.0")); //99'000glp -- decreased
-          expect(bal.glpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000glp --did not change
+          expect(bal.userbalance).eq(utils.parseEther("99000.0")); //99'000hlp -- decreased
+          expect(bal.hlpSupply).eq(utils.parseEther("150000.00000000000015")); //150'000hlp --did not change
         });
         it("Check Vault status", async () => {
           const vault = await ethers.getContractAt(

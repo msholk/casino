@@ -5,20 +5,20 @@ async function main() {
   await deployStakerFacet();
   await copyArtifacts();
 
-  const GLPAddress = await readGLPAddress();
-  const GLPContract = await ethers.getContractAt("HLP", GLPAddress);
-  // console.log(stakerAddress, GLPAddress);
+  const HLPAddress = await readHLPAddress();
+  const HLPContract = await ethers.getContractAt("HLP", HLPAddress);
+  // console.log(stakerAddress, HLPAddress);
   const Staker = await ethers.getContractAt("StakerFacet", stakerAddress);
-  await GLPContract.setMinter(stakerAddress, true);
-  await GLPContract.clearMaintenance();
-  Staker.setGLPTokenAddress(GLPAddress);
+  await HLPContract.setMinter(stakerAddress, true);
+  await HLPContract.clearMaintenance();
+  Staker.setHLPTokenAddress(HLPAddress);
 }
 
-async function readGLPAddress() {
+async function readHLPAddress() {
   const fs = require("fs");
-  const content = `export const GLPAddress = '`;
+  const content = `export const HLPAddress = '`;
   try {
-    const diamondAddressPath = "./frontend/src/contracts/GLPAddress.js";
+    const diamondAddressPath = "./frontend/src/contracts/HLPAddress.js";
     let res = fs.readFileSync(diamondAddressPath, {
       encoding: "utf8",
       flag: "r",

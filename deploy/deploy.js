@@ -29,13 +29,13 @@ async function deployDiamond() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   //Connect with HLP Token
-  const GLPAddress = await readGLPAddress();
-  const GLPContract = await ethers.getContractAt("HLP", GLPAddress);
-  // console.log(stakerAddress, GLPAddress);
+  const HLPAddress = await readHLPAddress();
+  const HLPContract = await ethers.getContractAt("HLP", HLPAddress);
+  // console.log(stakerAddress, HLPAddress);
   const Staker = await ethers.getContractAt("StakerFacet", diamondAddress);
-  await GLPContract.setMinter(diamondAddress, true);
-  await GLPContract.clearMaintenance();
-  Staker.setGLPTokenAddress(GLPAddress);
+  await HLPContract.setMinter(diamondAddress, true);
+  await HLPContract.clearMaintenance();
+  Staker.setHLPTokenAddress(HLPAddress);
 }
 
 async function deployStakerFacet() {
@@ -50,11 +50,11 @@ async function deployStakerFacet() {
   saveDiamondAddress(deployedFactory.address);
 }
 
-async function readGLPAddress() {
+async function readHLPAddress() {
   const fs = require("fs");
-  const content = `export const GLPAddress = '`;
+  const content = `export const HLPAddress = '`;
   try {
-    const diamondAddressPath = "./frontend/src/contracts/GLPAddress.js";
+    const diamondAddressPath = "./frontend/src/contracts/HLPAddress.js";
     let res = fs.readFileSync(diamondAddressPath, {
       encoding: "utf8",
       flag: "r",

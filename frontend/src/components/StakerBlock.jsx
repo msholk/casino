@@ -2,7 +2,7 @@ import React from "react";
 import { MDBInputGroup, MDBBtn } from "mdb-react-ui-kit";
 import _ from "lodash";
 import { nativeCoinName } from "../constants";
-import { reclaimGLP, stakeFunds } from "../libs/stakerLib";
+import { reclaimHLP, stakeFunds } from "../libs/stakerLib";
 /*
 StakerFacet: {
          'checkStakerBalance()': null,
@@ -12,8 +12,8 @@ StakerFacet: {
 export class StakerBlock extends React.PureComponent {
   getSupply() {
     const { stakerBalance } = this.props;
-    if (!_.get(stakerBalance, "glpSupply")) return "0.00";
-    return stakerBalance.glpSupply.toString() / 10 ** 18;
+    if (!_.get(stakerBalance, "hlpSupply")) return "0.00";
+    return stakerBalance.hlpSupply.toString() / 10 ** 18;
   }
   getHouseBalance() {
     const { stakerBalance } = this.props;
@@ -121,6 +121,6 @@ export class StakerBlock extends React.PureComponent {
       setBusy,
       clearErrorWithPause,
     };
-    reclaimGLP(st);
+    reclaimHLP(st);
   }
 }

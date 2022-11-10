@@ -25,9 +25,9 @@ const facetSelectors = {
   StakerFacet: {
     "checkStakerBalance()": null,
     "stakeETH()": null,
-    "getGLPTokenAddress()": null,
-    "reclaimGLP(uint256)": null,
-    "setGLPTokenAddress(address)": null,
+    "getHLPTokenAddress()": null,
+    "reclaimHLP(uint256)": null,
+    "setHLPTokenAddress(address)": null,
     // "withdrawAllStakerDAI()": null,
   },
   VaultFacet: {

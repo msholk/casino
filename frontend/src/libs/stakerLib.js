@@ -3,7 +3,7 @@ import StakerFacet from "contracts/StakerFacet.json";
 import vaultFacet from "contracts/VaultFacet.json";
 import { diamondAddress } from "contracts/diamondAddress";
 import _ from "lodash";
-export const reclaimGLP = async ({
+export const reclaimHLP = async ({
   cliamAmount,
   getBalanceHandler,
   setError,
@@ -23,7 +23,7 @@ export const reclaimGLP = async ({
       let myAddress = await signer.getAddress();
       console.log("provider signer...", myAddress);
 
-      const txn = await stakerContract.reclaimGLP(cliamAmount);
+      const txn = await stakerContract.reclaimHLP(cliamAmount);
       console.log("Withdrawing money...");
       setBusy("Withdrawing money...");
       await txn.wait();
@@ -48,7 +48,7 @@ export const reclaimGLP = async ({
     setBusy("");
   }
 };
-export const redeemGLP = async ({
+export const redeemHLP = async ({
   getBalanceHandler,
   setError,
   setBusy,

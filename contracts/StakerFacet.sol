@@ -23,7 +23,7 @@ interface IStakerFacet {
       uint256 stakerPercent,
       uint256 houseBalance,
       uint256 userbalance,
-      uint256 glpSupply
+      uint256 hlpSupply
     );
 }
 
@@ -42,17 +42,17 @@ contract StakerFacet is IStakerFacet {
     LibDiamond.setContractOwner(msg.sender);
   }
 
-  function setGLPTokenAddress(address GLPtokenAddress) public {
+  function setHLPTokenAddress(address HLPtokenAddress) public {
     LibDiamond.enforceIsContractOwner();
-    s.hs.GLPTokenAddress = GLPtokenAddress;
+    s.hs.HLPTokenAddress = HLPtokenAddress;
   }
 
-  function getGLPTokenAddress() public view returns (address GLPtokenAddress) {
-    return s.hs.GLPTokenAddress;
+  function getHLPTokenAddress() public view returns (address HLPtokenAddress) {
+    return s.hs.HLPTokenAddress;
   }
 
   function stakeETH() public payable {
-    require(s.hs.GLPTokenAddress != address(0), "GLPTokenAddress is not set");
+    require(s.hs.HLPTokenAddress != address(0), "HLPTokenAddress is not set");
     //console.log("stakeETH()******************************************");
     uint256 stakedValue = msg.value;
     //console.log("recieved:", stakedValue);
@@ -61,19 +61,15 @@ contract StakerFacet is IStakerFacet {
     s.hs.houseBalance += stakedValue;
     uint256 newHouseBalance = oldHouseBalance + stakedValue;
 
-    uint256 glp2Mint;
-    uint256 glpSupply = IERC20(s.hs.GLPTokenAddress).totalSupply();
-    if (glpSupply == 0 || oldHouseBalance == 0) {
-      glp2Mint = msg.value * 1000;
+    uint256 hlp2Mint;
+    uint256 hlpSupply = IERC20(s.hs.HLPTokenAddress).totalSupply();
+    if (hlpSupply == 0 || oldHouseBalance == 0) {
+      hlp2Mint = msg.value * 1000;
     } else {
       uint256 OldVsNew = (oldHouseBalance * 1e18) / newHouseBalance;
-      console.log("oldHouseBalance", oldHouseBalance);
-      console.log("newHouseBalance", newHouseBalance);
-      console.log("OldVsNew", OldVsNew);
-      console.log("glpSupply", glpSupply);
-      glp2Mint = (glpSupply * (1e18 - OldVsNew)) / OldVsNew;
+      hlp2Mint = (hlpSupply * (1e18 - OldVsNew)) / OldVsNew;
     }
-    IHlp(s.hs.GLPTokenAddress).mint(msg.sender, glp2Mint);
+    IHlp(s.hs.HLPTokenAddress).mint(msg.sender, hlp2Mint);
   }
 
   function checkStakerBalance()
@@ -83,35 +79,35 @@ contract StakerFacet is IStakerFacet {
       uint256 stakerPercent,
       uint256 houseBalance,
       uint256 userbalance,
-      uint256 glpSupply
+      uint256 hlpSupply
     )
   {
-    glpSupply = IERC20(s.hs.GLPTokenAddress).totalSupply();
-    userbalance = IERC20(s.hs.GLPTokenAddress).balanceOf(msg.sender);
+    hlpSupply = IERC20(s.hs.HLPTokenAddress).totalSupply();
+    userbalance = IERC20(s.hs.HLPTokenAddress).balanceOf(msg.sender);
     stakerPercent = 0;
-    if (glpSupply > 0) {
-      stakerPercent = (userbalance * 1e18) / glpSupply;
+    if (hlpSupply > 0) {
+      stakerPercent = (userbalance * 1e18) / hlpSupply;
     }
 
-    return (stakerPercent, s.hs.houseBalance, userbalance, glpSupply);
+    return (stakerPercent, s.hs.houseBalance, userbalance, hlpSupply);
   }
 
-  function reclaimGLP(uint256 glp2Reclaim) public {
-    uint256 stakerBalance = IERC20(s.hs.GLPTokenAddress).balanceOf(msg.sender);
+  function reclaimHLP(uint256 hlp2Reclaim) public {
+    uint256 stakerBalance = IERC20(s.hs.HLPTokenAddress).balanceOf(msg.sender);
     require(
-      glp2Reclaim <= stakerBalance,
+      hlp2Reclaim <= stakerBalance,
       "Not enough HLP balance to cliam this quantity"
     );
     //Pass the HLP to contract's address
-    IHlp(s.hs.GLPTokenAddress).burn(msg.sender, glp2Reclaim);
-    IHlp(s.hs.GLPTokenAddress).mint(address(this), glp2Reclaim);
+    IHlp(s.hs.HLPTokenAddress).burn(msg.sender, hlp2Reclaim);
+    IHlp(s.hs.HLPTokenAddress).mint(address(this), hlp2Reclaim);
 
-    ReclaimedGLP memory reclaimedGLP = ReclaimedGLP({
-      reclaimedGlpAmount: glp2Reclaim,
-      redeemedGLPAmount: 0,
+    ReclaimedHLP memory reclaimedHLP = ReclaimedHLP({
+      reclaimedHlpAmount: hlp2Reclaim,
+      redeemedHLPAmount: 0,
       timeOfReclaim: block.timestamp
     });
-    s.vault.stakers[msg.sender].push(reclaimedGLP);
-    s.vault.totalGlpBeingReclaimed += glp2Reclaim;
+    s.vault.stakers[msg.sender].push(reclaimedHLP);
+    s.vault.totalHlpBeingReclaimed += hlp2Reclaim;
   }
 }

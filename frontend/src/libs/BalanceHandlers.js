@@ -42,7 +42,7 @@ const getStakerBalanceHandler = async (state) => {
       }
       window.lastStakerCheck = new Date();
       state.setStakerBalance({
-        glpSupply: balance.glpSupply,
+        hlpSupply: balance.hlpSupply,
         houseBalance: balance.houseBalance,
         stakerPercent: balance.stakerPercent,
         userbalance: balance.userbalance,

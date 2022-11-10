@@ -38,12 +38,12 @@ describe("Staking test", async function () {
   let TokensMock;
   let Staker;
   let HLP;
-  let GLPAddress;
+  let HLPAddress;
 
   const facetAddress = {};
   let vrfInfo = {};
 
-  async function deployGLP() {
+  async function deployHLP() {
     const contractName = "HLP";
     const facetFactory = await ethers.getContractFactory(contractName, {
       libraries: {},
@@ -52,7 +52,7 @@ describe("Staking test", async function () {
     deployedFactory = await facetFactory.deploy();
     await deployedFactory.deployed();
     console.log(`${contractName} deployed: ${deployedFactory.address}`);
-    GLPAddress = deployedFactory.address;
+    HLPAddress = deployedFactory.address;
     HLP = await ethers.getContractAt(contractName, deployedFactory.address);
   }
 
@@ -68,13 +68,13 @@ describe("Staking test", async function () {
 
   before(async function () {
     const stakerAddress = await deployContract();
-    await deployGLP();
+    await deployHLP();
 
     const signers = await ethers.getSigners();
     await HLP.setMinter(signers[0].getAddress(), true);
     await HLP.setMinter(stakerAddress, true);
     await HLP.toggleMaintenance();
-    Staker.setGLPTokenAddress(GLPAddress);
+    Staker.setHLPTokenAddress(HLPAddress);
   });
 
   describe("Stake House Liquidity", async () => {
@@ -87,7 +87,7 @@ describe("Staking test", async function () {
       expect(bal.stakerPercent).eq(utils.parseEther("1")); //1 means 100%
       expect(bal.houseBalance).eq(utils.parseEther("1")); //1 means 100%
       expect(bal.userbalance).eq(utils.parseEther("1000"));
-      expect(bal.glpSupply).eq(utils.parseEther("1000")); //1 means 100%
+      expect(bal.hlpSupply).eq(utils.parseEther("1000")); //1 means 100%
     });
     it("Staker1 stakes: 2ETH", async () => {
       const signers = await ethers.getSigners();
@@ -102,7 +102,7 @@ describe("Staking test", async function () {
       expect(bal.stakerPercent).eq(utils.parseEther("0.333333333333333333")); //1 means 100%
       expect(bal.houseBalance).eq(utils.parseEther("3")); //1 means 100%
       expect(bal.userbalance).eq(utils.parseEther("1000"));
-      expect(bal.glpSupply).eq(utils.parseEther("3000.000000000000003")); //1 means 100%
+      expect(bal.hlpSupply).eq(utils.parseEther("3000.000000000000003")); //1 means 100%
     });
     it("The second staker should have some 66%", async () => {
       const signers = await ethers.getSigners();
@@ -111,7 +111,7 @@ describe("Staking test", async function () {
       expect(bal.stakerPercent).eq(utils.parseEther("0.666666666666666666")); //1 means 100%
       expect(bal.houseBalance).eq(utils.parseEther("3")); //1 means 100%
       expect(bal.userbalance).eq(utils.parseEther("2000.000000000000003"));
-      expect(bal.glpSupply).eq(utils.parseEther("3000.000000000000003")); //1 means 100%
+      expect(bal.hlpSupply).eq(utils.parseEther("3000.000000000000003")); //1 means 100%
     });
     xit("Withdraw funds", async () => {
       await expect(Staker.withdrawAllStakerDAI()).not.to.be.reverted;
