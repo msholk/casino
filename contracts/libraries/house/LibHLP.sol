@@ -36,7 +36,7 @@ library LibHLP {
     internal
   {
     //Amount goes from  House to Cashier
-    s.hs.houseBalance -= removeFromHouse;
+    s.hs.houseBalance -= payDiffEth;
   }
 
   function transferFromCashierToHouse(AppStorage storage s, uint256 payDiffEth)
@@ -44,7 +44,7 @@ library LibHLP {
   {
     if (s.hs.houseBalance >= s.hs.revenueBalance) {
       //Get 30% from benefit only
-      uint256 add2House = (playerBetsAmount * 70) / 100;
+      uint256 add2House = (payDiffEth * 70) / 100;
       s.hs.houseBalance += add2House;
       s.platformBalance += (payDiffEth - add2House);
       s.hs.revenueBalance = s.hs.houseBalance;

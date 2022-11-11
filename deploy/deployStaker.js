@@ -1,5 +1,5 @@
 const { diamondInit1 } = require("../test/utils/utils");
-const copyArtifacts = require("./copyArtifacts");
+const { copyArtifacts } = require("./copyArtifacts");
 let stakerAddress;
 async function main() {
   await deployStakerFacet();

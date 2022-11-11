@@ -18,10 +18,6 @@ contract VaultFacet {
     LibDiamond.setContractOwner(msg.sender);
   }
 
-  function test() public returns (bool) {
-    return true;
-  }
-
   function getVaultState()
     public
     view

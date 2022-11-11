@@ -31,7 +31,6 @@ const facetSelectors = {
     // "withdrawAllStakerDAI()": null,
   },
   VaultFacet: {
-    "test()": null,
     "getVaultState()": null,
     "redeemFromVault()": null,
   },

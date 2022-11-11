@@ -1,5 +1,5 @@
 const { diamondInit1 } = require("../test/utils/utils");
-const copyArtifacts = require("./copyArtifacts");
+const { copyArtifacts } = require("./copyArtifacts");
 const contractName = "HLP";
 let deployedFactory;
 async function main() {

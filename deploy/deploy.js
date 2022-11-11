@@ -1,7 +1,7 @@
 const { diamondInit1 } = require("../test/utils/utils");
 const chalk = require("chalk");
 const fs = require("fs");
-const copyArtifacts = require("./copyArtifacts");
+const { copyArtifacts } = require("./copyArtifacts");
 async function main() {
   fs.writeFileSync("deployDic.json", "{}");
   await deployDiamond();

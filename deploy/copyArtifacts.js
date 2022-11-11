@@ -1,6 +1,6 @@
-export async function copyArtifacts() {
+async function copyArtifacts() {
   await copyArtifactsToFolder("./frontend/src/contracts/");
-  await copyArtifactsToFolder("./reactCombineLandingPage/src/contracts");
+  await copyArtifactsToFolder("./reactCombineLandingPage/src/contracts/");
 }
 async function copyArtifactsToFolder(folder) {
   const fs = require("fs");
@@ -29,3 +29,5 @@ async function copyArtifactsToFolder(folder) {
     folder + "DiamondLoupeFacet.json"
   );
 }
+
+exports.copyArtifacts = copyArtifacts;

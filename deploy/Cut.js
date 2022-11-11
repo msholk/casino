@@ -2,20 +2,43 @@ const { diamondInit1 } = require("../test/utils/utils");
 const fs = require("fs");
 const _ = require("lodash");
 const chalk = require("chalk");
-const copyArtifacts = require("./copyArtifacts");
+const { copyArtifacts } = require("./copyArtifacts");
 const {
   upgrade,
   upgradeWithNewFacets,
 } = require("../scripts/libraries/diamond-util");
 let diamondAddress;
 async function main() {
-  await copyArtifacts();
-
   diamondAddress = await readDiamondAddress();
-  await upgradePlayer();
-  // await checkStakerBalance();
+  // await upgradeAll();
+  // // await checkStakerBalance();
 
-  await readDiamondMap();
+  // await readDiamondMap();
+
+  await copyArtifacts();
+}
+async function upgradeAll() {
+  await upgradeWithNewFacets({
+    diamondAddress,
+    facetNames: [
+      "PlayersFacet",
+      "AdminFacet",
+      "RouletteFacet",
+      "StakerFacet",
+      "VaultFacet",
+    ],
+    libraries: {
+      //  RouletteFacet: ["LibRulette"],
+    },
+    librariesAddresses: {
+      RouletteFacet: {
+        LibRulette: "0x1Cc1161F4AB263a091c07e25e108B7720bF3183B",
+      },
+    },
+    // selectorsToRemove = [],
+    // initFacetName = undefined,
+    // initArgs = [],
+  });
 }
 async function upgradePlayer() {
   await upgradeWithNewFacets({
