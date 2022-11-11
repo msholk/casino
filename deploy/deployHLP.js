@@ -1,4 +1,5 @@
 const { diamondInit1 } = require("../test/utils/utils");
+const copyArtifacts = require("./copyArtifacts");
 const contractName = "HLP";
 let deployedFactory;
 async function main() {
@@ -42,13 +43,6 @@ async function saveCntractAddress(addr) {
   console.log("COntract deployed to:", addr);
 }
 
-async function copyArtifacts() {
-  const fs = require("fs");
-  fs.copyFileSync(
-    `./artifacts/contracts/${contractName}/${contractName}.sol/${contractName}.json`,
-    `./frontend/src/contracts/${contractName}.json`
-  );
-}
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main()

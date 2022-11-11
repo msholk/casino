@@ -2,6 +2,7 @@ const { diamondInit1 } = require("../test/utils/utils");
 const fs = require("fs");
 const _ = require("lodash");
 const chalk = require("chalk");
+const copyArtifacts = require("./copyArtifacts");
 const {
   upgrade,
   upgradeWithNewFacets,
@@ -152,33 +153,6 @@ async function deployStakerFacet() {
   saveDiamondAddress(deployedFactory.address);
 }
 
-async function copyArtifacts() {
-  const fs = require("fs");
-  fs.copyFileSync(
-    "./artifacts/contracts/PlayersFacet.sol/PlayersFacet.json",
-    "./frontend/src/contracts/PlayersFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/StakerFacet.sol/StakerFacet.json",
-    "./frontend/src/contracts/StakerFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/VaultFacet.sol/VaultFacet.json",
-    "./frontend/src/contracts/VaultFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/AdminFacet.sol/AdminFacet.json",
-    "./frontend/src/contracts/AdminFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/RouletteFacet.sol/RouletteFacet.json",
-    "./frontend/src/contracts/RouletteFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/diamond/facets/DiamondLoupeFacet.sol/DiamondLoupeFacet.json",
-    "./frontend/src/contracts/DiamondLoupeFacet.json"
-  );
-}
 async function readDiamondAddress() {
   const fs = require("fs");
   const content = `export const diamondAddress = '`;

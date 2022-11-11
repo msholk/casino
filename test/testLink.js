@@ -70,25 +70,6 @@ async function main() {
   }
 }
 
-async function copyArtifacts() {
-  const fs = require("fs");
-  fs.copyFileSync(
-    "./artifacts/contracts/PlayersFacet.sol/PlayersFacet.json",
-    "./frontend/src/contracts/PlayersFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/StakerFacet.sol/StakerFacet.json",
-    "./frontend/src/contracts/StakerFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/VaultFacet.sol/VaultFacet.json",
-    "./frontend/src/contracts/VaultFacet.json"
-  );
-  fs.copyFileSync(
-    "./artifacts/contracts/AdminFacet.sol/AdminFacet.json",
-    "./frontend/src/contracts/AdminFacet.json"
-  );
-}
 async function saveDiamondAddress(addr) {
   const fs = require("fs");
   const content = `export const diamondAddress = '${addr}';`;
