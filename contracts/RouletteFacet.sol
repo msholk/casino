@@ -5,6 +5,7 @@ import "./diamond/libraries/LibDiamond.sol";
 import "./libraries/roulette/BetPointPrm.sol";
 import "./libraries/roulette/RouletteLaunchLib.sol";
 import "./libraries/house/LibHLP.sol";
+import "hardhat/console.sol";
 
 contract RouletteFacet is VRFContract {
   event RouletteLaunched(address indexed sender, uint256 requestId);
@@ -140,7 +141,9 @@ contract RouletteFacet is VRFContract {
     uint256[10] memory winByPosition;
     for (uint256 index; index < betPointQnt; ++index) {
       BetPoint memory p = rl.betPoints[index];
+      console.log("Revising bet position", index, p.betType, p.betDet);
       totalBetChips += p.amount;
+      console.log(" .  totalBetChips", p.amount);
       //check bet param
 
       uint256 winFact = LibRulette.getWinFactor(
@@ -148,6 +151,7 @@ contract RouletteFacet is VRFContract {
         p.betDet,
         resultnum8
       );
+      console.log(" .  winFact", winFact);
 
       if (winFact > 0) {
         uint256 won = (p.amount * winFact);
@@ -193,6 +197,8 @@ contract RouletteFacet is VRFContract {
       //transfer from to Cashier to HLP
       LibHLP.transferFromCashierToHouse(s, chipsToEth(uint256(payDiffChips)));
     }
+
+    console.log("RouletteStoppedPrizeInfo", winByPosition[0], winByPosition[1]);
 
     emit RouletteStoppedPrizeInfo(
       playerAddress,

@@ -135,8 +135,13 @@ export const placeBet = async (customerAddress, state) => {
         [
           {
             amount: 1,
-            betType: 1,
-            betDet: 22,
+            betType: 11,
+            betDet: 1,
+          },
+          {
+            amount: 1,
+            betType: 11,
+            betDet: 2,
           },
         ],
         0

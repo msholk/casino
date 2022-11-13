@@ -10,7 +10,7 @@ const {
 let diamondAddress;
 async function main() {
   diamondAddress = await readDiamondAddress();
-  // await upgradeAll();
+  await upgradeAll();
   // // await checkStakerBalance();
 
   // await readDiamondMap();
@@ -21,19 +21,19 @@ async function upgradeAll() {
   await upgradeWithNewFacets({
     diamondAddress,
     facetNames: [
-      "PlayersFacet",
-      "AdminFacet",
+      // "PlayersFacet",
+      // "AdminFacet",
       "RouletteFacet",
-      "StakerFacet",
-      "VaultFacet",
+      // "StakerFacet",
+      // "VaultFacet",
     ],
     libraries: {
-      //  RouletteFacet: ["LibRulette"],
+      RouletteFacet: ["LibRulette"],
     },
     librariesAddresses: {
-      RouletteFacet: {
-        LibRulette: "0x1Cc1161F4AB263a091c07e25e108B7720bF3183B",
-      },
+      //   RouletteFacet: {
+      //     LibRulette: "0x06CB6e718130C34DB4B91A4b99700395f12f9f55",
+      //   },
     },
     // selectorsToRemove = [],
     // initFacetName = undefined,
