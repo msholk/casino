@@ -10,9 +10,9 @@ export default function Home() {
   return (
     <div>
       <Header />
-      {!address && <Welcome />}
-      {!address && <Bottom />}
-      {address && <GameComponent />}
+      <Welcome />
+      <Bottom />
+      {/* {address && <GameComponent />} */}
     </div>
   );
 }

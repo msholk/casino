@@ -29,11 +29,13 @@ export default function Welcome() {
             Bet with BTC, ETH, and ,Stablecoins directly from your wallet
           </h1>
           <p className="my-5 text-slate-200 text-sm sm:text-xs w-[50vw] lg:w-11/12"></p>
-          <button className={styles.button55}>
-            <div className="text-4xl font-ams font-normal hover:font-bold">
-              Play Roulette
-            </div>
-          </button>
+          <a href={"https://game.110.monster"}>
+            <button className={styles.button55}>
+              <div className="text-4xl font-ams font-normal hover:font-bold">
+                Play Roulette
+              </div>
+            </button>
+          </a>
           <p className="my-5 text-slate-200 text-sm sm:text-xs w-[50vw] lg:w-11/12"></p>
         </div>
       </div>
