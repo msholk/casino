@@ -145,7 +145,7 @@ function GameComponent() {
       [event.target.name]: event.target.value,
     }));
   };
-  
+
   useEffect(async () => {
     const prm = { calledToBalanceHandler: false };
     await checkIfWalletIsConnected(prm);
@@ -185,7 +185,7 @@ function GameComponent() {
           }}
         />
         <BusyBlock {...{ busy }} />
-        <hr></hr>
+        {/* <hr></hr>
         <RouletteBlock
           {...{
             customerAddress,
@@ -212,7 +212,7 @@ function GameComponent() {
             busy,
           }}
         />
-        <hr></hr>
+        <hr></hr> */}
         <StakerBlock
           {...{
             stakerBalance,
