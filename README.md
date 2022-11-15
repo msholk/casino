@@ -50,3 +50,69 @@ yarn hardhat run test/deployHLP.js
 ### Vrf Subscription
 
 https://vrf.chain.link/mumbai/2190
+
+### Solidity Files Structure
+
+In our project we are using cutting edge technology like Ethereum Improvement Proposal:2535. Which is called Diamond: Multi-Facet Proxy, We create a modular smart contract system that can be extended and updated after deployment without changing the main deployment address.
+
+---
+
+####Utility facets
+#####Facet : DiamondCutFacet
+
+`diamondCut((address,uint8,bytes4[])[],address,bytes)` updates diamond
+
+#####Facet : DiamondLoupeFacet
+
+This facet is used to query diamond for actual facets and associated functions.
+
+1. `facetAddress(bytes4)`
+2. `facetAddresses()`
+3. `facetFunctionSelectors(address)`
+4. `facets()`
+5. `supportsInterface(bytes4)`
+
+#####Facet : OwnershipFacet
+
+1. `owner()`
+2. `transferOwnership(address)`
+
+---
+
+####Functional facets
+#####Facet : PlayersFacet
+
+1. `checkPlayerBalance()`
+2. `depositToCashier()`
+3. `withdrawPlayerBalance()`
+4. `withdrawPlayerBalanceAmount(uint256)`
+
+#####Facet : StakerFacet
+
+1. `checkStakerBalance()`
+2. `getHLPTokenAddress()`
+3. `reclaimHLP(uint256)`
+4. `setHLPTokenAddress(address)`
+5. `stakeETH()`
+
+#####Facet : AdminFacet
+
+1. `checkPlatformBalance()`
+2. `isContractOwner()`
+3. `withdrawAllPlatformFunds()`
+
+#####Facet : RouletteFacet
+Controls the gamve and VRF repsonses.
+
+1. `getReqID()`
+2. `getRnd()`
+3. `placeBet((uint256,uint8,uint8)[],uint256)`
+4. `rawFulfillRandomWords(uint256,uint256[])`
+5. `testFulfillRandomWords(uint256,uint256[])`
+6. `testGetAmounts()`
+
+#####Facet : VaultFacet
+Used to control reclaiming and redeeming staked funds.
+
+1. `getVaultState()`
+2. `redeemFromVault()`
