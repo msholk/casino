@@ -172,10 +172,10 @@ function GameComponent() {
     });
   };
   return (
-    <main className="main-container">
+    <main className="main-container ">
       {/* <h2 className="h2">Casino Project 💰</h2> */}
 
-      <section className="customer-section px-10 pt-5 pb-10">
+      <section className=" customer-section px-10 pt-5 pb-10">
         <ErrorBlock {...{ error }} />
 
         <CustomerInfo

@@ -11,8 +11,7 @@ export default function Header() {
             House Matrix
           </div>
         </div>
-
-        <ConnectButton accountStatus="address" />
+        <ConnectButton accountStatus="address" chainStatus="name" />
       </nav>
     </div>
   );

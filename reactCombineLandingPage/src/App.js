@@ -4,6 +4,7 @@ import {
   RainbowKitProvider,
   darkTheme,
 } from "@rainbow-me/rainbowkit";
+import { ToastProvider } from "react-toast-notifications";
 import { connectorsForWallets } from "@rainbow-me/rainbowkit";
 
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
@@ -72,7 +73,9 @@ export default function App() {
           fontStack: "system",
         })}
       >
-        <Home />
+        <ToastProvider autoDismiss={true} autoDismissTimeout="4000">
+          <Home />
+        </ToastProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   );

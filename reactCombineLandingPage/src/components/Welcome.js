@@ -4,10 +4,35 @@ import { useState, useEffect } from "react";
 // import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Link } from "react-router-dom";
 import Bottom from "./Bottom";
+import {
+  usePrepareContractWrite,
+  useAccount,
+  useConnect,
+  useContract,
+  useContractRead,
+  useContractWrite,
+  useNetwork,
+  useWaitForTransaction,
+} from "wagmi";
 import GameComponent from "../GameComponent";
+import { useToasts } from "react-toast-notifications";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 //https://cdn.discordapp.com/attachments/960590776570626098/1039674954213490828/martix.gif
 export default function Welcome() {
+  const { address } = useAccount();
+  const { addToast } = useToasts();
+  const { chain } = useNetwork();
+  const [chainnow, setchainnow] = useState("");
+  useEffect(() => {
+    if (chain) {
+      setchainnow(chain["id"]);
+    }
+  }, [chain]);
+  function connectWalletNotification() {
+    addToast("Please Connect Wallet & Choose Right Network Before Proceed!", {
+      appearance: "warning",
+    });
+  }
   const [buyhlp, setbuyhlp] = useState("");
   function hlpbuying() {
     setbuyhlp(!buyhlp);
@@ -34,33 +59,61 @@ export default function Welcome() {
         <div>
           <div className="grid items-center justify-items-center bg-no-repeat bg-cover bg-black bg-[url('https://cdn.discordapp.com/attachments/960590776570626098/1039674954213490828/martix.gif')] relative">
             <div className="mt-8 grid items-center justify-items-center text-center opacity-100 ">
-              <div className="flex items-center">
+              <div className="mt-5 flex items-center">
                 <img src={logo} width="100px" height="100px" />
-                <h1 className="font-ams  lg:text-6xl md:text-3xl sm:text-2xl font-bold text-pintk">
+                <h1 className=" font-Prompt  lg:text-6xl md:text-3xl sm:text-2xl font-bold text-pintk">
                   House
                   <br />
                 </h1>
-                <h1 className="font-ams lg:text-4xl md:text-3xl sm:text-2xl font-bold text-white"></h1>
-                <h1 className="font-ams  lg:text-6xl md:text-3xl sm:text-2xl font-bold text-houseblue">
+                <h1 className="font-Prompt lg:text-4xl md:text-3xl sm:text-2xl font-bold text-white"></h1>
+                <h1 className="font-Prompt lg:text-6xl md:text-3xl sm:text-2xl font-bold text-houseblue">
                   Matrix
                   <br />
                 </h1>
               </div>
 
-              <h1 className="font-ams lg:text-4xl md:text-3xl sm:text-2xl font-bold text-slate-300">
+              <h1 className="mt-5 font-Prompt lg:text-4xl md:text-3xl sm:text-2xl font-bold text-slate-300">
                 The Decentralized Casino
               </h1>
-              <h1 className="font-ams lg:text-4xl  font-bold text-slate-300">
-                Bet with BTC, ETH, and ,Stablecoins directly from your wallet
+              <h1 className="font-Prompt lg:text-4xl  font-bold text-slate-300">
+                Bet with BTC, ETH, and Stablecoins directly from your wallet
               </h1>
               <p className="my-5 text-slate-200 text-sm sm:text-xs w-[50vw] lg:w-11/12"></p>
-              <a href={"https://roulette.housematrix.io/"}>
-                <button className={styles.button55}>
-                  <div className="text-4xl font-ams font-normal hover:font-bold">
-                    Play Roulette
-                  </div>
-                </button>
-              </a>
+              {!address && (
+                <div>
+                  <button
+                    className={styles.button55}
+                    onClick={connectWalletNotification}
+                  >
+                    <div className="text-2xl font-Prompt font-normal hover:font-bold">
+                      Play Roulette
+                    </div>
+                  </button>
+                </div>
+              )}
+              {address && chainnow != 80001 && (
+                <div>
+                  <button
+                    className={styles.button55}
+                    onClick={connectWalletNotification}
+                  >
+                    <div className="text-2xl font-Prompt font-normal hover:font-bold">
+                      Play Roulette
+                    </div>
+                  </button>
+                </div>
+              )}
+              {address && chainnow == 80001 && (
+                <div>
+                  <a href={"https://www.house-of-matrix.com/roulette/"}>
+                    <button className={styles.button55}>
+                      <div className="text-2xl font-Prompt font-normal hover:font-bold">
+                        Play Roulette
+                      </div>
+                    </button>
+                  </a>
+                </div>
+              )}
               <p className="my-5 text-slate-200 text-sm sm:text-xs w-[50vw] lg:w-11/12"></p>
             </div>
           </div>
@@ -146,9 +199,7 @@ export default function Welcome() {
                   <div className="text-pintk font-Prompt font-bold text-xl">
                     Rewards
                   </div>
-                  <div className="text-white mt-4 font-Prompt font-bold">
-                    Provably Fair
-                  </div>
+                  <div className="text-white mt-4 font-Prompt font-bold"></div>
                   <div className="text-white font-Prompt font-bold">
                     Earn boosted winnings when locking
                   </div>
@@ -159,23 +210,23 @@ export default function Welcome() {
           </div>
           <div>
             <div className="grid items-center justify-items-center bg-no-repeat bg-cover bg-black bg-[url('https://cdn.discordapp.com/attachments/960590776570626098/1039674954213490828/martix.gif')] relative">
-              <div className="mt-8 flex items-center">
-                <h1 className=" font-ams lg:text-4xl md:text-3xl sm:text-lg font-bold text-pintk">
+              <div className="mt-16 flex items-center">
+                <h1 className=" font-Prompt lg:text-4xl md:text-3xl sm:text-lg font-bold text-pintk">
                   Decentralized
                 </h1>
 
-                <h1 className="font-ams  lg:text-4xl md:text-3xl sm:text-lg font-bold text-houseblue">
+                <h1 className="font-Prompt  lg:text-4xl md:text-3xl sm:text-lg font-bold text-houseblue">
                   Casino
                 </h1>
-                <h1 className="font-ams  lg:text-4xl md:text-3xl sm:text-lg font-bold text-white">
+                <h1 className="font-Prompt  lg:text-4xl md:text-3xl sm:text-lg font-bold text-white">
                   and
                 </h1>
-                <h1 className="font-ams  lg:text-4xl md:text-3xl sm:text-lg font-bold text-houseblue">
+                <h1 className="font-Prompt  lg:text-4xl md:text-3xl sm:text-lg font-bold text-houseblue">
                   Sportsbook
                 </h1>
               </div>
 
-              <h1 className="mb-8 font-ams text-center lg:text-4xl md:text-3xl sm:text-lg font-bold text-slate-300">
+              <h1 className="mb-8 font-Prompt text-center lg:text-4xl md:text-3xl sm:text-lg font-bold text-slate-300">
                 Enter the Matrix and enjoy a seamless On-Chain gaming experience
               </h1>
             </div>
@@ -221,10 +272,11 @@ export default function Welcome() {
                     />
                   </svg>
                   <div className="text-pintk font-Prompt font-bold">
-                    Poker and 21
+                    Black Jack
                   </div>
                   <div className="text-white mt-4 font-Prompt font-bold">
-                    Play provably fair Poker and 21
+                    Enjoy seamless on-chain Black Jack and other various poker
+                    games
                   </div>
                 </div>
                 <div className="text-center">
@@ -279,9 +331,14 @@ export default function Welcome() {
                 <div className="">
                   <div className="border-4 border-pintk p-8">
                     <h2 className="mb-4 text-white">
-                      <div className="flex items-center ">
-                        <img src={logo} width="100px" height="100px" />
-                        <h1 className="text-5xl lg:text-4xl md:text-3xl sm:text-2xl font-bold text-pintk">
+                      <div className="flex items-center jutify-center text-center">
+                        <img
+                          className="text-center"
+                          src={logo}
+                          width="100px"
+                          height="100px"
+                        />
+                        <h1 className="text-5xl lg:text-4xl md:text-3xl sm:text-2xl font-bold text-center text-pintk">
                           HMX
                           <br />
                         </h1>
@@ -290,19 +347,40 @@ export default function Welcome() {
                         <br /> HMX is the utility and governance token.
                         <br /> Accrues 30% of the platform's generated fees.
                         <br />
-                        <br /> Arbitrum APR: 23.65%
                       </div>
                     </h2>
                     <div className="flex items-center justify-center space-x-4">
-                      <a
-                        href={
-                          "https://app.uniswap.org/#/swap?outputCurrency=0xCa6206a67d65e1780CC9724F8A5375FDf8561722"
-                        }
-                      >
-                        <button className={styles.button26}>
-                          <div className="">Buy</div>
-                        </button>
-                      </a>
+                      {!address && (
+                        <div>
+                          <button
+                            className={styles.button26}
+                            onClick={connectWalletNotification}
+                          >
+                            <div className="">Buy</div>
+                          </button>
+                        </div>
+                      )}
+                      {address && chainnow != 80001 && (
+                        <div>
+                          <button
+                            className={styles.button26}
+                            onClick={connectWalletNotification}
+                          >
+                            <div className="">Buy</div>
+                          </button>
+                        </div>
+                      )}
+                      {address && chainnow == 80001 && (
+                        <a
+                          href={
+                            "https://app.uniswap.org/#/swap?outputCurrency=0xCa6206a67d65e1780CC9724F8A5375FDf8561722"
+                          }
+                        >
+                          <button className={styles.button26}>
+                            <div className="">Buy</div>
+                          </button>
+                        </a>
+                      )}
                       <button className={styles.button26}>
                         <div className="">Read more</div>
                       </button>
@@ -323,13 +401,34 @@ export default function Welcome() {
                         <br /> HLP is the liquidity provider token.
                         <br /> Accrues 70% of the platform's generated fees.{" "}
                         <br />
-                        <br /> Arbitrum APR: 31.08%
                       </div>
                     </h2>
                     <div className="flex items-center justify-center space-x-4">
-                      <button className={styles.button26} onClick={hlpbuying}>
-                        <div className="">Buy</div>
-                      </button>
+                      {!address && (
+                        <div>
+                          <button
+                            className={styles.button26}
+                            onClick={connectWalletNotification}
+                          >
+                            <div className="">Buy</div>
+                          </button>
+                        </div>
+                      )}
+                      {address && chainnow != 80001 && (
+                        <div>
+                          <button
+                            className={styles.button26}
+                            onClick={connectWalletNotification}
+                          >
+                            <div className="">Buy</div>
+                          </button>
+                        </div>
+                      )}
+                      {address && chainnow == 80001 && (
+                        <button className={styles.button26} onClick={hlpbuying}>
+                          <div className="">Buy</div>
+                        </button>
+                      )}
                       <button className={styles.button26}>
                         <div className="">Read more</div>
                       </button>
@@ -337,7 +436,7 @@ export default function Welcome() {
                   </div>
                 </div>
               </div>
-              <h1 className="mb-8 font-ams text-4xl  font-bold text-slate-300"></h1>
+              <h1 className="mb-8 font-Prompt text-4xl  font-bold text-slate-300"></h1>
             </div>
           </div>
           <Bottom />
