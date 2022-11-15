@@ -1,1 +1,0 @@
-(self.webpackChunkbank_project=self.webpackChunkbank_project||[]).push([[563],{6563:function(){}}]);
