@@ -35,5 +35,6 @@
   "0x9f787Ce83c082014341157d6AD5C6D32B390E523": "VaultFacet",
   "0x4a8c110a": "getVaultState()",
   "0xaf1adb62": "redeemFromVault()",
-  "0x0F42Dc6fDc73dF9874bCce1448fDe4eFfD8428d3": "RouletteFacet"
+  "0x0F42Dc6fDc73dF9874bCce1448fDe4eFfD8428d3": "RouletteFacet",
+  "0xdB4693877f9797C57dF0cA0B690F98F9c8E934D3": "RouletteFacet"
 }

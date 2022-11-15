@@ -28,12 +28,12 @@ async function upgradeAll() {
       // "VaultFacet",
     ],
     libraries: {
-      RouletteFacet: ["LibRulette"],
+      // RouletteFacet: ["LibRulette"],
     },
     librariesAddresses: {
-      //   RouletteFacet: {
-      //     LibRulette: "0x06CB6e718130C34DB4B91A4b99700395f12f9f55",
-      //   },
+      RouletteFacet: {
+        LibRulette: "0x06CB6e718130C34DB4B91A4b99700395f12f9f55",
+      },
     },
     // selectorsToRemove = [],
     // initFacetName = undefined,

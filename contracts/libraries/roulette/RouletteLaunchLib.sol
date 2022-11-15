@@ -39,7 +39,7 @@ library RouletteLaunchLib {
       BetPointPrm calldata p = betPoints[index];
       totalBetSum += p.amount;
       //check bet param is correct
-      LibRulette.getWinFactor(p.betType, p.betDet, p.betDet);
+      LibRulette.getWinFactor(p.betType, p.betDet, 1);
     }
   }
 }
