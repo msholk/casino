@@ -185,37 +185,11 @@ function GameComponent() {
           }}
         />
         <BusyBlock {...{ busy }} />
-        {/* <hr></hr>
-        <RouletteBlock
-          {...{
-            customerAddress,
-            setError,
-            clearErrorWithPause,
-            setRouletteStatus,
-            rouletteStatus,
-            busy,
-            isWalletConnected,
-            getBalanceHandler,
-          }}
-        />
-        <hr></hr>
-        <PlayerBlock
-          {...{
-            playerBalance,
-            isWalletConnected,
-            inputValue,
-            handleInputChange,
-            getBalanceHandler,
-            setError,
-            clearErrorWithPause,
-            setBusy,
-            busy,
-          }}
-        />
-        <hr></hr> */}
+
         <StakerBlock
           {...{
             stakerBalance,
+            customerAddress,
             isWalletConnected,
             inputValue,
             handleInputChange,
@@ -227,18 +201,6 @@ function GameComponent() {
           }}
         />
       </section>
-      <AdminPanel
-        {...{
-          busy,
-          isWalletConnected,
-          isAdmin,
-          platformBalance,
-          getBalanceHandler,
-          clearErrorWithPause,
-          setError,
-          setBusy,
-        }}
-      />
     </main>
   );
 }
