@@ -1,51 +1,16 @@
-### Install
+### Project description
 
-Install solidity project
-`yarn install`
-Install front end part:
-`cd frontend`
-`yarn install`
+This poroject is a dApp: Decentralized Casino that allows everyone to stake money, form part of the House and enjoy the benefits.
 
-### Running tests
+The Staker deposits the funds and the House receives 70% of the revenue.
+The rest 30% goes to HMX: the platform, the governance and maintenence.
 
-###### Test Staker
+When Staker claims back the deposited funds, they first go to the Vault for linear delayed liberation for 20 days.
+When the funds gets liberated, the Staker can redeem it.
 
-`npx hardhat test test/testStaker.js`
+### Run demo on local machine
 
-###### Test Player
-
-`npx hardhat test test/testPlayer.js`
-
-###### Test Diamond
-
-`npx hardhat test test/testDiamond.js`
-
-### Deployment to MUMBAI
-
-###### Deploy HLP Token
-
-`yarn hardhat run deploy/deployHLP.js --network mumbai`
-
-###### Deploy Staker
-
-`yarn hardhat run deploy/deployStaker.js --network mumbai`
-
-###### Deploy diamond
-
-Deploy HLP first
-`yarn hardhat run deploy/deploy.js --network mumbai`
-
-###### Cut diamond: update a module
-
-`yarn hardhat run deploy/Cut.js --network mumbai`
-The script shpuld be adjsuted in accordance to what module we want to update.
-
-### Run frontend
-
-`cd frontend`
-`npm run start`
-
-yarn hardhat run test/deployHLP.js
+`cd reactCombineLandingPage yarn yarn start`
 
 ### Vrf Subscription
 
@@ -116,3 +81,44 @@ Used to control reclaiming and redeeming staked funds.
 
 1. `getVaultState()`
 2. `redeemFromVault()`
+
+### Running tests
+
+###### Test Staker
+
+`npx hardhat test test/testStaker.js`
+
+###### Test Player
+
+`npx hardhat test test/testPlayer.js`
+
+###### Test Diamond
+
+`npx hardhat test test/testDiamond.js`
+
+### Deployment to MUMBAI
+
+###### Deploy HLP Token
+
+`yarn hardhat run deploy/deployHLP.js --network mumbai`
+
+###### Deploy Staker
+
+`yarn hardhat run deploy/deployStaker.js --network mumbai`
+
+###### Deploy diamond
+
+Deploy HLP first
+`yarn hardhat run deploy/deploy.js --network mumbai`
+
+###### Cut diamond: update a module
+
+`yarn hardhat run deploy/Cut.js --network mumbai`
+The script shpuld be adjsuted in accordance to what module we want to update.
+
+### Run frontend
+
+`cd frontend`
+`npm run start`
+
+yarn hardhat run test/deployHLP.js
