@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "contracts/HLP/IHlp.sol";
 
 uint256 constant DELAY_PERIOD = 20; //DAYS
+uint256 constant DAY_FRACTION = 10000;
 
 contract VaultFacet {
   AppStorage s;
@@ -35,10 +36,13 @@ contract VaultFacet {
       totalLeft2Redeem += (reclaim.reclaimedHlpAmount -
         reclaim.redeemedHLPAmount);
 
-      uint256 daysPassed = (block.timestamp - reclaim.timeOfReclaim) / (1 days);
+      uint256 daysPassed = ((block.timestamp - reclaim.timeOfReclaim) *
+        DAY_FRACTION) / (1 days);
       if (daysPassed > 0) {
         uint256 canBeRedeemed = (((daysPassed * 1e18) / DELAY_PERIOD) *
-          reclaim.reclaimedHlpAmount) / 1e18;
+          reclaim.reclaimedHlpAmount) /
+          1e18 /
+          DAY_FRACTION;
         totalReady2Redeem += (canBeRedeemed - reclaim.redeemedHLPAmount);
       }
     }
@@ -79,12 +83,15 @@ contract VaultFacet {
     for (int256 index = 0; index < int256(reclaimsCnt); ++index) {
       ReclaimedHLP storage reclaim = reclaims[uint256(index)];
 
-      uint256 daysPassed = (block.timestamp - reclaim.timeOfReclaim) / (1 days);
+      uint256 daysPassed = ((block.timestamp - reclaim.timeOfReclaim) *
+        DAY_FRACTION) / (1 days);
       if (daysPassed > 0) {
         console.log("Days passed", daysPassed);
-        if (daysPassed < DELAY_PERIOD) {
+        if (daysPassed < DELAY_PERIOD * DAY_FRACTION) {
           uint256 canBeRedeemed = (((daysPassed * 1e18) / DELAY_PERIOD) *
-            reclaim.reclaimedHlpAmount) / 1e18;
+            reclaim.reclaimedHlpAmount) /
+            1e18 /
+            DAY_FRACTION;
           uint256 redeemHlpAmount = (canBeRedeemed - reclaim.redeemedHLPAmount);
 
           totalRedeemAmount += redeemHlpAmount;

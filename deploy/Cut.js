@@ -23,9 +23,9 @@ async function upgradeAll() {
     facetNames: [
       // "PlayersFacet",
       // "AdminFacet",
-      "RouletteFacet",
+      // "RouletteFacet",
       // "StakerFacet",
-      // "VaultFacet",
+      "VaultFacet",
     ],
     libraries: {
       // RouletteFacet: ["LibRulette"],

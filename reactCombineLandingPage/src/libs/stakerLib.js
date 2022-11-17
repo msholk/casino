@@ -25,10 +25,10 @@ export const reclaimHLP = async ({
 
       const bn = ethers.utils.parseEther(claimAmount);
       const txn = await stakerContract.reclaimHLP(bn);
-      console.log("Withdrawing money...");
-      setBusy("Withdrawing money...");
+      console.log("Reclaiming funds...");
+      setBusy("Reclaiming funds...");
       await txn.wait();
-      console.log("Money with drew...done", txn.hash);
+      console.log("Funds reclaimed...done", txn.hash);
       setBusy("Updating balance...");
       getBalanceHandler();
     } else {
@@ -69,10 +69,10 @@ export const redeemHLP = async ({
       console.log("provider signer...", myAddress);
 
       const txn = await vaultContract.redeemFromVault();
-      console.log("Withdrawing money...");
-      setBusy("Withdrawing money...");
+      console.log("Redeeming Funds...");
+      setBusy("Redeeming Funds...");
       await txn.wait();
-      console.log("Money with drew...done", txn.hash);
+      console.log("Funds redeemed...done", txn.hash);
       setBusy("Updating balance...");
       getBalanceHandler();
     } else {

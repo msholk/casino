@@ -2,7 +2,7 @@ import React from "react";
 import { MDBInputGroup, MDBBtn } from "mdb-react-ui-kit";
 import _ from "lodash";
 import { nativeCoinName } from "../constants";
-import { reclaimHLP, stakeFunds } from "../libs/stakerLib";
+import { reclaimHLP, redeemHLP, stakeFunds } from "../libs/stakerLib";
 /*
 StakerFacet: {
          'checkStakerBalance()': null,
@@ -128,23 +128,19 @@ export class StakerBlock extends React.PureComponent {
                 <div> HLP supply: </div>
                 <div className="text-gray-400"> {this.getSupply()} HLP </div>
               </tr>
-              <tr className="border-t border-gray-500 flex justify-between w-full  py-2 px-4">
-                <div> Estimaded APR: </div>
-                <div className="text-gray-400"> 22 % </div>
-              </tr>
             </table>
 
             <table className="border-1 border-gray-500 font-light w-1/4 mx-2">
               <tr className="border-t border-gray-500 flex justify-between w-full  py-2 px-4">
                 <div> Staker percent: </div>
-                <div className="text-gray-400">
-                  {" "}
-                  {this.getStakerPercent()} %
-                </div>
+                <div className="text-gray-400">{this.getStakerPercent()} %</div>
               </tr>
               <tr className="border-t border-gray-500 flex justify-between w-full  py-2 px-4">
                 <div> Staker balance: </div>
-                <div className="text-gray-400"> {this.getStakerBalance()} </div>
+                <div className="text-gray-400">
+                  {" "}
+                  {this.getStakerBalance()} HLP{" "}
+                </div>
               </tr>
             </table>
           </div>
@@ -207,8 +203,6 @@ export class StakerBlock extends React.PureComponent {
       alert("Amount is empty");
       return;
     }
-    console.log(inputValue.stake_deposit);
-    debugger;
     const st = {
       claimAmount: inputValue.stake_deposit,
       getBalanceHandler,
@@ -217,5 +211,19 @@ export class StakerBlock extends React.PureComponent {
       clearErrorWithPause,
     };
     reclaimHLP(st);
+  }
+  async redeemFundsHandler(event) {
+    event.preventDefault();
+
+    const { getBalanceHandler, setError, setBusy, clearErrorWithPause } =
+      this.props;
+
+    const st = {
+      getBalanceHandler,
+      setError,
+      setBusy,
+      clearErrorWithPause,
+    };
+    redeemHLP(st);
   }
 }

@@ -304,7 +304,7 @@ describe("DiamondTest", async function () {
         expect(bal).eq(utils.parseEther("101.0")); //precision 18
 
         bal = await staker.checkStakerBalance();
-        console.log(bal);
+        // console.log(bal);
         expect(bal.stakerPercent).eq(utils.parseEther("1")); //1 means 100%
         expect(bal.houseBalance).eq(utils.parseEther("100.0")); //1 means 100%
         expect(bal.userbalance).eq(utils.parseEther("100000.0")); //10'000hlp
@@ -405,7 +405,7 @@ describe("DiamondTest", async function () {
           await vault.redeemFromVault();
 
           bal = await vault.getVaultState();
-          console.log(bal);
+          // console.log(bal);
 
           expect(bal.totalReclaimed).eq(utils.parseEther("1000.0")); //1 means 100%
           expect(bal.totalLeft2Redeem).eq(utils.parseEther("700.0")); //1 means 100%
@@ -417,7 +417,7 @@ describe("DiamondTest", async function () {
           await vault.redeemFromVault();
 
           bal = await vault.getVaultState();
-          console.log(bal);
+          // console.log(bal);
 
           expect(bal.totalReclaimed).eq(utils.parseEther("0.0")); //1 means 100%
           expect(bal.totalLeft2Redeem).eq(utils.parseEther("0.0")); //1 means 100%
@@ -427,7 +427,7 @@ describe("DiamondTest", async function () {
     });
   });
 
-  describe("Playing", async () => {
+  xdescribe("Playing", async () => {
     let playerBalance;
     let houseBalance;
     let requestId = 1;
@@ -726,7 +726,7 @@ describe("DiamondTest", async function () {
             requestId,
             theRandom,
             winNumber,
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            [0, 2, 0, 0, 0, 0, 0, 0, 0, 0]
           );
       });
       it("Checking lock balances after the bet", async () => {
@@ -739,13 +739,13 @@ describe("DiamondTest", async function () {
         expect(lockedAmounts.houseLocked).eq(utils.parseEther("0"));
         expect(lockedAmounts.playerLocked).eq(utils.parseEther("0"));
         expect(lockedAmounts.requestId).eq(0);
-        expect(lockedAmounts.playerBalance).eq(utils.parseEther("0.998")); //1-0.11
+        expect(lockedAmounts.playerBalance).eq(utils.parseEther("1")); //1-0.11
 
         //house receives 150+0.110000000000000000 - 0.000286000000000000
         expect(lockedAmounts.houseBalance).eq(
-          utils.parseEther("149.001400000000000195")
+          utils.parseEther("149.000000000000000195")
         );
-        expect(lockedAmounts.platformBalance).eq(utils.parseEther("0.0006"));
+        expect(lockedAmounts.platformBalance).eq(utils.parseEther("0"));
       });
 
       xdescribe("Platform Admin", async () => {
@@ -771,6 +771,50 @@ describe("DiamondTest", async function () {
           ).revertedWith("LibDiamond: Must be contract owner");
         });
       });
+    });
+  });
+
+  describe("Reclaimng & redeeming", async () => {
+    it("Get vault status ", async () => {
+      const staker = await ethers.getContractAt("StakerFacet", diamondAddress);
+      const vault = await ethers.getContractAt("VaultFacet", diamondAddress);
+      let vaultState = await vault.getVaultState();
+      let stakerBalance = await staker.checkStakerBalance();
+      console.log(vaultState);
+      console.log(stakerBalance);
+
+      await staker.reclaimHLP(utils.parseEther("10000"));
+
+      vaultState = await vault.getVaultState();
+      expect(vaultState.totalReclaimed).eq(utils.parseEther("10000"));
+      expect(vaultState.totalLeft2Redeem).eq(utils.parseEther("10000"));
+      expect(vaultState.totalReady2Redeem).eq(utils.parseEther("0"));
+      stakerBalance = await staker.checkStakerBalance();
+      console.log(vaultState);
+      //console.log(stakerBalance);
+
+      //Increase ready to redeem by time
+      const expectedVals = [
+        utils.parseEther("0.3"),
+        utils.parseEther("0.65"),
+        utils.parseEther("1.0"),
+        utils.parseEther("1.35"),
+      ];
+      for (let index = 0; index < 4; index++) {
+        await network.provider.send("evm_increaseTime", [60]);
+        await network.provider.send("evm_mine");
+        vaultState = await vault.getVaultState();
+        expect(vaultState.totalReady2Redeem).eq(expectedVals[index]);
+      }
+      // console.log(vaultState);
+      expect(vaultState.totalLeft2Redeem).eq(utils.parseEther("10000"));
+      expect(vaultState.totalReady2Redeem).eq(utils.parseEther("1.35"));
+      await vault.redeemFromVault();
+
+      vaultState = await vault.getVaultState();
+      // console.log(vaultState);
+      expect(vaultState.totalLeft2Redeem).eq(utils.parseEther("9998.65"));
+      expect(vaultState.totalReady2Redeem).eq(utils.parseEther("0"));
     });
   });
 });
