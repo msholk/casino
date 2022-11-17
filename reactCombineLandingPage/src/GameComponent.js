@@ -178,12 +178,6 @@ function GameComponent() {
       <section className=" customer-section">
         <ErrorBlock {...{ error }} />
 
-        <CustomerInfo
-          {...{
-            isWalletConnected,
-            customerAddress,
-          }}
-        />
         <BusyBlock {...{ busy }} />
 
         <StakerBlock

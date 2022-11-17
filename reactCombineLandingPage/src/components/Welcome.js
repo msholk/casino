@@ -45,7 +45,7 @@ export default function Welcome() {
     window.location.reload(false);
   }
   return (
-    <div>
+    <div className="bg-[#4C5265]">
       {buyhlp ? (
         <div>
           <GameComponent />
