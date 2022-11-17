@@ -8,6 +8,14 @@ The rest 30% goes to HMX: the platform, the governance and maintenence.
 When Staker claims back the deposited funds, they first go to the Vault for linear delayed liberation for 20 days.
 When the funds gets liberated, the Staker can redeem it.
 
+The wallet must be connected to MUMBAI network.
+
+Once launched, to begin with the casino, we need first stake some funds fo the house.
+Go to HLP, "Buy" button, Stake some funds.
+Now on the main page you can "Play Roulette"!
+
+Have a luck playing!
+
 ### Run demo on local machine
 
 `cd reactCombineLandingPage`
