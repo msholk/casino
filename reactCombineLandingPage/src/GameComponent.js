@@ -175,47 +175,15 @@ function GameComponent() {
     <main className="main-container ">
       {/* <h2 className="h2">Casino Project 💰</h2> */}
 
-      <section className=" customer-section px-10 pt-5 pb-10">
+      <section className=" customer-section">
         <ErrorBlock {...{ error }} />
 
-        <CustomerInfo
-          {...{
-            isWalletConnected,
-            customerAddress,
-          }}
-        />
         <BusyBlock {...{ busy }} />
-        {/* <hr></hr>
-        <RouletteBlock
-          {...{
-            customerAddress,
-            setError,
-            clearErrorWithPause,
-            setRouletteStatus,
-            rouletteStatus,
-            busy,
-            isWalletConnected,
-            getBalanceHandler,
-          }}
-        />
-        <hr></hr>
-        <PlayerBlock
-          {...{
-            playerBalance,
-            isWalletConnected,
-            inputValue,
-            handleInputChange,
-            getBalanceHandler,
-            setError,
-            clearErrorWithPause,
-            setBusy,
-            busy,
-          }}
-        />
-        <hr></hr> */}
+
         <StakerBlock
           {...{
             stakerBalance,
+            customerAddress,
             isWalletConnected,
             inputValue,
             handleInputChange,
@@ -227,18 +195,6 @@ function GameComponent() {
           }}
         />
       </section>
-      <AdminPanel
-        {...{
-          busy,
-          isWalletConnected,
-          isAdmin,
-          platformBalance,
-          getBalanceHandler,
-          clearErrorWithPause,
-          setError,
-          setBusy,
-        }}
-      />
     </main>
   );
 }

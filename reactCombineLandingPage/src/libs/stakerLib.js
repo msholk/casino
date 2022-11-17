@@ -4,7 +4,7 @@ import vaultFacet from "contracts/VaultFacet.json";
 import { diamondAddress } from "contracts/diamondAddress";
 import _ from "lodash";
 export const reclaimHLP = async ({
-  cliamAmount,
+  claimAmount,
   getBalanceHandler,
   setError,
   setBusy,
@@ -23,7 +23,8 @@ export const reclaimHLP = async ({
       let myAddress = await signer.getAddress();
       console.log("provider signer...", myAddress);
 
-      const txn = await stakerContract.reclaimHLP(cliamAmount);
+      const bn = ethers.utils.parseEther(claimAmount);
+      const txn = await stakerContract.reclaimHLP(bn);
       console.log("Withdrawing money...");
       setBusy("Withdrawing money...");
       await txn.wait();

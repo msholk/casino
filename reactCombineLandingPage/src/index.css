@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
 @tailwind base;
 @layer base {
     svg {
@@ -14,6 +15,7 @@
 body {
   font-family: Roboto, Helvetica, Arial, sans-serif;
   padding: 0px;
+  background-color: #4C5265;
 }
 
 .mw-330 {

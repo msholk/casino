@@ -45,7 +45,7 @@ export default function Welcome() {
     window.location.reload(false);
   }
   return (
-    <div>
+    <div className="bg-[#4C5265]">
       {buyhlp ? (
         <div>
           <GameComponent />
@@ -76,7 +76,7 @@ export default function Welcome() {
                 The Decentralized Casino
               </h1>
               <h1 className="font-Prompt lg:text-4xl  font-bold text-slate-300">
-                Bet with BTC, ETH, and Stablecoins directly from your wallet
+                Bet directly from your wallet
               </h1>
               <p className="my-5 text-slate-200 text-sm sm:text-xs w-[50vw] lg:w-11/12"></p>
               {!address && (
@@ -105,7 +105,7 @@ export default function Welcome() {
               )}
               {address && chainnow == 80001 && (
                 <div>
-                  <a href={"https://www.house-of-matrix.com/roulette/"}>
+                  <a href={"http://housematrix.io/roulette/"}>
                     <button className={styles.button55}>
                       <div className="text-2xl font-Prompt font-normal hover:font-bold">
                         Play Roulette
