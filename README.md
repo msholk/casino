@@ -14,6 +14,8 @@ Once launched, to begin with the casino, we need first stake some funds fo the h
 Go to HLP, "Buy" button, Stake some funds.
 Now on the main page you can "Play Roulette"!
 
+Deposit some player's funds and
+
 Have a luck playing!
 
 ### Run demo on local machine
