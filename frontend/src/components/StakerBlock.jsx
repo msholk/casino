@@ -2,7 +2,7 @@ import React from "react";
 import { MDBInputGroup, MDBBtn } from "mdb-react-ui-kit";
 import _ from "lodash";
 import { nativeCoinName } from "../constants";
-import { reclaimHLP, stakeFunds } from "../libs/stakerLib";
+import { reclaimHLP, stakeFunds, redeemHLP } from "../libs/stakerLib";
 /*
 StakerFacet: {
          'checkStakerBalance()': null,
@@ -29,6 +29,35 @@ export class StakerBlock extends React.PureComponent {
     const { stakerBalance } = this.props;
     if (!_.get(stakerBalance, "userbalance")) return "0.00";
     return stakerBalance.userbalance.toString() / 10 ** 18;
+  }
+  getVault() {
+    const { stakerBalance } = this.props;
+    if (!_.get(stakerBalance, "vault")) return null;
+    const { totalReclaimed, totalLeft2Redeem, totalReady2Redeem } =
+      stakerBalance.vault;
+
+    return (
+      <span className="mr-5">
+        <div>
+          <strong>Vault Info</strong>
+        </div>
+        <div>
+          <strong>
+            Total reclaimed: {totalReclaimed.toString() / 10 ** 18}
+          </strong>
+        </div>
+        <div>
+          <strong>
+            Left to redeem: {totalLeft2Redeem.toString() / 10 ** 18}{" "}
+          </strong>
+        </div>
+        <div>
+          <strong>
+            Ready to redeem: {totalReady2Redeem.toString() / 10 ** 18}
+          </strong>
+        </div>
+      </span>
+    );
   }
   render() {
     const {
@@ -60,6 +89,8 @@ export class StakerBlock extends React.PureComponent {
               <strong>Staker balance: {this.getStakerBalance()} HLP</strong>
             </div>
           </span>
+
+          <div>{this.getVault()}</div>
         </div>
         <section>
           <div className="bg-white border rounded-5 p-2 mw-330">
@@ -88,10 +119,19 @@ export class StakerBlock extends React.PureComponent {
               className="moveMoneyButton"
               outline
               onClick={(e) => {
-                this.withdrawAllStakerFundsHandler(e);
+                this.reclaimFundsHandler(e);
               }}
             >
-              Withdraw All
+              Reclaim:Move to Vault
+            </MDBBtn>
+            <MDBBtn
+              className="moveMoneyButton"
+              outline
+              onClick={(e) => {
+                this.redeemFundsHandler(e);
+              }}
+            >
+              Redeem: transfer from Vault to Wallet
             </MDBBtn>
           </div>
         </section>
@@ -104,7 +144,31 @@ export class StakerBlock extends React.PureComponent {
     event.preventDefault();
     stakeFunds({ inputValue, getBalanceHandler, setError, setBusy });
   }
-  async withdrawAllStakerFundsHandler(event) {
+  async reclaimFundsHandler(event) {
+    event.preventDefault();
+
+    const {
+      inputValue,
+      getBalanceHandler,
+      setError,
+      setBusy,
+      clearErrorWithPause,
+    } = this.props;
+
+    if (!_.trim(inputValue.stake_deposit)) {
+      alert("Amount is empty");
+      return;
+    }
+    const st = {
+      cliamAmount: inputValue.stake_deposit,
+      getBalanceHandler,
+      setError,
+      setBusy,
+      clearErrorWithPause,
+    };
+    reclaimHLP(st);
+  }
+  async redeemFundsHandler(event) {
     event.preventDefault();
 
     const {
@@ -115,12 +179,11 @@ export class StakerBlock extends React.PureComponent {
       clearErrorWithPause,
     } = this.props;
     const st = {
-      cliamAmount: inputValue.stake_deposit,
       getBalanceHandler,
       setError,
       setBusy,
       clearErrorWithPause,
     };
-    reclaimHLP(st);
+    redeemHLP(st);
   }
 }

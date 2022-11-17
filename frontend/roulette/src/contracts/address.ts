@@ -1,2 +1,0 @@
-export const diamondAddress = '0xD1579EB39C6AA833B8230D87733Ed2cDCA8EE8F3';
-export const GLPAddress = '0x2F5f2332aC95f40F966dcb71862D2204Dce012d9';

@@ -22,8 +22,8 @@ export const reclaimHLP = async ({
 
       let myAddress = await signer.getAddress();
       console.log("provider signer...", myAddress);
-
-      const txn = await stakerContract.reclaimHLP(cliamAmount);
+      const bn = ethers.utils.parseEther(cliamAmount);
+      const txn = await stakerContract.reclaimHLP(bn);
       console.log("Withdrawing money...");
       setBusy("Withdrawing money...");
       await txn.wait();
@@ -68,10 +68,10 @@ export const redeemHLP = async ({
       console.log("provider signer...", myAddress);
 
       const txn = await vaultContract.redeemFromVault();
-      console.log("Withdrawing money...");
-      setBusy("Withdrawing money...");
+      console.log("Reclaiming money...");
+      setBusy("Reclaiming money...");
       await txn.wait();
-      console.log("Money with drew...done", txn.hash);
+      console.log("Money withdraw...done", txn.hash);
       setBusy("Updating balance...");
       getBalanceHandler();
     } else {
