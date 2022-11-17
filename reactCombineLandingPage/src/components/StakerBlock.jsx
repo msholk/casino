@@ -59,21 +59,21 @@ export class StakerBlock extends React.PureComponent {
         <tr className="border-t border-gray-500 flex justify-between w-full  py-2 px-4">
           <div> Total reclaimed: </div>
           <div className="text-gray-400">
-            {totalReclaimed.toString() / 10 ** 18}
+            {totalReclaimed.toString() / 10 ** 18} HLP
           </div>
         </tr>
         <tr className="border-t border-gray-500 flex justify-between w-full  py-2 px-4">
           <div> Delayed to redeem: </div>
           <div className="text-gray-400">
             {" "}
-            {totalLeft2Redeem.toString() / 10 ** 18}{" "}
+            {totalLeft2Redeem.toString() / 10 ** 18} HLP
           </div>
         </tr>
         <tr className="border-t border-gray-500 flex justify-between w-full  py-2 px-4">
           <div> Ready to redeem: </div>
           <div className="text-gray-400">
             {" "}
-            {totalReady2Redeem.toString() / 10 ** 18}{" "}
+            {totalReady2Redeem.toString() / 10 ** 18} HLP
           </div>
         </tr>
         <tr className="border-t border-gray-500 flex justify-between w-full   py-2 px-4">
