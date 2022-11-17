@@ -22,10 +22,10 @@ async function upgradeAll() {
     diamondAddress,
     facetNames: [
       // "PlayersFacet",
-      // "AdminFacet",
+      "AdminFacet",
       // "RouletteFacet",
       // "StakerFacet",
-      "VaultFacet",
+      // "VaultFacet",
     ],
     libraries: {
       // RouletteFacet: ["LibRulette"],

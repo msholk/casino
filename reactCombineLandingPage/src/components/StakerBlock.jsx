@@ -42,6 +42,15 @@ export class StakerBlock extends React.PureComponent {
     const { totalReclaimed, totalLeft2Redeem, totalReady2Redeem } =
       stakerBalance.vault;
 
+    if (
+      totalReclaimed.toString() +
+        totalLeft2Redeem.toString() +
+        totalReady2Redeem.toString() ==
+      "000"
+    ) {
+      return null;
+    }
+
     return (
       <table className="  border-1 border-gray-500 font-light w-1/2 m-2">
         <tr className="border-t border-gray-500 flex justify-between w-full  py-2 px-4">

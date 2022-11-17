@@ -38,7 +38,7 @@ contract AdminFacet {
     view
     returns (uint256 platformBalance, uint256 contractBalance)
   {
-    LibDiamond.enforceIsContractOwner();
+    // LibDiamond.enforceIsContractOwner();
     return (s.platformBalance, address(this).balance);
   }
 

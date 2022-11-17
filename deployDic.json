@@ -36,5 +36,6 @@
   "0x4a8c110a": "getVaultState()",
   "0xaf1adb62": "redeemFromVault()",
   "0x9a3bfA0AdFB79462735c4c2c5500d497D5116d59": "VaultFacet",
-  "0xf4a38789A5012D3d7CC70571B12Ad079B5de8b4c": "VaultFacet"
+  "0xf4a38789A5012D3d7CC70571B12Ad079B5de8b4c": "VaultFacet",
+  "0x3d4B0344Bc882F84fE52C53BA30D56DAb3668e96": "AdminFacet"
 }
