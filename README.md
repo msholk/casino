@@ -10,7 +10,9 @@ When the funds gets liberated, the Staker can redeem it.
 
 ### Run demo on local machine
 
-`cd reactCombineLandingPage yarn yarn start`
+`cd reactCombineLandingPage`
+`yarn `
+`yarn start`
 
 ### Vrf Subscription
 
