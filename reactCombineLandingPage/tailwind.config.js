@@ -13,6 +13,7 @@ module.exports = {
         ams: ["Amatic SC", "cursive"],
         Ubuntu: ["Ubuntu", "sans-serif"],
         Prompt: ["Prompt", "sans-serif"],
+        Inconsolata: ["Inconsolata", "monospace"]
       },
     },
   },
