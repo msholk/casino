@@ -23,7 +23,8 @@ export const reclaimHLP = async ({
       let myAddress = await signer.getAddress();
       console.log("provider signer...", myAddress);
 
-      const txn = await stakerContract.reclaimHLP(claimAmount);
+      const bn = ethers.utils.parseEther(claimAmount);
+      const txn = await stakerContract.reclaimHLP(bn);
       console.log("Withdrawing money...");
       setBusy("Withdrawing money...");
       await txn.wait();
