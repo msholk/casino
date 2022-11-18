@@ -21,7 +21,9 @@ Have a luck playing!
 ### Run demo on local machine
 
 `cd reactCombineLandingPage`
+
 `yarn `
+
 `yarn start`
 
 ### Vrf Subscription
@@ -34,12 +36,12 @@ In our project we are using cutting edge technology like Ethereum Improvement Pr
 
 ---
 
-####Utility facets
-#####Facet : DiamondCutFacet
+#### Utility facets
+##### Facet : DiamondCutFacet
 
 `diamondCut((address,uint8,bytes4[])[],address,bytes)` updates diamond
 
-#####Facet : DiamondLoupeFacet
+##### Facet : DiamondLoupeFacet
 
 This facet is used to query diamond for actual facets and associated functions.
 
@@ -49,22 +51,22 @@ This facet is used to query diamond for actual facets and associated functions.
 4. `facets()`
 5. `supportsInterface(bytes4)`
 
-#####Facet : OwnershipFacet
+##### Facet : OwnershipFacet
 
 1. `owner()`
 2. `transferOwnership(address)`
 
 ---
 
-####Functional facets
-#####Facet : PlayersFacet
+#### Functional facets
+##### Facet : PlayersFacet
 
 1. `checkPlayerBalance()`
 2. `depositToCashier()`
 3. `withdrawPlayerBalance()`
 4. `withdrawPlayerBalanceAmount(uint256)`
 
-#####Facet : StakerFacet
+##### Facet : StakerFacet
 
 1. `checkStakerBalance()`
 2. `getHLPTokenAddress()`
@@ -72,13 +74,13 @@ This facet is used to query diamond for actual facets and associated functions.
 4. `setHLPTokenAddress(address)`
 5. `stakeETH()`
 
-#####Facet : AdminFacet
+##### Facet : AdminFacet
 
 1. `checkPlatformBalance()`
 2. `isContractOwner()`
 3. `withdrawAllPlatformFunds()`
 
-#####Facet : RouletteFacet
+##### Facet : RouletteFacet
 Controls the gamve and VRF repsonses.
 
 1. `getReqID()`
@@ -88,7 +90,7 @@ Controls the gamve and VRF repsonses.
 5. `testFulfillRandomWords(uint256,uint256[])`
 6. `testGetAmounts()`
 
-#####Facet : VaultFacet
+##### Facet : VaultFacet
 Used to control reclaiming and redeeming staked funds.
 
 1. `getVaultState()`
