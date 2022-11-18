@@ -24,18 +24,21 @@ export default class RouletteResult extends Phaser.GameObjects.Sprite {
             this.stop()
 
             let totalWin = 0
-            for(let pos of winByPos){
+            for (let pos of winByPos) {
                 totalWin += pos
             }
 
             // flash message with the results
             let msg: string
             let msgX: number
-            if(totalWin){
+            if (totalWin) {
                 msg = `You won ${totalWin}!`
                 msgX = 620
             } else {
-                msg = `Roulette stopped at ${result}!`
+                if(result == 37) msg = 'Roulette stopped at 00!'
+                else if(result == 36) msg = 'Roulette stopped at 0!'
+                else msg = `Roulette stopped at ${result}!`
+
                 msgX = 470
             }
             scene.messageFlasher.flashMessage(msgX, 300, msg, undefined, scene.messageFlasher.colors.INFO)
@@ -52,7 +55,7 @@ export default class RouletteResult extends Phaser.GameObjects.Sprite {
             }
 
             // ensure the roulette spins the right way
-            if(initialIndex > finalIndex){
+            if (initialIndex > finalIndex) {
                 this.animateFromTo(initialIndex, 37)
                 this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                     this.animateFromTo(0, finalIndex)

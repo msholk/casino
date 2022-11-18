@@ -40,12 +40,14 @@ export default class BetManager {
         let chipValue = this.scene.bottomPannelUi.chipContainer.currentValue
 
         if (chipValue == NO_CHIP) {
-            console.log('No chip selected')
             return
         }
         if (chipValue + this.scene.totalBet.totalBetAmmount > this.scene.playerBalance.playerBalance) {
             this.scene.messageFlasher.flashMessage(440, 100, 'Insufficient funds!', undefined, this.scene.messageFlasher.colors.ERROR)
-            console.log('Not enough balance')
+            return
+        }
+        if(this.currentBets.length > 10){
+            this.scene.messageFlasher.flashMessage(400, 100, 'Only 10 bets at a time!', undefined, this.scene.messageFlasher.colors.ERROR)
             return
         }
         // add the chip to the board
