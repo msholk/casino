@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "target": "ES2015",
+        "module": "ES2015",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowJs": true,
+        "allowUnreachableCode": false,
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "strictPropertyInitialization": false,
+        "resolveJsonModule": true,
+        "moduleResolution": "node",
+        "lib": [
+            "dom",
+            "esnext"
+        ]
+    },
+    "include": [
+        "src/**/*",
+        "typings/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ]
+}

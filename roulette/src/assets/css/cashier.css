@@ -1,0 +1,65 @@
+.form-container{
+    position: absolute;
+    display: flex;
+}
+
+input {
+    appearance: none;
+    -webkit-appearance: none;
+    height: 3rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 2px solid white;
+    background-color: rgba(0,0,0, 0.1);
+    outline: none;
+    color: white;
+    font-family: 'Press Start 2P';
+    margin: 0 1rem;
+}
+
+input[type="number"] {
+    width: 200px;
+    padding-left: 2rem;
+}
+
+input[type="submit"] {
+    border: 3px solid #FF00F8;
+    width: 200px;
+    font-size: 1rem;
+    padding: 0 1rem;
+}
+input[type="submit"]:hover {
+    cursor: pointer;
+    border: 2px solid #00FFFA;
+}
+
+input[type="number"]:focus {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    border-bottom: 2px solid #00FFFA;
+}
+
+/* remove arrows */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+    appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+    appearance: none;
+}
+
+#form-hint{
+    color: darkgray;
+    font-family: 'Press Start 2P';
+    width: 400px;
+    position: relative;
+    top: 1rem;
+}
