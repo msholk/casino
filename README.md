@@ -11,10 +11,9 @@ The wallet must be connected to MUMBAI testnet network.
 
 #### Staking
 
-Let's start with the staking. Once the frontend is launched as instructed below, we will scroll down to the section where you can buy some HLP, which is the equivalent of providing liquidity to the house. 
-After staking some funds, we will be able to interact with them and check how the investment is doing in that same page. 
+Let's start with the staking. Once the frontend is launched as instructed below, we will scroll down to the section where you can buy some HLP, which is the equivalent of providing liquidity to the house.
+After staking some funds, we will be able to interact with them and check how the investment is doing in that same page.
 This number will change depending on how the roulette players do. If they lose, this number will go up and if they win, this number will go down
-
 
 <a href="https://github.com/~#readme"><img src="readme/staker_1.png"></a>
 <a href="https://github.com/~#readme"><img src="readme/staker_2.png"></a>
@@ -25,7 +24,7 @@ If staking looks boring to you, you can go against the house too! Follow the ins
 
 <a href="https://github.com/~#readme"><img src="readme/roulette_1.png"></a>
 
-### Run frontend on local machine
+### Run landing page on local machine
 
 `cd reactCombineLandingPage`
 
@@ -52,6 +51,7 @@ In our project we are using cutting edge technology like Ethereum Improvement Pr
 ---
 
 #### Utility facets
+
 ##### Facet : DiamondCutFacet
 
 `diamondCut((address,uint8,bytes4[])[],address,bytes)` updates diamond
@@ -74,6 +74,7 @@ This facet is used to query diamond for actual facets and associated functions.
 ---
 
 #### Functional facets
+
 ##### Facet : PlayersFacet
 
 1. `checkPlayerBalance()`
@@ -96,6 +97,7 @@ This facet is used to query diamond for actual facets and associated functions.
 3. `withdrawAllPlatformFunds()`
 
 ##### Facet : RouletteFacet
+
 Controls the gamve and VRF repsonses.
 
 1. `getReqID()`
@@ -106,6 +108,7 @@ Controls the gamve and VRF repsonses.
 6. `testGetAmounts()`
 
 ##### Facet : VaultFacet
+
 Used to control reclaiming and redeeming staked funds.
 
 1. `getVaultState()`
