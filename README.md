@@ -18,11 +18,12 @@ This number will change depending on how the roulette players do. If they lose, 
 
 <a href="https://github.com/~#readme"><img src="readme/staker_1.png"></a>
 <a href="https://github.com/~#readme"><img src="readme/staker_2.png"></a>
+
 #### Betting
 
 If staking looks boring to you, you can go against the house too! Follow the instructions below to run the housematrix roulette and deposit some funds to the cashier. Then, place your bets, click the spin button and thats it. Good luck!
 
-
+<a href="https://github.com/~#readme"><img src="readme/roulette_1.png"></a>
 
 ### Run frontend on local machine
 
