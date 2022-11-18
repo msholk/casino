@@ -1,24 +1,30 @@
 ### Project description
 
-This poroject is a dApp: Decentralized Casino that allows everyone to stake money, form part of the House and enjoy the benefits.
+Our project can be summarized as a decentralized Casino that allows everyone to either stake their money and provide liquidity for the house, or bet against it.
 
-The Staker deposits the funds and the House receives 70% of the revenue.
-The rest 30% goes to HMX: the platform, the governance and maintenence.
+The stakers receive 70% of the revenue while the other 30% goes to the HMX token holder. This last token will act as a governance token and will symbolize decision power over the platform much like a DAO.
 
-When Staker claims back the deposited funds, they first go to the Vault for linear delayed liberation for 20 days.
-When the funds gets liberated, the Staker can redeem it.
+To avoid liquidity drops, when a staker claims back the deposited funds, they first go to the Vault for linear delayed liberation over 20 days.
+As the funds get unstaked, the Stakers can claim them back to their wallets.
 
-The wallet must be connected to MUMBAI network.
+The wallet must be connected to MUMBAI testnet network.
 
-Once launched, to begin with the casino, we need first stake some funds fo the house.
-Go to HLP, "Buy" button, Stake some funds.
-Now on the main page you can "Play Roulette"!
+#### Staking
 
-Deposit some player's funds and
+Let's start with the staking. Once the frontend is launched as instructed below, we will scroll down to the section where you can buy some HLP, which is the equivalent of providing liquidity to the house. 
+After staking some funds, we will be able to interact with them and check how the investment is doing in that same page. 
+This number will change depending on how the roulette players do. If they lose, this number will go up and if they win, this number will go down
 
-Have a luck playing!
 
-### Run demo on local machine
+<a href="https://github.com/~#readme"><img src="readme/staker_1.png"></a>
+<a href="https://github.com/~#readme"><img src="readme/staker_2.png"></a>
+#### Betting
+
+If staking looks boring to you, you can go against the house too! Follow the instructions below to run the housematrix roulette and deposit some funds to the cashier. Then, place your bets, click the spin button and thats it. Good luck!
+
+
+
+### Run frontend on local machine
 
 `cd reactCombineLandingPage`
 
@@ -26,13 +32,21 @@ Have a luck playing!
 
 `yarn start`
 
+### Run roulette on local machine
+
+`cd roulette`
+
+`npm install `
+
+`npm start`
+
 ### Vrf Subscription
 
 https://vrf.chain.link/mumbai/2190
 
-### Solidity Files Structure
+### Solidity File Structure
 
-In our project we are using cutting edge technology like Ethereum Improvement Proposal:2535. Which is called Diamond: Multi-Facet Proxy, We create a modular smart contract system that can be extended and updated after deployment without changing the main deployment address.
+In our project we are using cutting edge technology like Ethereum Improvement Proposal:2535, which is called Diamond: Multi-Facet Proxy. We create a modular smart contract system that can be extended and updated after deployment without changing the main deployment address.
 
 ---
 
@@ -130,7 +144,7 @@ Deploy HLP first
 `yarn hardhat run deploy/Cut.js --network mumbai`
 The script shpuld be adjsuted in accordance to what module we want to update.
 
-### Run frontend
+### Run minimal frontend used for testing
 
 `cd frontend`
 `npm run start`
