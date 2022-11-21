@@ -1,5 +1,5 @@
-forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z -vvvvv --match-contract Sw --match-test testSwapSingleHopExactAmountIn
-forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z   --fork-block-number 15756971 --match-contract Sw --match-test testSwapSingleHopExactAmountIn
+forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/THE_KEY -vvvvv --match-contract Sw --match-test testSwapSingleHopExactAmountIn
+forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/THE_KEY   --fork-block-number 15756971 --match-contract Sw --match-test testSwapSingleHopExactAmountIn
 
 test player deposit :  yarn forge2
 
@@ -11,7 +11,7 @@ yarn add @chainlink/contracts --dev
 
 
 Launch the node
-yarn hardhat node --fork https://polygon-mumbai.g.alchemy.com/v2/Pa82fzNJ4JO3TxJbwjhpqyoIw_m8uRnR
+yarn hardhat node --fork https://polygon-mumbai.g.alchemy.com/v2/THE_KEY
 
 Possible need to run alse before deploy:
 export NODE_OPTIONS=--openssl-legacy-provider
@@ -62,8 +62,8 @@ To run test for player as single contract: yarn testPlayer
 To run test for player as part of Diamond: yarn testDiamondPlayer
 To run test for staker as single contract: yarn testStaker
 
-forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z -vvvvv --match-contract Sw --match-test testSwapSingleHopExactAmountIn
-forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/a1H2bvHzNVPb9GP63_v-GpA0KVhbI95Z --fork-block-number 15756971 --match-contract Sw --match-test testSwapSingleHopExactAmountIn
+forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/THE_KEY -vvvvv --match-contract Sw --match-test testSwapSingleHopExactAmountIn
+forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/THE_KEY --fork-block-number 15756971 --match-contract Sw --match-test testSwapSingleHopExactAmountIn
 
 test player deposit : yarn forge2
 
